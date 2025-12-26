@@ -1,139 +1,124 @@
 import 'package:flutter/material.dart';
-import 'package:middle_ware/screens/BusinessHomePageScreen.dart';
-import 'package:middle_ware/screens/CreateEventPage.dart';
-import 'package:middle_ware/screens/EditEventPage.dart';
-import 'package:middle_ware/screens/EventDetailPage.dart';
-import 'package:middle_ware/screens/EventListScreen.dart';
-import 'package:middle_ware/screens/OrderProvider.dart';
-import 'package:middle_ware/screens/PrivacyPolicyScreen.dart';
-import 'package:middle_ware/screens/TermsConditionScreen.dart';
-import 'package:middle_ware/screens/order/OrderDetailsScreen.dart';
-import 'package:middle_ware/screens/portfolio/AddPortfolioScreen.dart';
-import 'screens/onboarding/splash_screen.dart';
-import 'screens/onboarding/onboardinglanguage_screen.dart';
-import 'screens/onboarding/WelcomeScreen.dart';
-import 'screens/onboarding/UserProviderSelectionScreen.dart';
-
-import 'screens/LocationAccessScreen.dart';
-
-import 'screens/Auth/LoginScreen.dart';
-import 'screens/Auth/SignUpScreen.dart';
-import 'screens/Auth/ForgotPasswordScreen.dart';
-import 'screens/Auth/VerificationCodeScreen.dart';
-import 'screens/Auth/SignUpProviderScreen.dart';
-import 'screens/Auth/profile/ProfilePage.dart';
-
-
-import 'screens/Auth/profile/EditProfileScreen.dart';
-
-import 'screens/Help/HelpSupportScreen.dart';
-import 'screens/ContractUsScreen.dart';
-import 'screens/Faq/FaqScreen.dart';
-import 'screens/WishlistScreen.dart';
-import 'screens/order/OrderHistoryScreen.dart';
-import 'screens/ProvidersScreen.dart';
-import 'screens/ProviderDetailsScreen.dart';
-import 'screens/AppointmentScreen.dart';
-import 'screens/BookingScreen.dart';
-import 'screens/BookingPaidScreen.dart';
-import 'screens/Chat/ChatScreen.dart';
-import 'screens/Auth/profile/ProviderProfileScreen.dart';
-import 'screens/Payment/PaymentScreen.dart';
-import 'screens/HomeScreen.dart';
-import 'screens/CategoriesPage.dart';
-import 'screens/notification/NotificationPage.dart';
-import 'screens/HomeProviderScreen.dart';
-import 'screens/CreateServiceProvider.dart';
-import 'screens/Auth/LoginProviderScreen.dart';
-import 'screens/Auth/profile/Provider/ProviderProfilePage.dart';
-import 'screens/portfolio/ProviderPortfolioPage.dart';
-import 'screens/BankAcountAddScreen.dart';
-import 'screens/AddBankInfo.dart';
-import 'screens/BankPayoutView.dart';
-import 'screens/PaymentHistoryPage.dart';
-import 'screens/PaymentHistoryDetailPage.dart';
-
-
+import 'package:get/get.dart';
+import 'core/routes/app_routes.dart';
+import 'core/theme/app_colors.dart';
 
 void main() {
+  // Initialize GetX dependencies
+  _initDependencies();
+
   runApp(const MyApp());
 }
 
-// nirob
+/// Initialize all GetX controllers and dependencies
+void _initDependencies() {
+  // Auth Controller
+  // Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
+
+  // TODO: Add more controllers here as you create them
+  // User Controllers
+  // Get.lazyPut<UserHomeController>(() => UserHomeController(), fenix: true);
+
+  // Provider Controllers
+  // Get.lazyPut<ProviderHomeController>(() => ProviderHomeController(), fenix: true);
+
+  // Business Controllers
+  // Get.lazyPut<BusinessHomeController>(() => BusinessHomeController(), fenix: true);
+
+  // Event Manager Controllers
+  // Get.lazyPut<EventManagerHomeController>(() => EventManagerHomeController(), fenix: true);
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'middware App',
+    return GetMaterialApp(
+      title: 'MiddleWare App',
       debugShowCheckedModeBanner: false,
-      //initialRoute: '/splash',
-      initialRoute: '/splash',
-      routes: {
-        '/splash': (context) => const SplashScreen(),
 
-        '/profile': (context) => const ProfilePage(),
-        '/notifications': (context) => const NotificationPage(),
-        '/profile/edit': (context) => const EditProfileScreen(),
-        '/forgotpassword': (context) => const ForgotPasswordScreen(),
-        '/otp': (context) => const VerificationCodeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const SignUpScreen(),
-        '/welcome': (context) => const WelcomeScreen(),
-        '/location': (context) => const LocationAccessScreen(),
-        '/userorprovider': (context) => const UserProviderSelectionScreen(),
-        '/onboarding': (context) => const OnboardingScreen(),
-        '/home': (context) => const HomePage(),
-        '/categories': (context) => const CategoriesPage(),
-        '/help': (context) => const HelpSupportScreen(),
-        '/contact': (context) => const ContractUsScreen(),
-        '/faq': (context) => const FaqScreen(),
-        '/wishlist': (context) => const WishlistScreen(),
-        '/order': (context) => const OrderHistoryScreen(),
-        '/order/details': (context) => const OrderDetailsScreen(),
+      // Initial route
+      initialRoute: AppRoutes.splash,
 
-        '/service': (context) => const ProvidersScreen(),
-        '/service/detail': (context) => const ProviderDetailsScreen(),
-        '/appoinment': (context) => const AppointmentScreen(),
-        '/booking': (context) => const BookingScreen(),
-        '/booking/paid': (context) => const BookingPaidScreen(),
-        '/chat': (context) => const ChatScreen(),
-         '/service/profile': (context) => const ProviderProfileScreen(),
-        '/payment': (context) => const PaymentScreen(),
-        //ProviederRoutes: '/',
+      // GetX routes
+      getPages: AppRoutes.pages,
 
+      // Default transitions
+      defaultTransition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
 
-        '/provider/register': (context) => const SignUpProviderScreen(),
-        '/provider/login': (context) => const LoginProviderScreen(),
-        '/provider/home': (context) => const HomeProviderScreen(),
-        '/provider/create': (context) => const CreateServicePage(),
-        '/provider/profile': (context) => const ProviderProfilePage(),
-        '/provider/portfolio': (context) => const PortfolioPage(),
-        '/provider/portfolio/edit': (context) => const AddPortfolioScreen(),
-        '/provider/order': (context) => const OrderHistoryProviderScreen(),
-        '/provider/bank/add': (context) => const BankAddInformationPage(),
-        '/provider/bank/info': (context) => const BankInformationScreen(),
-        '/provider/payout': (context) => const BankInformationPayoutScreen(),
-        '/provider/payment/history': (context) => const PaymentHistoryPage(),
-        '/provider/payment/detail': (context) => const PaymentHistoryDetailPage(),
-        '/terms': (context) => const TermsConditionScreen(),
-        '/privacy': (context) => const PrivacyPolicyScreen(),
+      // Theme
+      theme: ThemeData(
+        primaryColor: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.scaffold,
+        useMaterial3: true,
 
+        // AppBar Theme
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+        ),
 
-        '/Businesshome': (context) => const BusinessHomePageScreen(),
+        // Card Theme
+        cardTheme: const CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
 
+        // Input Decoration Theme
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+        ),
 
+        // Elevated Button Theme
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
 
+        // Text Button Theme
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+        ),
 
-        '/homeevent': (context) => const EventListScreen(),
-        '/eventedit': (context) => const EditEventPage(),
-        '/eventcreate': (context) => const CreateEventPage(),
-      },
+        // Color Scheme
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          primary: AppColors.primary,
+          secondary: AppColors.secondary,
+          error: AppColors.error,
+          surface: AppColors.surface,
+        ),
+      ),
+
+      // Locale settings
+      locale: const Locale('en', 'US'),
+      fallbackLocale: const Locale('en', 'US'),
     );
   }
 }
-
-
-
