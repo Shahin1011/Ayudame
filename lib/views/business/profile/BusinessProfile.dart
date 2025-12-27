@@ -1,0 +1,589 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
+
+import 'EventHelpSupportScreen.dart';
+import 'EventTermsConditionScreen.dart';
+
+class BusinessProfilePage extends StatefulWidget {
+  const BusinessProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<BusinessProfilePage> createState() => _BusinessProfilePageState();
+}
+
+class _BusinessProfilePageState extends State<BusinessProfilePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Column(
+        children: [
+          // Header
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color(0xFF2D6A4F),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 4,
+                  right: 16,
+                  top: 8,
+                  bottom: 16,
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Profile',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.pushNamed(context, '/profile/edit');
+                    //   },
+                    //   icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+
+                  // Profile Picture and Name
+                  Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: const CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2D6A4F),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/icons/edit.svg',
+                            width: 14,
+                            height: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    'Seam Rahman',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  const Text(
+                    'seamr7845@gmail.com',
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Account Information Section
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
+                          child: Text(
+                            'Account Information',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        _buildMenuItem(
+                          iconPath: 'assets/icons/profile.svg',
+                          title: 'Profile info',
+                          onTap: () {},
+                        ),
+                        // _buildMenuItem(
+                        //   icon: Icons.work_outline,
+                        //   title: 'All Services',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/service');
+                        //   },
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.history,
+                        //   title: 'Order History',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/provider/order');
+                        //   },
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.dashboard_outlined,
+                        //   title: 'Portfolio',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/provider/portfolio');
+                        //   },
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.receipt_long_outlined,
+                        //   title: 'Payment History',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/provider/payment/history');
+                        //   },
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.account_balance_outlined,
+                        //   title: 'Bank Information',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/provider/bank/add');
+                        //   },
+                        //   showDivider: false,
+                        // ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Policy Center Section
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
+                          child: Text(
+                            'Policy Center',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        // _buildMenuItem(
+                        //   icon: Icons.shield_outlined,
+                        //   title: 'Privacy Policy',
+                        //     onTap: () => Get.to(() => EventPrivacyPolicyScreen ()),
+                        //
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.description_outlined,
+                        //   title: 'Terms & Condition',
+                        //
+                        //     onTap: () => Get.to(() => EventTermsConditionScreen ()),
+                        //   showDivider: false,
+                        // ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Settings Section
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
+                          child: Text(
+                            'Settings',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                        // _buildMenuItem(
+                        //   icon: Icons.notifications_none_outlined,
+                        //   title: 'Notification',
+                        //   onTap: () {
+                        //     Navigator.pushNamed(context, '/notifications');
+                        //   },
+                        // ),
+                        // _buildMenuItem(
+                        //   icon: Icons.help_outline,
+                        //   title: 'Help & Support',
+                        //  onTap: () => Get.to(() => EventHelpSupportScreen()),
+                        // ),
+                        _buildMenuItem(
+                          iconPath: 'assets/icons/logout.svg',
+                          title: 'Log Out',
+                          onTap: _showLogoutDialog,
+                        ),
+                        _buildMenuItem(
+                          iconPath: 'assets/icons/delete.svg',
+                          title: 'Delete Account',
+                          onTap: () {
+                            _showDeleteAccountDialog(context);
+                          },
+                          isDestructive: true,
+                          showDivider: false,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/icons/logout.svg',
+                    width: 32,
+                    height: 32,
+                    color: Colors.orange.shade400,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Log Out',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Are you sure you want to log out?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          // Add your logout logic here
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Logged out successfully'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Log Out',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/icons/delete.svg',
+                    width: 32,
+                    height: 32,
+                    color: Colors.red.shade400,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Delete Account',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Are you sure to delete this account? This action cannot be undone.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Account deleted successfully'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Yes, Delete',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuItem({
+    required String iconPath,
+    required String title,
+    required VoidCallback onTap,
+    bool showDivider = true,
+    bool isDestructive = false,
+  }) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  iconPath,
+                  width: 22,
+                  height: 22,
+                  color: isDestructive ? Colors.red : Colors.black54,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDestructive ? Colors.red : Colors.black87,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                SvgPicture.asset(
+                  'assets/icons/arrow_forward.svg',
+                  width: 14,
+                  height: 14,
+                  color: isDestructive ? Colors.red : Colors.black38,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // if (showDivider)
+        //   Divider(
+        //     height: 1,
+        //     indent: 52,
+        //     endIndent: 16,
+        //     color: Colors.grey.shade200,
+        //   ),
+      ],
+    );
+  }
+}
