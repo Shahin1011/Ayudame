@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'WelcomeScreen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 80),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.050),
 
               // Language Selection Cards
               Row(
@@ -100,6 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         decoration: BoxDecoration(
           color: cardColor, // Different color for each card
           borderRadius: BorderRadius.circular(20),
+          border: Border.all( color: AppColors.mainAppColor),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),

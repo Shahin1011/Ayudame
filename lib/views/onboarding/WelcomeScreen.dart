@@ -31,11 +31,10 @@ class WelcomeScreen extends StatelessWidget {
           ),
 
           Positioned(
-            bottom: 280, // Higher position for the first image
+            bottom: 280,
             left: 0,
             child: Container(
-              height: 150, // Fixed height
-
+              height: 150,
               child: Center(
                 child: Image.asset(
                   'assets/images/Rectangle.png',
@@ -46,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 280, // Higher position for the first image
+            bottom: 280,
             left: 0,
             child: Container(
               height: 110, // Fixed height
@@ -82,11 +81,9 @@ class WelcomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
 
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const SizedBox(height: 80),
-
-                        const Text(
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                        Text(
                           'Welcome to Ayudame',
                           style: TextStyle(
                             color: Colors.white,

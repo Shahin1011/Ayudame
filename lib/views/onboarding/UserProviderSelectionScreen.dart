@@ -19,7 +19,7 @@ class _UserProviderSelectionScreenState
   void _navigateToSelectedScreen() {
     switch (selectedType) {
       case 'User':
-        Get.toNamed(AppRoutes.userlogin);
+        Get.toNamed(AppRoutes.userBottomNavScreen);
         break;
       case 'Provider':
         Get.toNamed(AppRoutes.providerLogin);
@@ -50,9 +50,7 @@ class _UserProviderSelectionScreenState
           color: isSelected ? const Color(0xFF1C5941) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF1C5941)
-                : const Color(0xFFE0E0E0),
+            color: Color(0xFF1C5941),
             width: 1,
           ),
         ),
