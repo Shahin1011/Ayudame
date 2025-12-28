@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../onboarding/UserProviderSelectionScreen.dart';
+import 'UserProviderSelectionScreen.dart';
 
 class LocationAccessScreen extends StatelessWidget {
   const LocationAccessScreen({super.key});
@@ -16,8 +16,6 @@ class LocationAccessScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
-
 
               Container(
                 width: 64,

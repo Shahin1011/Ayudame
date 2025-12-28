@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_colors.dart';
+
 /// App-wide constants
 class AppConstants {
   // App Info
@@ -33,36 +35,37 @@ class AppConstants {
   static const int maxPageSize = 100;
 }
 
-/// App Colors
-class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF6C63FF);
-  static const Color primaryDark = Color(0xFF5548C8);
-  static const Color primaryLight = Color(0xFF9D97FF);
-
-  // Secondary Colors
-  static const Color secondary = Color(0xFFFF6584);
-  static const Color secondaryDark = Color(0xFFE5415E);
-  static const Color secondaryLight = Color(0xFFFF8FA3);
-
-  // Neutral Colors
-  static const Color black = Color(0xFF000000);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color grey = Color(0xFF9E9E9E);
-  static const Color greyLight = Color(0xFFE0E0E0);
-  static const Color greyDark = Color(0xFF616161);
-
-  // Status Colors
-  static const Color success = Color(0xFF4CAF50);
-  static const Color error = Color(0xFFF44336);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color info = Color(0xFF2196F3);
-
-  // Background Colors
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color scaffold = Color(0xFFFAFAFA);
-}
+// /// App Colors
+// class AppColors {
+//   // Primary Colors
+//   static const Color primary = Color(0xFF1C5941);
+//   static const Color primaryDark = Color(0xFF5548C8);
+//   static const bgColor = Color(0xFFF3F8F4);
+//   static const Color primaryLight = Color(0xFF9D97FF);
+//
+//   // Secondary Colors
+//   static const Color secondary = Color(0xFFFF6584);
+//   static const Color secondaryDark = Color(0xFFE5415E);
+//   static const Color secondaryLight = Color(0xFFFF8FA3);
+//
+//   // Neutral Colors
+//   static const Color black = Color(0xFF000000);
+//   static const Color white = Color(0xFFFFFFFF);
+//   static const Color grey = Color(0xFF9E9E9E);
+//   static const Color greyLight = Color(0xFFE0E0E0);
+//   static const Color greyDark = Color(0xFF616161);
+//
+//   // Status Colors
+//   static const Color success = Color(0xFF4CAF50);
+//   static const Color error = Color(0xFFF44336);
+//   static const Color warning = Color(0xFFFF9800);
+//   static const Color info = Color(0xFF2196F3);
+//
+//   // Background Colors
+//   static const Color background = Color(0xFFF5F5F5);
+//   static const Color surface = Color(0xFFFFFFFF);
+//   static const Color scaffold = Color(0xFFFAFAFA);
+// }
 
 /// Text Styles
 class AppTextStyles {

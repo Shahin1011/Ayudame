@@ -13,7 +13,7 @@ import '../../views/common/HelpSupportScreen.dart';
 import '../../views/common/NotificationPage.dart';
 import '../../views/common/PrivacyPolicyScreen.dart';
 import '../../views/common/TermsConditionScreen.dart';
-import '../../views/common/LocationAccessScreen.dart';
+import '../../views/onboarding/LocationAccessScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
@@ -57,6 +57,8 @@ import '../../views/user/auth/ForgotPasswordScreen.dart';
 import '../../views/user/auth/LoginScreen.dart';
 import '../../views/user/auth/SignUpScreen.dart';
 import '../../views/user/auth/VerificationCodeScreen.dart';
+import '../../views/user/auth/user_new_password_screen.dart';
+import '../../views/user/bottom_nav/bottom_nav.dart';
 import '../../views/user/home/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
@@ -92,7 +94,9 @@ class AppRoutes {
   static const String userregister = '/user_register';
   static const String userforgotPassword = '/user_forgot-password';
   static const String userotp = '/user_otp';
+  static const String userNewPasswordScreen = '/user_new_password_screen';
   static const String userNotification = "/user_notification";
+  static const String userBottomNavScreen = "/bottom_nav";
 
   static const String userHome = '/user-home';
   static const String userProfile = '/user-profile';
@@ -176,7 +180,10 @@ class AppRoutes {
     GetPage(name: userregister, page: () => const SignUpScreen()),
     GetPage(name: userforgotPassword, page: () => const ForgotPasswordScreen()),
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),
+    GetPage(name: userNewPasswordScreen, page: () => UserNewPasswordScreen()),
     GetPage(name: userHome, page: () => const HomePage()),
+    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
+
     GetPage(name: userProfile, page: () => const ProfilePage()),
     GetPage(name: userEditProfile, page: () => const EditProfileScreen()),
     GetPage(name: userCategories, page: () => const CategoriesPage()),

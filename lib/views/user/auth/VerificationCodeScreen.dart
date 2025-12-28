@@ -42,7 +42,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
           },
         ),
         title: const Text(
-          'Back to Login',
+          'OTP Verification',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -176,7 +176,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               height: 52,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.offNamed(AppRoutes.userHome);
+                  Get.offNamed(AppRoutes.userNewPasswordScreen);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1C5941),
