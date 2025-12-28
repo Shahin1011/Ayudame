@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
+import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
 
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
@@ -31,15 +32,17 @@ class _EventProfilePageState extends State<EventProfilePage> {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.only(left: 4, right: 16, top: 8, bottom: 16),
+                padding: const EdgeInsets.only(
+                  left: 4,
+                  right: 16,
+                  top: 8,
+                  bottom: 16,
+                ),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                    ),
+                    const SizedBox(
+                      width: 48,
+                    ), // Spacer to balance the right button
                     const Expanded(
                       child: Text(
                         'Profile',
@@ -53,9 +56,13 @@ class _EventProfilePageState extends State<EventProfilePage> {
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/profile/edit');
+
                       },
-                      icon: const Icon(Icons.add, color: Colors.white, size: 24),
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ],
                 ),
@@ -128,10 +135,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
 
                   const Text(
                     'seamr7845@gmail.com',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                   const SizedBox(height: 20),
 
@@ -167,7 +171,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           icon: Icons.person_outline,
                           title: 'Profile info',
                           onTap: () {
-
+                            Get.to(() => const ProfileInfoScreen());
                           },
                         ),
                         // _buildMenuItem(
@@ -243,14 +247,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
                         _buildMenuItem(
                           icon: Icons.shield_outlined,
                           title: 'Privacy Policy',
-                            onTap: () => Get.to(() => EventPrivacyPolicyScreen ()),
-
+                          onTap: () => Get.to(() => EventPrivacyPolicyScreen()),
                         ),
                         _buildMenuItem(
                           icon: Icons.description_outlined,
                           title: 'Terms & Condition',
 
-                            onTap: () => Get.to(() => EventTermsConditionScreen ()),
+                          onTap: () =>
+                              Get.to(() => EventTermsConditionScreen()),
                           showDivider: false,
                         ),
                       ],
@@ -297,7 +301,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                         _buildMenuItem(
                           icon: Icons.help_outline,
                           title: 'Help & Support',
-                         onTap: () => Get.to(() => EventHelpSupportScreen()),
+                          onTap: () => Get.to(() => EventHelpSupportScreen()),
                         ),
                         _buildMenuItem(
                           icon: Icons.logout,
@@ -365,10 +369,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                 const Text(
                   'Are you sure you want to log out?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -473,10 +474,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                 const Text(
                   'Are you sure to delete this account? This action cannot be undone.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
                 Row(

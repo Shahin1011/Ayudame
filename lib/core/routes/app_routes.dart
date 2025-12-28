@@ -7,9 +7,6 @@ import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
 import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
 import '../../views/business/profile/BusinessProfile.dart';
-import '../../views/common/ContactUsScreen.dart';
-import '../../views/common/FaqScreen.dart';
-import '../../views/common/HelpSupportScreen.dart';
 import '../../views/common/NotificationPage.dart';
 import '../../views/common/PrivacyPolicyScreen.dart';
 import '../../views/common/TermsConditionScreen.dart';
@@ -32,7 +29,7 @@ import '../../views/business/employee/BusinessEmployeeScreen.dart'; // Import Em
 // Event Manager Feature Views
 
 import '../../views/event_manager/home/EditEventPage.dart';
-import '../../views/event_manager/home/EventHomeScreen.dart';
+import '../../widgets/bottom_nave.dart';
 // Event Manager Feature Views mappings removed as they are imported above directly
 
 // Provider Feature Views
@@ -45,7 +42,6 @@ import '../../views/provider/profile/AddPortfolioScreen.dart';
 import '../../views/provider/profile/BankAcountAddScreen.dart';
 import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../views/provider/profile/ProviderProfilePage.dart';
-import '../../views/provider/profile/ProviderProfileScreen.dart';
 import '../../views/provider/profile/providerBankPayoutView.dart';
 import '../../views/provider/profile/provider_AddBankInfo.dart';
 import '../../views/provider/settings/PaymentHistoryDetailPage.dart';
@@ -138,8 +134,6 @@ class AppRoutes {
   static const String businessOrders = '/business-orders';
   static const String businessActivity = '/ActivitiesPage';
 
-
-
   static const String businessProfile = '/BusinessProfile';
 
   // ============================================
@@ -229,8 +223,8 @@ class AppRoutes {
       page: () => const PaymentHistoryDetailPage(),
     ),
 
-                         // Business
-    GetPage(name: businessHome, page: () => const BusinessHomePageScreen()),
+    // Business
+    GetPage(name: businessHome, page: () => BusinessHomePageScreen()),
     GetPage(name: businessLogin, page: () => const BusinessLoginScreen()),
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(
@@ -249,11 +243,10 @@ class AppRoutes {
       name: businessOrders,
       page: () => const OrderHistoryProviderScreen(),
     ), // Reuse provider orders for now
-    GetPage(name: businessProfile, page: () => const BusinessProfilePage()),
+    GetPage(name: businessProfile, page: () => const Businessprofile()),
     GetPage(name: businessActivity, page: () => const ActivitiesPage()),
 
-
-                                // Event Manager
+    // Event Manager
     GetPage(name: eventLogin, page: () => const EventLoginScreen()),
     GetPage(name: eventRegister, page: () => const EventSignUpScreen()),
     GetPage(
@@ -261,7 +254,7 @@ class AppRoutes {
       page: () => const EventForgotPasswordScreen(),
     ),
     GetPage(name: eventOtp, page: () => const EventVerificationCodeScreen()),
-    GetPage(name: eventHome, page: () => const EventHomeScreen()),
+    GetPage(name: eventHome, page: () => const BottomNavEScreen()),
     GetPage(name: eventCreate, page: () => const CreateEventPage()),
     GetPage(name: eventEdit, page: () => const EditEventPage()),
     GetPage(name: eventProfile, page: () => const EventProfilePage()),

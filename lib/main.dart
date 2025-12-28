@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
@@ -34,19 +35,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'MiddleWare App',
-      debugShowCheckedModeBanner: false,
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          title: 'MiddleWare App',
+          debugShowCheckedModeBanner: false,
 
-      // Initial route
-      initialRoute: AppRoutes.splash,
+          // Initial route
+          initialRoute: AppRoutes.splash,
 
-      // GetX routes
-      getPages: AppRoutes.pages,
+          // GetX routes
+          getPages: AppRoutes.pages,
 
-      // Default transitions
-      defaultTransition: Transition.rightToLeft,
-      transitionDuration: const Duration(milliseconds: 300),
+          // Default transitions
+          defaultTransition: Transition.rightToLeft,
+          transitionDuration: const Duration(milliseconds: 300),
 
       // Theme
       theme: ThemeData(
@@ -119,6 +125,8 @@ class MyApp extends StatelessWidget {
       // Locale settings
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en', 'US'),
+        );
+      },
     );
   }
 }

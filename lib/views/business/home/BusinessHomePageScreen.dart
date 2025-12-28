@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/profile/BusinessProfile.dart';
 import '../../../core/routes/app_routes.dart';
-
 import '../Activities/ActivitiesPage.dart';
 import 'BusinessNotificationPage.dart';
 
@@ -21,7 +22,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
     const _HomeContent(),
     const BusinessEmployeeListScreen(),
     const ActivitiesPage(),
-    const BusinessProfilePage(),
+    const Businessprofile(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,11 +34,8 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      backgroundColor: AppColors.bgColor,
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: _buildBottomNavBar(),
     );
   }
@@ -65,13 +63,12 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
         items: [
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/home_nav.svg',
+              'assets/icons/homes.svg',
               width: 24,
               height: 24,
-              color: Colors.grey,
             ),
             activeIcon: SvgPicture.asset(
-              'assets/icons/home_nav.svg',
+              'assets/icons/homes.svg',
               width: 24,
               height: 24,
               color: const Color(0xFF1C5941),
@@ -83,7 +80,6 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               'assets/icons/employee.svg',
               width: 24,
               height: 24,
-              color: Colors.grey,
             ),
             activeIcon: SvgPicture.asset(
               'assets/icons/employee.svg',
@@ -98,7 +94,6 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               'assets/icons/activity.svg',
               width: 24,
               height: 24,
-              color: Colors.grey,
             ),
             activeIcon: SvgPicture.asset(
               'assets/icons/activity.svg',
@@ -110,13 +105,12 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/profileIcon.svg',
+              'assets/icons/Profiles.svg',
               width: 24,
               height: 24,
-              color: Colors.grey,
             ),
             activeIcon: SvgPicture.asset(
-              'assets/icons/profileIcon.svg',
+              'assets/icons/Profiles.svg',
               width: 24,
               height: 24,
               color: const Color(0xFF1C5941),
@@ -136,52 +130,69 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
+        backgroundColor: AppColors.mainAppColor,
         elevation: 0,
+        toolbarHeight: 90.h,
+        leadingWidth: 80.w,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundImage: AssetImage('assets/images/profile.png'),
+          padding: EdgeInsets.only(left: 20.w, top: 10.h, bottom: 10.h),
+          child: const CircleAvatar(
+            radius: 40.0,
+            backgroundColor: Color(0xFFFFFFFF),
+            child: CircleAvatar(
+              radius: 36.0,
+              backgroundImage: AssetImage('assets/images/profile.png'),
+            ),
           ),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             Text(
               'Welcome Back',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.white,
               ),
             ),
+            SizedBox(height: 4.h),
             Text(
-              'John Doe',
+              'Seam Rahman',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
+                color: AppColors.white,
               ),
             ),
           ],
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: SvgPicture.asset(
-                'assets/icons/notification.svg',
-                color: const Color(0xFF1C5941),
-              ),
-              onPressed: () {
-                Get.to(() => BusinessNotificationPage());
+          Padding(
+            padding: EdgeInsets.only(right: 20.w),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(30),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BusinessNotificationPage(),
+                  ),
+                );
               },
+              child: CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.white,
+                child: SvgPicture.asset(
+                  'assets/icons/notificationIcon.svg',
+                  width: 40,
+                  height: 40,
+                ),
+              ),
             ),
           ),
         ],
@@ -190,28 +201,42 @@ class _HomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Stats Cards Section
+            // Stats Cards Section Background
             Container(
-              padding: const EdgeInsets.all(16),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1C5941),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20.r),
+                  bottomRight: Radius.circular(20.r),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                16.w,
+                kToolbarHeight + 90.h,
+                16.w,
+                24.h,
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Expanded(
                         child: _buildStatCard(
                           color: const Color(0xFFFFE5E5),
-                          iconPath: 'assets/icons/calendar.svg',
+                          iconPath: 'assets/icons/booking.svg',
                           iconColor: const Color(0xFFFF6B6B),
                           value: '1,237',
                           label: 'Total Booking',
                           percentage: '+8%',
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Expanded(
                         child: _buildStatCard(
                           color: const Color(0xFFFFE8D6),
-                          iconPath: 'assets/icons/money.svg',
+                          iconPath: 'assets/icons/income.svg',
                           iconColor: const Color(0xFFFF9F43),
                           value: '\$50,500',
                           label: 'Total Income',
@@ -220,27 +245,27 @@ class _HomeContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Row(
                     children: [
                       Expanded(
                         child: _buildStatCard(
                           color: const Color(0xFFE8F5E9),
-                          iconPath: 'assets/icons/check_circle.svg',
+                          iconPath: 'assets/icons/user.svg',
                           iconColor: const Color(0xFF4CAF50),
                           value: '786',
-                          label: 'Service Completed',
+                          label: 'Active Users',
                           percentage: '+8%',
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Expanded(
                         child: _buildStatCard(
-                          color: const Color(0xFFEDE7F6),
-                          iconPath: 'assets/icons/cancel.svg',
+                          color: AppColors.eventBackground,
+                          iconPath: 'assets/icons/order.svg',
                           iconColor: const Color(0xFF9C27B0),
                           value: '850',
-                          label: 'Service Cancelled',
+                          label: 'Active Orders',
                           percentage: '+2%',
                         ),
                       ),
@@ -250,61 +275,76 @@ class _HomeContent extends StatelessWidget {
               ),
             ),
 
+            SizedBox(height: 16.h),
+
             // Search Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.grey,
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Search Providers...',
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 14.sp,
+                    ),
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: EdgeInsets.all(12.w),
                       child: SvgPicture.asset(
-                        'assets/icons/search.svg',
+                        'assets/icons/search-01.svg',
                         color: Colors.grey[400],
                       ),
                     ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.5),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
                     ),
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // All Providers Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'All Providers',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      // Ensure this list exists or defaults to providers
-                      Get.toNamed(AppRoutes.userProviders); // Or provider list
+                      Get.toNamed(AppRoutes.userProviders);
                     },
-                    child: const Text(
+                    child: Text(
                       'View All',
                       style: TextStyle(
-                        color: Color(0xFF1C5941),
-                        fontSize: 14,
+                        color: const Color(0xFF1C5941),
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -325,23 +365,21 @@ class _HomeContent extends StatelessWidget {
               price: '\$63',
               buttonText: 'Add an Employee',
               buttonColor: const Color(0xFF1C5941),
-              onTap: () {
-                // Add employee logic
-              },
+              onTap: () {},
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // My Employees Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'My Employees',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
@@ -350,11 +388,11 @@ class _HomeContent extends StatelessWidget {
                     onPressed: () {
                       Get.toNamed(AppRoutes.businessEmployee);
                     },
-                    child: const Text(
+                    child: Text(
                       'View All',
                       style: TextStyle(
-                        color: Color(0xFF1C5941),
-                        fontSize: 14,
+                        color: const Color(0xFF1C5941),
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -380,7 +418,7 @@ class _HomeContent extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 80),
+            SizedBox(height: 80.h),
           ],
         ),
       ),
@@ -396,10 +434,17 @@ class _HomeContent extends StatelessWidget {
     required String percentage,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: iconColor.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -408,46 +453,53 @@ class _HomeContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  width: 20,
-                  height: 20,
+                  width: 20.w,
+                  height: 20.h,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4),
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(
                   percentage,
                   style: TextStyle(
                     color: iconColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: 19.sp,
               fontWeight: FontWeight.w700,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 2),
-          Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[700])),
+          SizedBox(height: 4.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
+            ),
+          ),
         ],
       ),
     );
@@ -466,75 +518,78 @@ class _HomeContent extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFFE0E0E0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
             child: Image.asset(
               'assets/images/provider_service.jpg',
               width: double.infinity,
-              height: 150,
+              height: 150.h,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   width: double.infinity,
-                  height: 150,
+                  height: 150.h,
                   color: Colors.grey[300],
-                  child: Icon(Icons.image, size: 50, color: Colors.grey),
+                  child: Icon(Icons.image, size: 50.w, color: Colors.grey),
                 );
               },
             ),
           ),
-
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Provider Info
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: 16,
-                      backgroundImage: AssetImage(
+                      radius: 16.r,
+                      backgroundImage: const AssetImage(
                         'assets/images/provider_avatar.png',
                       ),
                       backgroundColor: Colors.grey[300],
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             name,
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: TextStyle(
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.black87,
                             ),
                           ),
                           Row(
                             children: [
-                              SvgPicture.asset(
-                                'assets/icons/location.svg',
-                                width: 12,
-                                height: 12,
+                              Icon(
+                                Icons.location_on,
+                                size: 12.sp,
                                 color: Colors.grey[600],
                               ),
-                              const SizedBox(width: 2),
+                              SizedBox(width: 2.w),
                               Text(
                                 location,
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 11.sp,
                                   color: Colors.grey[600],
                                 ),
                               ),
@@ -545,33 +600,27 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-
-                // Service Title
+                SizedBox(height: 12.h),
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 6),
-
-                // Description
+                SizedBox(height: 6.h),
                 Text(
                   description,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     color: Colors.grey[600],
                     height: 1.4,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
-
-                // Rating and Price Row
+                SizedBox(height: 12.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -581,22 +630,21 @@ class _HomeContent extends StatelessWidget {
                           4,
                           (index) => SvgPicture.asset(
                             'assets/icons/star.svg',
-                            width: 14,
-                            height: 14,
+                            width: 14.w,
+                            height: 14.h,
                             color: const Color(0xFFFFC107),
                           ),
                         ),
-                        SvgPicture.asset(
-                          'assets/icons/star_border.svg',
-                          width: 14,
-                          height: 14,
+                        Icon(
+                          Icons.star_border,
+                          size: 14.sp,
                           color: const Color(0xFFFFC107),
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4.w),
                         Text(
                           '$rating ($reviews)',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 11.sp,
                             color: Colors.grey[600],
                           ),
                         ),
@@ -604,16 +652,14 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-
-                // Price and Button Row
+                SizedBox(height: 12.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Approximate Price: $price',
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                       ),
@@ -625,17 +671,17 @@ class _HomeContent extends StatelessWidget {
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(6.r),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
                         ),
                       ),
                       child: Text(
                         buttonText,
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -662,18 +708,18 @@ class BusinessEmployeeListScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1C5941),
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Employees',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.w),
         itemCount: 10,
         itemBuilder: (context, index) {
           return GestureDetector(
@@ -681,11 +727,11 @@ class BusinessEmployeeListScreen extends StatelessWidget {
               Get.toNamed(AppRoutes.businessEmployee);
             },
             child: Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
+              margin: EdgeInsets.only(bottom: 12.h),
+              padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -697,55 +743,54 @@ class BusinessEmployeeListScreen extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 30,
-                    backgroundImage: AssetImage(
+                    radius: 30.r,
+                    backgroundImage: const AssetImage(
                       'assets/images/provider_avatar.png',
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Employee ${index + 1}',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Text(
                           'Expert House Cleaning Service',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 13.sp,
                             color: Colors.grey[600],
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Row(
                           children: [
                             ...List.generate(
                               4,
                               (i) => SvgPicture.asset(
                                 'assets/icons/star.svg',
-                                width: 14,
-                                height: 14,
+                                width: 14.w,
+                                height: 14.h,
                                 color: const Color(0xFFFFC107),
                               ),
                             ),
-                            SvgPicture.asset(
-                              'assets/icons/star_border.svg',
-                              width: 14,
-                              height: 14,
+                            Icon(
+                              Icons.star_border,
+                              size: 14.sp,
                               color: const Color(0xFFFFC107),
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4.w),
                             Text(
                               '4.0 (102)',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -754,10 +799,7 @@ class BusinessEmployeeListScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.grey[400],
-                  ),
+                  Icon(Icons.chevron_right, color: Colors.grey[400]),
                 ],
               ),
             ),
