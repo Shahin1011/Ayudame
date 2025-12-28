@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/views/event_manager/home/EventNotificationPage.dart';
 import '../../../core/routes/app_routes.dart';
 import 'EventDetailPage.dart';
+import 'cancel.dart';
 
 class EventHomeScreen extends StatelessWidget {
   const EventHomeScreen({super.key});
@@ -54,17 +56,22 @@ class EventHomeScreen extends StatelessWidget {
                 color: Color(0xFF1C5941),
               ),
               onPressed: () {
-                 Get.to(() =>  EventNotificationPage());
+                Get.to(() => EventNotificationPage());
               },
             ),
           ),
         ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(25.r),
+            bottomRight: Radius.circular(25.r),
+          ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _buildEventCard(
-
             context,
             imageUrl: 'assets/images/event_detail.png',
             event: "Event Name",
@@ -91,7 +98,6 @@ class EventHomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
@@ -343,9 +349,12 @@ class EventHomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
+
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showCancelEventDialog(context);
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1C5941),
                             foregroundColor: Colors.white,
@@ -372,82 +381,6 @@ class EventHomeScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // Home button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventHome);
-                },
-                child: _buildNavItem(
-                  Icons.home,
-                  'Home',
-                  true,
-                ),
-              ),
-              // Create Event button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventCreate);
-                },
-                child: _buildNavItem(
-                  Icons.event_outlined,
-                  'Create Event',
-                  false,
-                ),
-              ),
-              // Profile button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventProfile);
-                },
-                child: _buildNavItem(Icons.person_outline, 'Profile', false),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isActive ? const Color(0xFF1C5941) : Colors.grey,
-          size: 24,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isActive ? const Color(0xFF1C5941) : Colors.grey,
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ActivitiesPage extends StatefulWidget {
   const ActivitiesPage({super.key});
@@ -34,7 +35,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$150',
         time: '5 hours ago',
         isPositive: true,
-        avatar: 'assets/images/avatar1.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'New booking received',
@@ -44,7 +45,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$150',
         time: '5 hours ago',
         isPositive: true,
-        avatar: 'assets/images/avatar2.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'Payment received',
@@ -54,7 +55,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$150',
         time: '5 hours ago',
         isPositive: true,
-        avatar: 'assets/images/avatar1.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'Order cancelled',
@@ -64,7 +65,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$150',
         time: '5 hours ago',
         isPositive: false,
-        avatar: 'assets/images/avatar2.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'New booking received',
@@ -74,7 +75,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$150',
         time: '5 hours ago',
         isPositive: true,
-        avatar: 'assets/images/avatar1.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'Order completed',
@@ -84,7 +85,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$200',
         time: '3 hours ago',
         isPositive: true,
-        avatar: 'assets/images/avatar2.png',
+        avatar: 'assets/images/profile.png',
       ),
       ActivityItem(
         type: 'Order cancelled',
@@ -94,7 +95,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         amount: '\$100',
         time: '2 hours ago',
         isPositive: false,
-        avatar: 'assets/images/avatar1.png',
+        avatar: 'assets/images/profile.png',
       ),
     ];
   }
@@ -166,20 +167,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: const Color(0xFF1C5941),
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      title: const Text(
-        'Activities',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      centerTitle: true,
-    );
+    return CustomAppBar(title: 'Activities');
   }
 
   Widget _buildTimeFilterTabs() {

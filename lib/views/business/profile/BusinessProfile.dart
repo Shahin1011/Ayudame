@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
+import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
 
+import '../../event_manager/profile/EventHelpSupportScreen.dart';
+import '../../event_manager/profile/EventTermsConditionScreen.dart';
+import '../../user/profile/EditProfileScreen.dart';
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
 
-class BusinessProfilePage extends StatefulWidget {
-  const BusinessProfilePage({Key? key}) : super(key: key);
+class Businessprofile extends StatefulWidget {
+  const Businessprofile ({Key? key}) : super(key: key);
 
   @override
-  State<BusinessProfilePage> createState() => _BusinessProfilePageState();
+  State<Businessprofile > createState() => _BusinessprofileState();
 }
 
-class _BusinessProfilePageState extends State<BusinessProfilePage> {
+class _BusinessprofileState extends State<Businessprofile > {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +43,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                 ),
                 child: Row(
                   children: [
+                    const SizedBox(
+                      width: 48,
+                    ), // Spacer to balance the right button
                     const Expanded(
                       child: Text(
                         'Profile',
@@ -51,12 +57,16 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                         ),
                       ),
                     ),
-                    // IconButton(
-                    //   onPressed: () {
-                    //     Navigator.pushNamed(context, '/profile/edit');
-                    //   },
-                    //   icon: const Icon(Icons.add, color: Colors.white, size: 24),
-                    // ),
+                    IconButton(
+                      onPressed: () {
+
+                      },
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -103,10 +113,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: SvgPicture.asset(
-                            'assets/icons/edit.svg',
-                            width: 14,
-                            height: 14,
+                          child: const Icon(
+                            Icons.edit,
+                            size: 14,
                             color: Colors.white,
                           ),
                         ),
@@ -162,46 +171,41 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                           ),
                         ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/profile.svg',
+                          icon: Icons.person_outline,
                           title: 'Profile info',
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => const EditProfileScreen());
+                          },
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.work_outline,
-                        //   title: 'All Services',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/service');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.history,
-                        //   title: 'Order History',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/order');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.dashboard_outlined,
-                        //   title: 'Portfolio',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/portfolio');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.receipt_long_outlined,
-                        //   title: 'Payment History',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/payment/history');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.account_balance_outlined,
-                        //   title: 'Bank Information',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/bank/add');
-                        //   },
-                        //   showDivider: false,
-                        // ),
+                        _buildMenuItem(
+                          icon: Icons.work_outline,
+                          title: 'Employee Management',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/service');
+                          },
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.history,
+                          title: 'Business profile',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/provider/order');
+                          },
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.receipt_long_outlined,
+                          title: 'Payment History',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/provider/payment/history');
+                          },
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.account_balance_outlined,
+                          title: 'Bank Information',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/provider/bank/add');
+                          },
+                          showDivider: false,
+                        ),
                       ],
                     ),
                   ),
@@ -236,19 +240,19 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                             ),
                           ),
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.shield_outlined,
-                        //   title: 'Privacy Policy',
-                        //     onTap: () => Get.to(() => EventPrivacyPolicyScreen ()),
-                        //
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.description_outlined,
-                        //   title: 'Terms & Condition',
-                        //
-                        //     onTap: () => Get.to(() => EventTermsConditionScreen ()),
-                        //   showDivider: false,
-                        // ),
+                        _buildMenuItem(
+                          icon: Icons.shield_outlined,
+                          title: 'Privacy Policy',
+                          onTap: () => Get.to(() => EventPrivacyPolicyScreen()),
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.description_outlined,
+                          title: 'Terms & Condition',
+
+                          onTap: () =>
+                              Get.to(() => EventTermsConditionScreen()),
+                          showDivider: false,
+                        ),
                       ],
                     ),
                   ),
@@ -290,18 +294,18 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                         //     Navigator.pushNamed(context, '/notifications');
                         //   },
                         // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.help_outline,
-                        //   title: 'Help & Support',
-                        //  onTap: () => Get.to(() => EventHelpSupportScreen()),
-                        // ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/logout.svg',
+                          icon: Icons.help_outline,
+                          title: 'Help & Support',
+                          onTap: () => Get.to(() => EventHelpSupportScreen()),
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.logout,
                           title: 'Log Out',
                           onTap: _showLogoutDialog,
                         ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/delete.svg',
+                          icon: Icons.delete_outline,
                           title: 'Delete Account',
                           onTap: () {
                             _showDeleteAccountDialog(context);
@@ -342,10 +346,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                     color: Colors.orange.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/logout.svg',
-                    width: 32,
-                    height: 32,
+                  child: Icon(
+                    Icons.logout,
+                    size: 32,
                     color: Colors.orange.shade400,
                   ),
                 ),
@@ -448,10 +451,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                     color: Colors.red.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/delete.svg',
-                    width: 32,
-                    height: 32,
+                  child: Icon(
+                    Icons.delete_outline,
+                    size: 32,
                     color: Colors.red.shade400,
                   ),
                 ),
@@ -535,7 +537,7 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
   }
 
   Widget _buildMenuItem({
-    required String iconPath,
+    required IconData icon,
     required String title,
     required VoidCallback onTap,
     bool showDivider = true,
@@ -549,10 +551,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                SvgPicture.asset(
-                  iconPath,
-                  width: 22,
-                  height: 22,
+                Icon(
+                  icon,
+                  size: 22,
                   color: isDestructive ? Colors.red : Colors.black54,
                 ),
                 const SizedBox(width: 14),
@@ -566,10 +567,9 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                     ),
                   ),
                 ),
-                SvgPicture.asset(
-                  'assets/icons/arrow_forward.svg',
-                  width: 14,
-                  height: 14,
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
                   color: isDestructive ? Colors.red : Colors.black38,
                 ),
               ],

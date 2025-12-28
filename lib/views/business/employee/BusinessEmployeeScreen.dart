@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../core/theme/app_colors.dart';
 
 class EmployeeDetailsScreen extends StatefulWidget {
@@ -17,37 +18,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.mainAppColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/icons/arrow_back.svg',
-            color: Colors.white,
-            width: 20,
-            height: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Employee',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/more_vert.svg',
-              color: Colors.white,
-            ),
-            onPressed: () => _showActionSheet(context),
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(title: "Employee"),
       body: Column(
         children: [
           _buildProfileHeader(),

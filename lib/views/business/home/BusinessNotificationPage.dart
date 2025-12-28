@@ -137,12 +137,7 @@ class BusinessNotificationPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SvgPicture.asset(
-                      'assets/icons/more_vert.svg',
-                      width: 18,
-                      height: 18,
-                      color: Colors.grey[400],
-                    ),
+                    Icon(Icons.more_vert, size: 18, color: Colors.grey[400]),
                   ],
                 ),
                 const SizedBox(height: 6),
