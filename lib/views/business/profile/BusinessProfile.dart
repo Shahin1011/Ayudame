@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
-import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
-
-import '../../event_manager/profile/EventHelpSupportScreen.dart';
-import '../../event_manager/profile/EventTermsConditionScreen.dart';
-import '../../user/profile/EditProfileScreen.dart';
-import 'EventHelpSupportScreen.dart';
-import 'EventTermsConditionScreen.dart';
+import 'package:middle_ware/views/business/profile/payment.dart';
+import '../../../core/theme/app_colors.dart';
+import '../home/BusinessNotificationPage.dart';
+import 'bank_information.dart';
+import 'edit_profile_screen.dart';
+import 'BusinessHelpSupportScreen.dart';
+import 'BusinessTermsConditionScreen.dart';
+import 'PrivacyPolicyScreen.dart';
 
 class Businessprofile extends StatefulWidget {
-  const Businessprofile ({Key? key}) : super(key: key);
+  const Businessprofile({Key? key}) : super(key: key);
 
   @override
-  State<Businessprofile > createState() => _BusinessprofileState();
+  State<Businessprofile> createState() => _BusinessprofileState();
 }
 
-class _BusinessprofileState extends State<Businessprofile > {
+class _BusinessprofileState extends State<Businessprofile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
           // Header
           Container(
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: Color(0xFF2D6A4F),
+              color: Color(0xFF1C5941),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
@@ -57,16 +57,7 @@ class _BusinessprofileState extends State<Businessprofile > {
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
 
-                      },
-                      icon: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -178,13 +169,6 @@ class _BusinessprofileState extends State<Businessprofile > {
                           },
                         ),
                         _buildMenuItem(
-                          icon: Icons.work_outline,
-                          title: 'Employee Management',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/service');
-                          },
-                        ),
-                        _buildMenuItem(
                           icon: Icons.history,
                           title: 'Business profile',
                           onTap: () {
@@ -195,14 +179,15 @@ class _BusinessprofileState extends State<Businessprofile > {
                           icon: Icons.receipt_long_outlined,
                           title: 'Payment History',
                           onTap: () {
-                            Navigator.pushNamed(context, '/provider/payment/history');
+                            Get.to(() => PaymentHistoryScreen ());
+
                           },
                         ),
                         _buildMenuItem(
                           icon: Icons.account_balance_outlined,
                           title: 'Bank Information',
                           onTap: () {
-                            Navigator.pushNamed(context, '/provider/bank/add');
+                            Get.to(() => BankInformationScreen());
                           },
                           showDivider: false,
                         ),
@@ -243,14 +228,14 @@ class _BusinessprofileState extends State<Businessprofile > {
                         _buildMenuItem(
                           icon: Icons.shield_outlined,
                           title: 'Privacy Policy',
-                          onTap: () => Get.to(() => EventPrivacyPolicyScreen()),
+                          onTap: () => Get.to(() => BusinessPrivacyPolicyScreen()),
                         ),
                         _buildMenuItem(
                           icon: Icons.description_outlined,
                           title: 'Terms & Condition',
 
                           onTap: () =>
-                              Get.to(() => EventTermsConditionScreen()),
+                              Get.to(() => BusinessTermsConditionScreen()),
                           showDivider: false,
                         ),
                       ],
@@ -295,9 +280,14 @@ class _BusinessprofileState extends State<Businessprofile > {
                         //   },
                         // ),
                         _buildMenuItem(
+                          icon: Icons.notifications,
+                          title: 'Notification',
+                          onTap: () => Get.to(() => BusinessNotificationPage()),
+                        ),
+                        _buildMenuItem(
                           icon: Icons.help_outline,
                           title: 'Help & Support',
-                          onTap: () => Get.to(() => EventHelpSupportScreen()),
+                          onTap: () => Get.to(() => BusinessHelpSupportScreen()),
                         ),
                         _buildMenuItem(
                           icon: Icons.logout,

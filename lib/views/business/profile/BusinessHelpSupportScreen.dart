@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
-class BusinessContactUsScreen extends StatelessWidget {
-  const BusinessContactUsScreen({Key? key}) : super(key: key);
+import 'BusinessContactUsScreen.dart';
+
+class BusinessHelpSupportScreen extends StatelessWidget {
+  const BusinessHelpSupportScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F0ED),
+      backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
           Container(
@@ -37,7 +41,7 @@ class BusinessContactUsScreen extends StatelessWidget {
                     ),
                     const Expanded(
                       child: Text(
-                        'Contact Us',
+                        'Help & Support',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -55,30 +59,9 @@ class BusinessContactUsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                _buildContactItem(
-                  icon: Icons.camera_alt_outlined,
-                  title: 'Instagram',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                _buildContactItem(
-                  icon: Icons.language,
-                  title: 'Website',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                _buildContactItem(
-                  icon: Icons.phone_outlined,
-                  title: 'Twitter',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 12),
-                _buildContactItem(
-                  icon: Icons.email_outlined,
-                  title: 'Email',
-                  onTap: () {
-                    // Launch Email
-                  },
+                _buildMenuItem(
+                  title: 'Contact Us',
+                  onTap: () => Get.to(() => BusinessContactUsScreen()),
                 ),
               ],
             ),
@@ -88,11 +71,7 @@ class BusinessContactUsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -112,13 +91,16 @@ class BusinessContactUsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
-              Icon(icon, size: 24, color: Colors.black87),
-              const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   title,
                   style: const TextStyle(fontSize: 15, color: Colors.black87),
                 ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.black38,
               ),
             ],
           ),
