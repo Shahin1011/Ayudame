@@ -3,10 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/business/employee/all_employee.dart';
+import 'package:middle_ware/views/business/home/provider.dart';
 import 'package:middle_ware/views/business/profile/BusinessProfile.dart';
 import '../../../core/routes/app_routes.dart';
 import '../Activities/ActivitiesPage.dart';
 import 'BusinessNotificationPage.dart';
+import '../../../widgets/provider_ui_card.dart';
 
 class BusinessHomePageScreen extends StatefulWidget {
   const BusinessHomePageScreen({super.key});
@@ -20,7 +23,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
 
   final List<Widget> _screens = [
     const _HomeContent(),
-    const BusinessEmployeeListScreen(),
+    const BusinessEmployeeListScreen(), //EmployeeDetailsScreen
     const ActivitiesPage(),
     const Businessprofile(),
   ];
@@ -63,7 +66,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
         items: [
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/homes.svg',
+              'assets/icons/home_nav.svg',
               width: 24,
               height: 24,
             ),
@@ -71,7 +74,6 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               'assets/icons/homes.svg',
               width: 24,
               height: 24,
-              color: const Color(0xFF1C5941),
             ),
             label: 'Home',
           ),
@@ -82,10 +84,9 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               height: 24,
             ),
             activeIcon: SvgPicture.asset(
-              'assets/icons/employee.svg',
+              'assets/icons/employees.svg',
               width: 24,
               height: 24,
-              color: const Color(0xFF1C5941),
             ),
             label: 'Employee',
           ),
@@ -96,21 +97,20 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               height: 24,
             ),
             activeIcon: SvgPicture.asset(
-              'assets/icons/activity.svg',
-              width: 24,
-              height: 24,
-              color: const Color(0xFF1C5941),
+              'assets/icons/activitys.svg',
+              width: 28,
+              height: 28,
             ),
             label: 'Activities',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/Profiles.svg',
+              'assets/icons/profileIcon.svg',
               width: 24,
               height: 24,
             ),
             activeIcon: SvgPicture.asset(
-              'assets/icons/Profiles.svg',
+              'assets/icons/profilesIcon.svg',
               width: 24,
               height: 24,
               color: const Color(0xFF1C5941),
@@ -338,7 +338,7 @@ class _HomeContent extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Get.toNamed(AppRoutes.userProviders);
+                      Get.to(() => BusinessProvidersScreen());
                     },
                     child: Text(
                       'View All',
@@ -354,18 +354,25 @@ class _HomeContent extends StatelessWidget {
             ),
 
             // Provider Card 1
-            _buildProviderCard(
-              name: 'Jackson Butler',
-              location: 'San Francisco Way 1318',
-              title: 'Expert House Cleaning Service',
-              description:
-                  'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
-              rating: '4.00',
-              reviews: '102',
-              price: '\$63',
-              buttonText: 'Add an Employee',
-              buttonColor: const Color(0xFF1C5941),
+            GestureDetector(
               onTap: () {},
+              child: ProviderUICard(
+                name: 'Jackson Butler',
+                location: 'San Francisco Way 1318',
+                serviceTitle: 'Expert House Cleaning Service',
+                description:
+                    'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
+                rating: 4.0,
+                reviewCount: 102,
+                price: '\$63',
+                buttonText: 'Add an Employee',
+                onViewDetails: () {},
+                imageUrl:
+                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+                profileUrl:
+                    'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                postedTime: '1 day ago',
+              ),
             ),
 
             SizedBox(height: 16.h),
@@ -402,20 +409,29 @@ class _HomeContent extends StatelessWidget {
             ),
 
             // Provider Card 2
-            _buildProviderCard(
-              name: 'Jackson Butler',
-              location: 'San Francisco Way 1318',
-              title: 'Expert House Cleaning Service',
-              description:
-                  'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
-              rating: '4.00',
-              reviews: '102',
-              price: '\$63',
-              buttonText: 'View Details',
-              buttonColor: const Color(0xFF1C5941),
+            GestureDetector(
               onTap: () {
                 Get.toNamed(AppRoutes.businessEmployee);
               },
+              child: ProviderUICard(
+                name: 'Jackson Butler',
+                location: 'San Francisco Way 1318',
+                serviceTitle: 'Expert House Cleaning Service',
+                description:
+                    'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
+                rating: 4.0,
+                reviewCount: 102,
+                price: '\$63',
+                buttonText: 'View Details',
+                onViewDetails: () {
+                  Get.toNamed(AppRoutes.businessEmployee);
+                },
+                imageUrl:
+                    'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800',
+                profileUrl:
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+                postedTime: '2 days ago',
+              ),
             ),
 
             SizedBox(height: 80.h),
@@ -501,310 +517,6 @@ class _HomeContent extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildProviderCard({
-    required String name,
-    required String location,
-    required String title,
-    required String description,
-    required String rating,
-    required String reviews,
-    required String price,
-    required String buttonText,
-    required Color buttonColor,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-            child: Image.asset(
-              'assets/images/provider_service.jpg',
-              width: double.infinity,
-              height: 150.h,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: double.infinity,
-                  height: 150.h,
-                  color: Colors.grey[300],
-                  child: Icon(Icons.image, size: 50.w, color: Colors.grey),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16.r,
-                      backgroundImage: const AssetImage(
-                        'assets/images/provider_avatar.png',
-                      ),
-                      backgroundColor: Colors.grey[300],
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            name,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 12.sp,
-                                color: Colors.grey[600],
-                              ),
-                              SizedBox(width: 2.w),
-                              Text(
-                                location,
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey[600],
-                    height: 1.4,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 12.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        ...List.generate(
-                          4,
-                          (index) => SvgPicture.asset(
-                            'assets/icons/star.svg',
-                            width: 14.w,
-                            height: 14.h,
-                            color: const Color(0xFFFFC107),
-                          ),
-                        ),
-                        Icon(
-                          Icons.star_border,
-                          size: 14.sp,
-                          color: const Color(0xFFFFC107),
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '$rating ($reviews)',
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Approximate Price: $price',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: onTap ?? () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 8.h,
-                        ),
-                      ),
-                      child: Text(
-                        buttonText,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Business Employee List Screen Widget
-class BusinessEmployeeListScreen extends StatelessWidget {
-  const BusinessEmployeeListScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        title: Text(
-          'Employees',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.w),
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.businessEmployee);
-            },
-            child: Container(
-              margin: EdgeInsets.only(bottom: 12.h),
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30.r,
-                    backgroundImage: const AssetImage(
-                      'assets/images/provider_avatar.png',
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Employee ${index + 1}',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          'Expert House Cleaning Service',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Row(
-                          children: [
-                            ...List.generate(
-                              4,
-                              (i) => SvgPicture.asset(
-                                'assets/icons/star.svg',
-                                width: 14.w,
-                                height: 14.h,
-                                color: const Color(0xFFFFC107),
-                              ),
-                            ),
-                            Icon(
-                              Icons.star_border,
-                              size: 14.sp,
-                              color: const Color(0xFFFFC107),
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              '4.0 (102)',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(Icons.chevron_right, color: Colors.grey[400]),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
