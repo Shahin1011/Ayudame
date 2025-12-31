@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'WelcomeScreen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F8F4),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
@@ -66,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       flag: '🇪🇸',
                       textColor: Colors.black,
                       imagePath: 'assets/images/spain.png',
-                      cardColor: Color(0xFFEAEFE9),
+                      cardColor: AppColors.mainAppColor.withOpacity(0.1),
                       onTap: () {
                         _handleLanguageSelection(context, 'Spanish');
                       },

@@ -84,25 +84,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        title: const Text(
-          'Create Event',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(25.r),
-            bottomRight: Radius.circular(25.r),
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Event Create", showBackButton: false),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -165,7 +148,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     const SizedBox(height: 6),
                     Text(
                       'This will be used to generate unique confirmation codes for attendees.',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 11, color: AppColors.dark),
                     ),
                   ],
                 ),
@@ -222,14 +205,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
             Icon(
               Icons.cloud_upload_outlined,
               size: 32,
-              color: Colors.grey[400],
+              color: AppColors.grey,
             ),
             const SizedBox(height: 8),
             Text(
               'Upload your event flier or promotional image',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: AppColors.grey,
               ),
             ),
           ],
@@ -259,7 +242,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[400],
+            color: AppColors.grey,
             fontSize: 14,
           ),
           border: InputBorder.none,
@@ -291,12 +274,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[400],
+            color: AppColors.grey,
             fontSize: 14,
           ),
           suffixIcon: Icon(
             Icons.keyboard_arrow_down,
-            color: Colors.grey[600],
+            color: AppColors.grey,
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -323,13 +306,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[400],
+            color: AppColors.grey,
             fontSize: 14,
           ),
           prefixIcon: Icon(
             Icons.location_on_outlined,
             size: 20,
-            color: Colors.grey[600],
+            color: AppColors.grey,
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -368,7 +351,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[400],
+            color: AppColors.grey,
             fontSize: 14,
           ),
           suffixIcon: Icon(
@@ -437,7 +420,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[400],
+            color:AppColors.grey,
             fontSize: 14,
           ),
           suffixIcon: Icon(
@@ -478,7 +461,7 @@ class EventPreviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
-      appBar: CustomAppBar(title: "Event Create"),
+      appBar: CustomAppBar(title: "Event Create",),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -504,7 +487,7 @@ class EventPreviewPage extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      imagePath ?? 'assets/images/event_preview.jpg',
+                      imagePath ?? 'assets/images/event_detail.png',
                       width: double.infinity,
                       height: 180,
                       fit: BoxFit.cover,

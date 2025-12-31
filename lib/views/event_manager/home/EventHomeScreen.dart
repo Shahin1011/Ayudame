@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/home/EventNotificationPage.dart';
 import '../../../core/routes/app_routes.dart';
 import 'EventDetailPage.dart';
@@ -12,7 +13,7 @@ class EventHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1C5941),
         elevation: 0,
@@ -53,7 +54,7 @@ class EventHomeScreen extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFF1C5941),
+                color: AppColors.mainAppColor,
               ),
               onPressed: () {
                 Get.to(() => EventNotificationPage());

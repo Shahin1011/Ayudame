@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? hintText;
-  final TextEditingController? controller; // Added this to fix your error
+  final TextEditingController? controller;
   final bool isPassword;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
@@ -37,10 +38,10 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       maxLines: maxLines,
       readOnly: readOnly,
-      style: TextStyle(fontSize: 14.sp),
+      style: TextStyle(fontSize: 14.sp, fontFamily: "Inter"),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
+        hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp, fontFamily: "Inter"),
         fillColor: fillColor ?? const Color(0xFFF9FAFB),
         filled: true,
         prefixIcon: prefixIcon,
@@ -48,11 +49,11 @@ class CustomTextField extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(fieldBorderRadius ?? 10.r),
-          borderSide: BorderSide(color: fieldBorderColor ?? const Color(0xFFE5E7EB)),
+          borderSide: BorderSide(color: fieldBorderColor ?? const Color(0xFF525252)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(fieldBorderRadius ?? 10.r),
-          borderSide: const BorderSide(color: Color(0xFF1B4D3E), width: 1.5),
+          borderSide: const BorderSide(color: AppColors.mainAppColor, width: 1.5),
         ),
       ),
     );

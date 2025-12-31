@@ -282,21 +282,21 @@ class _HomeContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.grey,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Search Providers...',
                     hintStyle: TextStyle(
-                      color: Colors.grey[400],
+                      color: AppColors.grey,
                       fontSize: 14.sp,
                     ),
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(12.w),
                       child: SvgPicture.asset(
                         'assets/icons/search-01.svg',
-                        color: Colors.grey[400],
+                        color: AppColors.grey,
                       ),
                     ),
                     border: OutlineInputBorder(
@@ -354,86 +354,62 @@ class _HomeContent extends StatelessWidget {
             ),
 
             // Provider Card 1
-            GestureDetector(
-              onTap: () {},
-              child: ProviderUICard(
-                name: 'Jackson Butler',
-                location: 'San Francisco Way 1318',
-                serviceTitle: 'Expert House Cleaning Service',
-                description:
-                    'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
-                rating: 4.0,
-                reviewCount: 102,
-                price: '\$63',
-                buttonText: 'Add an Employee',
-                onViewDetails: () {},
-                imageUrl:
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-                profileUrl:
-                    'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
-                postedTime: '1 day ago',
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: GestureDetector(
+
+                onTap: () {
+
+                },
+
+                child: ProviderUICard(
+
+                  imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+                  profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                  name: 'Jackson Builder',
+                  location: 'Dhanmondi Dhaka 1209',
+                  postedTime: '1 day ago',
+                  serviceTitle: 'Expert House Cleaning Service',
+                  description: 'I take care of every corner, deep cleaning every room with care...',
+                  rating: 4.0,
+                  reviewCount: 120,
+                  price: 'Appointment Price: \$100',
+                  showOnlineIndicator: true,
+                  onViewDetails: () {
+                    Get.to(() => BusinessProvidersScreen());
+                  },
+
+                ),
               ),
             ),
 
             SizedBox(height: 16.h),
 
-            // My Employees Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'My Employees',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.businessEmployee);
-                    },
-                    child: Text(
-                      'View All',
-                      style: TextStyle(
-                        color: const Color(0xFF1C5941),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Provider Card 2
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.businessEmployee);
-              },
-              child: ProviderUICard(
-                name: 'Jackson Butler',
-                location: 'San Francisco Way 1318',
-                serviceTitle: 'Expert House Cleaning Service',
-                description:
-                    'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
-                rating: 4.0,
-                reviewCount: 102,
-                price: '\$63',
-                buttonText: 'View Details',
-                onViewDetails: () {
+              child: GestureDetector(
+                onTap: () {
                   Get.toNamed(AppRoutes.businessEmployee);
                 },
-                imageUrl:
-                    'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800',
-                profileUrl:
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-                postedTime: '2 days ago',
+                child: ProviderUICard(
+                  imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+                  profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                  name: 'Jackson Builder',
+                  location: 'Dhanmondi Dhaka 1209',
+                  postedTime: '1 day ago',
+                  serviceTitle: 'House Cleaning',
+                  description: 'I take care of every corner, deep cleaning every room with care.',
+                  rating: 4.0,
+                  reviewCount: 120,
+                  price: 'From \$100',
+                  showOnlineIndicator: true,
+                  onViewDetails: () {
+                    Get.to(() => const BusinessEmployeeListScreen());
+                  },
+                ),
               ),
             ),
-
             SizedBox(height: 80.h),
           ],
         ),

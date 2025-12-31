@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
 import '../../core/routes/app_routes.dart';
 
@@ -9,7 +10,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       body: Stack(
         children: [
           // Top illustration section
@@ -84,8 +85,7 @@ class WelcomeScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const SizedBox(height: 80),
-
+                        const SizedBox(height: 20),
                         const Text(
                           'Welcome to Ayudame',
                           style: TextStyle(
@@ -94,7 +94,7 @@ class WelcomeScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
                         const Text(
                           'Connecting you with the best services, anytime, anywhere.\nExperience seamless support tailored just for you.',
                           textAlign: TextAlign.center,

@@ -10,18 +10,17 @@ class PaymentHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: 'Payment History'),
+      appBar: const CustomAppBar(title: 'Payment History'),
       body: Padding(
         padding: EdgeInsets.all(16.w),
-        child: _paymentCard(),
+        child: _paymentCard(context),
       ),
     );
   }
 
-  Widget _paymentCard() {
+  Widget _paymentCard(BuildContext context) {
     return Container(
-      height: 290,
-      width: 356,
+      width: MediaQuery.of(context).size.width * 0.9,
       padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -36,17 +35,18 @@ class PaymentHistoryScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           _infoRow('Date', '24 May, 2020'),
-          const Divider(),
+          SizedBox(height: 5.h),
           _infoRow('Amount', '\$ 281'),
-          const Divider(),
+          SizedBox(height: 5.h),
           _infoRow('Bank Account Number', '********6789'),
-          const Divider(),
+          SizedBox(height: 5.h),
           _infoRow(
             'Status',
             'Completed',
-            valueColor: Colors.green,
+            valueColor: AppColors.dark,
           ),
         ],
       ),

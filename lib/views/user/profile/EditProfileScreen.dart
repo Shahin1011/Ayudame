@@ -55,8 +55,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const Expanded(
                       child: Text(
+
                         'Edit Profile',
                         style: TextStyle(
+                          fontFamily: 'Inter',
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,

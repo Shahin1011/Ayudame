@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../widgets/custom_text_field.dart';
 
 
@@ -25,7 +26,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar('Edit Profile'),
+      appBar: CustomAppBar(title: "Edit Profile"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
         child: Column(
@@ -34,7 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Center(
               child: Stack(
                 children: [
-                  CircleAvatar(radius: 50.r, backgroundImage: const AssetImage('assets/profile.png')),
+                  CircleAvatar(radius: 50.r, backgroundImage: const AssetImage('assets/images/profile.png')),
                   Positioned(bottom: 0, right: 0, child: _buildCameraIcon()),
                 ],
               ),
@@ -72,17 +73,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Helper methods to keep code clean
-  PreferredSizeWidget _buildAppBar(String title) {
-    return AppBar(
-      backgroundColor: const Color(0xFF1B4D3E),
-      elevation: 0,
-      leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Colors.white), onPressed: () => Get.back()),
-      title: Text(title, style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w600)),
-      centerTitle: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(30.r))),
-    );
-  }
 
   Widget _buildFieldLabel(String label) => Padding(
     padding: EdgeInsets.only(bottom: 8.h),
@@ -108,9 +98,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     width: double.infinity,
     height: 50.h,
     child: ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Get.back();
+      },
       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B4D3E), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),
-      child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      child: Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontFamily: "Inter")),
     ),
   );
 }

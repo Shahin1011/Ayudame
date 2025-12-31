@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../viewmodels/BankController.dart';
 import '../../../widgets/custom_appbar.dart';
 
@@ -12,7 +13,7 @@ class AddBankInfoScreen extends StatelessWidget {
     final controller = Get.find<BankController>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:AppColors.bgColor,
       appBar: CustomAppBar(title: "Bank Information"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
@@ -57,12 +58,12 @@ class AddBankInfoScreen extends StatelessWidget {
       readOnly: isDropDown,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14.sp),
+        hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp),
         filled: true,
-        fillColor: const Color(0xFFF9F9F9),
+        fillColor: Colors.white,
         suffixIcon: isDropDown ? const Icon(Icons.keyboard_arrow_down) : null,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r), borderSide: BorderSide.none),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r), borderSide: BorderSide.none,),
       ),
     );
   }
@@ -70,10 +71,11 @@ class AddBankInfoScreen extends StatelessWidget {
   Widget _buildSecurityBox() {
     return Container(
       padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(color: const Color(0xFFE8F3ED), borderRadius: BorderRadius.circular(8.r)),
+      decoration: BoxDecoration(color: AppColors.mainAppColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8.r)),
       child: Row(
         children: [
-          const Icon(Icons.verified_user_outlined, color: Color(0xFF1E5631), size: 20),
+          const Icon(Icons.verified_user_outlined, color: AppColors.mainAppColor, size: 20),
           SizedBox(width: 10.w),
           Expanded(
             child: Column(
@@ -95,7 +97,7 @@ class AddBankInfoScreen extends StatelessWidget {
       height: 50.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1E5631),
+          backgroundColor: AppColors.mainAppColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
         ),
         onPressed: isLoading ? null : onPressed,
