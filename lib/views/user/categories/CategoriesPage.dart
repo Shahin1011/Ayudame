@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/svg.dart';
+import 'package:middle_ware/views/user/categories/providers_screen.dart';
+import '../../../core/theme/app_colors.dart';
+import 'package:get/get.dart';
 
 
 class CategoriesPage extends StatefulWidget {
@@ -9,37 +12,13 @@ class CategoriesPage extends StatefulWidget {
   State<CategoriesPage> createState() => _CategoriesPageState();
 }
   class _CategoriesPageState extends State<CategoriesPage> {
-  int _selectedIndex = 1; // Set to 1 since this is the Categories page
-  bool _isFavorite = false;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
 
-    // Navigation logic
-    if (index == 0) {
-      // Navigate to Home page
-      Navigator.pushNamed(context, '/home');
-    } else if (index == 1) {
-      // Already on Categories page
-      // Do nothing or refresh if needed
-    } else if (index == 2) {
-      // Navigate to Notifications page
-      Navigator.pushNamed(context, '/notifications');
-    } else if (index == 3) {
-      // Navigate to Profile page
-      Navigator.pushNamed(context, '/profile');
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-
-      body: SafeArea(
-        child: Column(
+      backgroundColor: AppColors.bgColor1,
+      body: Column(
           children: [
-
             Container(
               decoration: const BoxDecoration(
                 color: Color(0xFF2D6A4F),
@@ -48,34 +27,43 @@ class CategoriesPage extends StatefulWidget {
                   bottomRight: Radius.circular(30),
                 ),
               ),
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+              padding: EdgeInsets.fromLTRB(20, 35, 20, 24),
               child: Column(
                 children: [
-
                   Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
                         },
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 20,
+                        child: SvgPicture.asset(
+                          "assets/icons/backIcon.svg",
+                          color: AppColors.white,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Categories',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Categories',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Opacity(
+                        opacity: 0,
+                        child: SvgPicture.asset(
+                          "assets/icons/backIcon.svg",
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
 
                   Container(
                     decoration: BoxDecoration(
@@ -155,35 +143,23 @@ class CategoriesPage extends StatefulWidget {
             ),
           ],
         ),
-      ),
-
     );
 
   }
 
   Widget _buildCategoryCard(String title, String imageUrl,{VoidCallback? onTap}) {
     return Container(
+      padding: EdgeInsets.all(2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Colors.green.withOpacity(0.1)
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
@@ -199,7 +175,7 @@ class CategoriesPage extends StatefulWidget {
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(12),
@@ -207,30 +183,24 @@ class CategoriesPage extends StatefulWidget {
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
-              border: Border(
-                top: BorderSide(color: Color(0xFF2D6A4F), width: 2),
-                left: BorderSide(color: Color(0xFF2D6A4F), width: 2),
-                right: BorderSide(color: Color(0xFF2D6A4F), width: 2),
-                bottom: BorderSide(color: Color(0xFF2D6A4F), width: 2),
+              border: Border.all(color: Color(0xFF2D6A4F), width: 1)
+            ),
+            child: GestureDetector(
+              onTap: () {
+                Get.to(() => ProvidersScreen());
+              },
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF2D6A4F),
+                ),
               ),
             ),
-
-    child: GestureDetector(
-    onTap: () {
-    Navigator.pushNamed(context, '/service');
-    },
-    child: Text(
-    title,
-    textAlign: TextAlign.center,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-    style: const TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    color: Color(0xFF2D6A4F),
-    ),
-    ),
-    ),
           )
         ],
       ),

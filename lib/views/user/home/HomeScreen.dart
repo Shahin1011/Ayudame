@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/utils/constants.dart';
 import 'package:middle_ware/views/user/UserNotificationPage.dart';
+import 'package:middle_ware/views/user/home/widgets/custom_bussiness_card.dart';
+import 'package:middle_ware/views/user/home/widgets/custom_events_card.dart';
+import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
+import 'package:middle_ware/views/user/home/widgets/custom_recent_provider_card.dart' hide CustomRecentProviderCard;
+import 'package:middle_ware/views/user/home/widgets/custom_top_businesses_card.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -15,15 +21,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isFavorite = false;
+
 
 
   @override
   Widget build(BuildContext context) {
+
+    final List<String> _names = [
+      "Style Hair Cut",
+      "Power Flex Gym",
+      "Pure Life Wellness",
+      "Knowledge Tree",
+    ];
+
+    final List<String> _categories = [
+      "Beauty",
+      "Fitness",
+      "Health",
+      "Education",
+    ];
+
+    final List<double> _distances = [0.8, 0.9, 1.2, 1.4];
+
+    final List<String> _images = [
+      'assets/images/hairCut.png',
+      'assets/images/gymIcon.png',
+      'assets/images/healthIcon.png',
+      'assets/images/education.png',
+    ];
+
     return Scaffold(
       backgroundColor: AppColors.bgColor1,
-      body: SingleChildScrollView(
-          child: Column(
+      body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// Header Section
@@ -35,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                     bottomRight: Radius.circular(30),
                   ),
                 ),
-                padding: EdgeInsets.only(left: 24.w, right: 24.w, top: 15.h, bottom: 24.h),
+                padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 15.h, bottom: 16.h),
                 child: SafeArea(
                   child: Column(
                     children: [
@@ -93,22 +122,15 @@ class _HomePageState extends State<HomePage> {
                             onTap: () {
                               Get.toNamed(AppRoutes.notifications);
                             },
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/NotificationICon.svg",
-                                width: 24.w,
-                                height: 24.h,
-                              ),
+                            child: SvgPicture.asset(
+                              "assets/icons/NotificationICon.svg",
+                              width: 34.w,
+                              height: 34.h,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 10),
                   
                       // Search Bar
                       Container(
@@ -118,11 +140,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: TextField(
                           decoration: InputDecoration(
-                            hintText: 'Search Services...',
+                            hintText: 'Search providers, businesses, services..',
                             hintStyle: TextStyle(color: Colors.grey[400]),
                             prefixIcon: Icon(
                               Icons.search,
                               color: Colors.grey[400],
+                              size: 28,
                             ),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(
@@ -137,341 +160,250 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // Content Section
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    // Categories Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Categories',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.userCategories);
-                          },
-                          child: const Text(
-                            'View All',
-                            style: TextStyle(
-                              color: Color(0xFF2D6A4F),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Categories Grid
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildCategoryItem(
-                          'IT Services',
-                          'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=200',
-                        ),
-                        _buildCategoryItem(
-                          'Moving Services',
-                          'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=200',
-                        ),
-                        _buildCategoryItem(
-                          'Pet Services',
-                          'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=200',
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Popular Services Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Popular Services',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
+              /// Content Section
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildNavigationButton(Icons.chevron_left),
-                            const SizedBox(width: 8),
-                            _buildNavigationButton(Icons.chevron_right),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
+                            Text(
+                              "Near You",
+                              style: GoogleFonts.inter(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black
+                              ),
+                            ),
+                            ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: 2,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index){
+                                return CustomRecentProviderCard(
+                                  providerName: 'Shahin Alam',
+                                  location: 'Dhanmondi, Dhaka 1209',
+                                  activeStatus: '1 hour ago',
+                                  serviceTitle: 'Expert House Cleaning Service',
+                                  serviceDescription: 'I take care of every corner, deep cleaning every room without leaving your home fresh and perfectly tidy for you.',
+                                  reviews: '4.00 (120)',
+                                  appointmentPrice: 50,
+                                  servicePrice: 100,
+                                );
+                              },
+                            ),
+                            SizedBox(height: 18.h),
 
-                    // Service Card
-                    _buildServiceCard(),
-                  ],
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Near You",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black
+                                  ),
+                                ),
+                                Text(
+                                  "Within 6 km radius",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[600]
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.h),
+
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(0),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: 0.95,
+                              ),
+                              itemCount: 4,
+                              itemBuilder: (context, index) {
+                                  return BusinessCard(
+                                    name: _names[index],
+                                    category: _categories[index],
+                                    rating: 4.8,
+                                    distance: _distances[index],
+                                    image: _images[index],
+
+                                 );
+                              },
+                            ),
+                            SizedBox(height: 20.h),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Events",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: (){},
+                                  child: Text(
+                                    "View all",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.mainAppColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 300.h,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
+                                itemCount: 3,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: 16.w),
+                                    child: SizedBox(
+                                      width: 320.w,
+                                      child: CustomEventCard(
+                                        title: "Party",
+                                        eventName: "Creazy musical event 2025",
+                                        date: "December 10, 2025",
+                                        timeRange: "2:00 PM - 8:00 PM",
+                                        location: "Convention Center Hall A",
+                                        attendingCount: 555,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 18.h),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Recent Providers",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: (){},
+                                  child: Text(
+                                    "View all",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.mainAppColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.h),
+
+                            SizedBox(
+                              height: 500.h,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.zero,
+                                itemCount: 4,
+                                itemBuilder: (context, index){
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: 16.w),
+                                    child: SizedBox(
+                                      width: 330.w,
+                                      child: CustomRecentProviderCard(
+                                        providerName: 'Shahin Alam',
+                                        location: 'Dhanmondi, Dhaka 1209',
+                                        activeStatus: '1 hour ago',
+                                        serviceTitle: 'Expert House Cleaning Service',
+                                        serviceDescription: 'I take care of every corner, deep cleaning every room without leaving your home fresh and perfectly tidy for you.',
+                                        reviews: '4.00 (120)',
+                                        appointmentPrice: 50,
+                                        servicePrice: 100,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 18.h),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Top Businesses",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: (){},
+                                  child: Text(
+                                    "View all",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.mainAppColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.h),
+
+                            ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: 5,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index){
+                                return CustomTopbusinessesCard(
+                                  title: "Expert house cleaning service",
+                                  review: "4.8",
+                                  location: "321 Fashion Blvb,City Center",
+                                  numberEmployees: 121,
+                                  numberOfServices: 12,
+                                );
+                              },
+                            ),
+                            SizedBox(height: 10.h),
+
+                          ],
+                       ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-    );
-  }
-
-  Widget _buildCategoryItem(String title, String imageUrl) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.userCategories);
-              },
-              child: Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image, color: Colors.grey),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavigationButton(IconData icon) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Icon(icon, size: 18, color: Colors.grey[600]),
-    );
-  }
-
-  Widget _buildServiceCard() {
-    return GestureDetector(
-      onTap: () {
-        Get.toNamed(AppRoutes.userProviders);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Service Image with Favorite Button
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                  child: Image.network(
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 200,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: _isFavorite ? Colors.red : Colors.grey,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // Service Details
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Arafat Rahman',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: const [
-                      Icon(Icons.location_on, size: 14, color: Colors.grey),
-                      SizedBox(width: 4),
-                      Text(
-                        'Dhanmondi Dhaka 1209',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'I take care of every corner, deep cleaning every room without leaving your home fresh and perfectly tidy for you.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      ...List.generate(
-                        4,
-                        (index) => const Icon(
-                          Icons.star,
-                          size: 18,
-                          color: Colors.amber,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.star_half,
-                        size: 18,
-                        color: Colors.amber,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '4.00 (120)',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'From \$100',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.userProviderDetails);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2D6A4F),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const AppText(text: "View Details"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
 
-class AppText extends StatelessWidget {
-  final String text;
-  const AppText({super.key, required this.text});
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Colors.white,
-      ),
-    );
-  }
-}

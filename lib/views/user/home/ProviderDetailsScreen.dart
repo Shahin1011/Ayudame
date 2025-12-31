@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class ProviderDetailsScreen extends StatelessWidget {
   const ProviderDetailsScreen({Key? key}) : super(key: key);
 
@@ -45,7 +44,10 @@ class ProviderDetailsScreen extends StatelessWidget {
                           height: 48,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey[300]!, width: 1),
+                            border: Border.all(
+                              color: Colors.grey[300]!,
+                              width: 1,
+                            ),
                           ),
                           child: ClipOval(
                             child: Image.network(
@@ -59,7 +61,8 @@ class ProviderDetailsScreen extends StatelessWidget {
                               },
                             ),
                           ),
-                        ),  Positioned(
+                        ),
+                        Positioned(
                           right: 0,
                           bottom: 0,
                           child: Container(
@@ -89,9 +92,10 @@ class ProviderDetailsScreen extends StatelessWidget {
                               const SizedBox(height: 3),
                               Row(
                                 children: [
-                                  Icon(Icons.location_on_outlined,
-                                      size: 14,
-                                      color: Colors.grey[600]
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    size: 14,
+                                    color: Colors.grey[600],
                                   ),
                                   const SizedBox(width: 3),
                                   Text(
@@ -107,9 +111,9 @@ class ProviderDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/service/profile');
-                            },
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/service/profile');
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1B5E4E),
                             foregroundColor: Colors.white,
@@ -149,17 +153,18 @@ class ProviderDetailsScreen extends StatelessWidget {
                             return Container(
                               height: 200,
                               color: Colors.grey[300],
-                              child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                              child: const Icon(
+                                Icons.image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
                             );
                           },
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                    color: Colors.white,
-                    height: 16,
-                  ),
+                  Container(color: Colors.white, height: 16),
                   // Service Title
                   Container(
                     color: Colors.white,
@@ -199,11 +204,26 @@ class ProviderDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        _buildNumberedPoint('1.', 'Your trusted source for professional cleaning in Queens.'),
-                        _buildNumberedPoint('2.', 'Reclaim your weekend with a spotless, stress-free home.'),
-                        _buildNumberedPoint('3.', 'We deliver a professional deep clean you can always depend on.'),
-                        _buildNumberedPoint('4.', 'Get a high-quality clean without the high cost.'),
-                        _buildNumberedPoint('5.', 'We offer a healthy, eco-friendly clean for your entire home.'),
+                        _buildNumberedPoint(
+                          '1.',
+                          'Your trusted source for professional cleaning in Queens.',
+                        ),
+                        _buildNumberedPoint(
+                          '2.',
+                          'Reclaim your weekend with a spotless, stress-free home.',
+                        ),
+                        _buildNumberedPoint(
+                          '3.',
+                          'We deliver a professional deep clean you can always depend on.',
+                        ),
+                        _buildNumberedPoint(
+                          '4.',
+                          'Get a high-quality clean without the high cost.',
+                        ),
+                        _buildNumberedPoint(
+                          '5.',
+                          'We offer a healthy, eco-friendly clean for your entire home.',
+                        ),
                       ],
                     ),
                   ),
@@ -252,17 +272,21 @@ class ProviderDetailsScreen extends StatelessWidget {
                         _buildReview(
                           name: 'Flores, Juanita',
                           time: '1 Month ago',
-                          profileUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
+                          profileUrl:
+                              'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
                           rating: 4,
-                          review: 'Lorem ipsum dolor sit amet consectetur. Dolor vestibut faucibus nunc nulla eam ac. Nunc ut malesuada aliquet ut. Nunc mattis molestie sit malesuada.',
+                          review:
+                              'Lorem ipsum dolor sit amet consectetur. Dolor vestibut faucibus nunc nulla eam ac. Nunc ut malesuada aliquet ut. Nunc mattis molestie sit malesuada.',
                         ),
                         const SizedBox(height: 16),
                         _buildReview(
                           name: 'Flores, Juanita',
                           time: '2 Month ago',
-                          profileUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+                          profileUrl:
+                              'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
                           rating: 4,
-                          review: 'Lorem ipsum dolor sit amet consectetur. Dolor vestibut faucibus nunc nulla eam ac. Nunc ut malesuada aliquet ut. Nunc mattis molestie sit malesuada.',
+                          review:
+                              'Lorem ipsum dolor sit amet consectetur. Dolor vestibut faucibus nunc nulla eam ac. Nunc ut malesuada aliquet ut. Nunc mattis molestie sit malesuada.',
                         ),
                       ],
                     ),
@@ -426,10 +450,7 @@ class ProviderDetailsScreen extends StatelessWidget {
                       ),
                       Text(
                         time,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[500],
-                        ),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                       ),
                     ],
                   ),
@@ -437,7 +458,7 @@ class ProviderDetailsScreen extends StatelessWidget {
                   Row(
                     children: List.generate(
                       5,
-                          (index) => Padding(
+                      (index) => Padding(
                         padding: const EdgeInsets.only(right: 2),
                         child: Icon(
                           Icons.star,
