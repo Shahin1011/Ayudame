@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/views/business/profile/business_profile_details.dart';
 
 class BusinessProfileCard extends StatelessWidget {
@@ -66,7 +68,15 @@ class BusinessProfileCard extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Icon(Icons.location_on_outlined, size: 18, color: Colors.grey[600]),
+                  SvgPicture.asset(
+                    AppIcons.location,
+                    width: 18,
+                    height: 18,
+                    colorFilter: ColorFilter.mode(
+                      Colors.grey[600]!,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   const Expanded(
                     child: Text(

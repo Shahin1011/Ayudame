@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/views/business/profile/business_profile_screen.dart';
 import 'package:middle_ware/views/business/profile/payment.dart';
 import '../../../core/theme/app_colors.dart';
@@ -23,7 +25,7 @@ class _BusinessprofileState extends State<Businessprofile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Profile", showBackButton: false,),
+      appBar: CustomAppBar(title: "Profile", showBackButton: false),
       body: Column(
         children: [
           Expanded(
@@ -51,10 +53,11 @@ class _BusinessprofileState extends State<Businessprofile> {
                         ),
                         child: const CircleAvatar(
                           radius: 50,
-                          backgroundImage: AssetImage('assets/images/profile.png'),
+                          backgroundImage: AssetImage(
+                            'assets/images/profile.png',
+                          ),
                         ),
                       ),
-
                     ],
                   ),
 
@@ -73,7 +76,11 @@ class _BusinessprofileState extends State<Businessprofile> {
 
                   const Text(
                     'seamr7845@gmail.com',
-                    style: TextStyle(fontSize: 13, color: Colors.black54,fontFamily: 'Inter'),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                      fontFamily: 'Inter',
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -106,29 +113,28 @@ class _BusinessprofileState extends State<Businessprofile> {
                           ),
                         ),
                         _buildMenuItem(
-                          icon: Icons.person_outline,
+                          iconPath: AppIcons.profileIcon,
                           title: 'Profile info',
                           onTap: () {
                             Get.to(() => const EditProfileScreen());
                           },
                         ),
                         _buildMenuItem(
-                          icon: Icons.history,
+                          iconPath: AppIcons.business,
                           title: 'Business profile',
                           onTap: () {
-                          Get.to(() => const BusinessProfileScreen());
+                            Get.to(() => const BusinessProfileScreen());
                           },
                         ),
                         _buildMenuItem(
-                          icon: Icons.receipt_long_outlined,
+                          iconPath: AppIcons.payment,
                           title: 'Payment History',
                           onTap: () {
-                            Get.to(() => PaymentHistoryScreen ());
-
+                            Get.to(() => PaymentHistoryScreen());
                           },
                         ),
                         _buildMenuItem(
-                          icon: Icons.account_balance_outlined,
+                          iconPath: AppIcons.bank,
                           title: 'Bank Information',
                           onTap: () {
                             Get.to(() => BankInformationScreen());
@@ -170,12 +176,13 @@ class _BusinessprofileState extends State<Businessprofile> {
                           ),
                         ),
                         _buildMenuItem(
-                          icon: Icons.shield_outlined,
+                          iconPath: AppIcons.privacy,
                           title: 'Privacy Policy',
-                          onTap: () => Get.to(() => BusinessPrivacyPolicyScreen()),
+                          onTap: () =>
+                              Get.to(() => BusinessPrivacyPolicyScreen()),
                         ),
                         _buildMenuItem(
-                          icon: Icons.description_outlined,
+                          iconPath: AppIcons.terms,
                           title: 'Terms & Condition',
 
                           onTap: () =>
@@ -216,30 +223,24 @@ class _BusinessprofileState extends State<Businessprofile> {
                             ),
                           ),
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.notifications_none_outlined,
-                        //   title: 'Notification',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/notifications');
-                        //   },
-                        // ),
                         _buildMenuItem(
-                          icon: Icons.notifications,
+                          iconPath: AppIcons.notification,
                           title: 'Notification',
                           onTap: () => Get.to(() => BusinessNotificationPage()),
                         ),
                         _buildMenuItem(
-                          icon: Icons.help_outline,
+                          iconPath: AppIcons.help,
                           title: 'Help & Support',
-                          onTap: () => Get.to(() => BusinessHelpSupportScreen()),
+                          onTap: () =>
+                              Get.to(() => BusinessHelpSupportScreen()),
                         ),
                         _buildMenuItem(
-                          icon: Icons.logout,
+                          iconPath: AppIcons.logout,
                           title: 'Log Out',
                           onTap: _showLogoutDialog,
                         ),
                         _buildMenuItem(
-                          icon: Icons.delete_outline,
+                          iconPath: AppIcons.delete,
                           title: 'Delete Account',
                           onTap: () {
                             _showDeleteAccountDialog(context);
@@ -280,10 +281,14 @@ class _BusinessprofileState extends State<Businessprofile> {
                     color: Colors.orange.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.logout,
-                    size: 32,
-                    color: Colors.orange.shade400,
+                  child: SvgPicture.asset(
+                    AppIcons.logout,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      Colors.orange.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -385,10 +390,14 @@ class _BusinessprofileState extends State<Businessprofile> {
                     color: Colors.red.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    size: 32,
-                    color: Colors.red.shade400,
+                  child: SvgPicture.asset(
+                    AppIcons.delete,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      Colors.red.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -471,7 +480,7 @@ class _BusinessprofileState extends State<Businessprofile> {
   }
 
   Widget _buildMenuItem({
-    required IconData icon,
+    required String iconPath,
     required String title,
     required VoidCallback onTap,
     bool showDivider = true,
@@ -485,10 +494,14 @@ class _BusinessprofileState extends State<Businessprofile> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Icon(
-                  icon,
-                  size: 22,
-                  color: isDestructive ? Colors.red : Colors.black54,
+                SvgPicture.asset(
+                  iconPath,
+                  width: 22,
+                  height: 22,
+                  colorFilter: ColorFilter.mode(
+                    isDestructive ? Colors.red : Colors.black54,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -511,13 +524,6 @@ class _BusinessprofileState extends State<Businessprofile> {
             ),
           ),
         ),
-        // if (showDivider)
-        //   Divider(
-        //     height: 1,
-        //     indent: 52,
-        //     endIndent: 16,
-        //     color: Colors.grey.shade200,
-        //   ),
       ],
     );
   }

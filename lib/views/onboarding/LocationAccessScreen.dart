@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../onboarding/UserProviderSelectionScreen.dart';
-
+import 'package:middle_ware/views/onboarding/UserProviderSelectionScreen.dart';
 class LocationAccessScreen extends StatelessWidget {
   const LocationAccessScreen({super.key});
 
@@ -70,7 +68,7 @@ class LocationAccessScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const UserProviderSelectionScreen(),
+                        builder: (context) =>  UserProviderSelectionScreen(),
                       ),
                     );
                   },

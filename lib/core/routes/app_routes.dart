@@ -6,17 +6,17 @@ import '../../views/business/auth/BusinessForgotPasswordScreen.dart';
 import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
 import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
+import '../../views/business/home/BusinessNotificationPage.dart';
 import '../../views/business/profile/BusinessProfile.dart';
-import '../../views/common/NotificationPage.dart';
-import '../../views/common/PrivacyPolicyScreen.dart';
-import '../../views/common/TermsConditionScreen.dart';
-import '../../views/common/LocationAccessScreen.dart';
+import '../../views/business/profile/BusinessTermsConditionScreen.dart';
+import '../../views/business/profile/PrivacyPolicyScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
 import '../../views/event_manager/auth/auth/EventVerificationCodeScreen.dart';
 import '../../views/event_manager/event/CreateEventPage.dart';
 import '../../views/event_manager/profile/EventProfile.dart';
+import '../../views/onboarding/LocationAccessScreen.dart';
 import '../../views/onboarding/UserProviderSelectionScreen.dart';
 import '../../views/onboarding/WelcomeScreen.dart';
 import '../../views/onboarding/onboardinglanguage_screen.dart';
@@ -161,9 +161,9 @@ class AppRoutes {
       page: () => const UserProviderSelectionScreen(),
     ),
     GetPage(name: location, page: () => const LocationAccessScreen()),
-    GetPage(name: terms, page: () => const TermsConditionScreen()),
-    GetPage(name: privacy, page: () => const PrivacyPolicyScreen()),
-    GetPage(name: notifications, page: () => const NotificationPage()),
+    GetPage(name: terms, page: () => const BusinessTermsConditionScreen()),
+    GetPage(name: privacy, page: () => const BusinessPrivacyPolicyScreen()),
+    GetPage(name: notifications, page: () => const BusinessNotificationPage()),
 
     // User Auth & Features
     GetPage(name: userlogin, page: () => const LoginScreen()),

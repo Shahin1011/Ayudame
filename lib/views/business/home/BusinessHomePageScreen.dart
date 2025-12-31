@@ -140,6 +140,7 @@ class _HomeContent extends StatelessWidget {
         leading: Padding(
           padding: EdgeInsets.only(left: 20.w, top: 10.h, bottom: 10.h),
           child: const CircleAvatar(
+
             radius: 40.0,
             backgroundColor: Color(0xFFFFFFFF),
             child: CircleAvatar(
@@ -150,6 +151,7 @@ class _HomeContent extends StatelessWidget {
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
             Text(
@@ -185,12 +187,12 @@ class _HomeContent extends StatelessWidget {
                 );
               },
               child: CircleAvatar(
-                radius: 28,
+                radius: 30,
                 backgroundColor: Colors.white,
                 child: SvgPicture.asset(
-                  'assets/icons/notificationIcon.svg',
-                  width: 40,
-                  height: 40,
+                  'assets/icons/notification.svg',
+                  width: 38,
+                  height: 38,
                 ),
               ),
             ),
@@ -402,7 +404,7 @@ class _HomeContent extends StatelessWidget {
                   description: 'I take care of every corner, deep cleaning every room with care.',
                   rating: 4.0,
                   reviewCount: 120,
-                  price: 'From \$100',
+                  price: 'Appointment Price: \$100',
                   showOnlineIndicator: true,
                   onViewDetails: () {
                     Get.to(() => const BusinessEmployeeListScreen());

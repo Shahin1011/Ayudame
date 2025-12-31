@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
+import '../core/app_icons.dart';
 import '../core/theme/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -28,9 +29,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
       leading: showBackButton
           ? IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        onPressed: () => Get.back(),
-      )
+              icon: SvgPicture.asset(
+                AppIcons.arrowBack,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () => Get.back(),
+            )
           : null,
       automaticallyImplyLeading: false,
       title: Text(

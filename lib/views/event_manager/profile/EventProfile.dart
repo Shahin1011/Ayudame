@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
@@ -21,11 +23,9 @@ class _EventProfilePageState extends State<EventProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Profile",),
+      appBar: CustomAppBar(title: "Profile"),
       body: Column(
         children: [
-
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -42,22 +42,6 @@ class _EventProfilePageState extends State<EventProfilePage> {
                               'assets/images/profile.png', // replace image
                             ),
                           ),
-                          // Positioned(
-                          //   bottom: 0,
-                          //   right: 0,
-                          //   child: Container(
-                          //     padding: const EdgeInsets.all(6),
-                          //     decoration: const BoxDecoration(
-                          //       color: Color(0xFF1C5941),
-                          //       shape: BoxShape.circle,
-                          //     ),
-                          //     child: const Icon(
-                          //       Icons.camera_alt,
-                          //       size: 16,
-                          //       color: Colors.white,
-                          //     ),
-                          //   ),
-                          // )
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -70,8 +54,10 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       ),
                       const SizedBox(height: 6),
                       Container(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFF1C5941),
                           borderRadius: BorderRadius.circular(20),
@@ -87,7 +73,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h,),
+                  SizedBox(height: 20.h),
 
                   // Account Information Section
                   Container(
@@ -118,13 +104,12 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           ),
                         ),
                         _buildMenuItem(
-                          icon: Icons.person_outline,
+                          iconPath: AppIcons.profileIcon,
                           title: 'Profile info',
                           onTap: () {
                             Get.to(() => const ProfileInfoScreen());
                           },
                         ),
-
                       ],
                     ),
                   ),
@@ -160,12 +145,12 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           ),
                         ),
                         _buildMenuItem(
-                          icon: Icons.shield_outlined,
+                          iconPath: AppIcons.privacy,
                           title: 'Privacy Policy',
                           onTap: () => Get.to(() => EventPrivacyPolicyScreen()),
                         ),
                         _buildMenuItem(
-                          icon: Icons.description_outlined,
+                          iconPath: AppIcons.terms,
                           title: 'Terms & Condition',
 
                           onTap: () =>
@@ -208,17 +193,17 @@ class _EventProfilePageState extends State<EventProfilePage> {
                         ),
 
                         _buildMenuItem(
-                          icon: Icons.help_outline,
+                          iconPath: AppIcons.help,
                           title: 'Help & Support',
                           onTap: () => Get.to(() => EventHelpSupportScreen()),
                         ),
                         _buildMenuItem(
-                          icon: Icons.logout,
+                          iconPath: AppIcons.logout,
                           title: 'Log Out',
                           onTap: _showLogoutDialog,
                         ),
                         _buildMenuItem(
-                          icon: Icons.delete_outline,
+                          iconPath: AppIcons.delete,
                           title: 'Delete Account',
                           onTap: () {
                             _showDeleteAccountDialog(context);
@@ -259,10 +244,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
                     color: Colors.orange.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.logout,
-                    size: 32,
-                    color: Colors.orange.shade400,
+                  child: SvgPicture.asset(
+                    AppIcons.logout,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      Colors.orange.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -364,10 +353,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
                     color: Colors.red.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    size: 32,
-                    color: Colors.red.shade400,
+                  child: SvgPicture.asset(
+                    AppIcons.delete,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      Colors.red.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -450,7 +443,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
   }
 
   Widget _buildMenuItem({
-    required IconData icon,
+    required String iconPath,
     required String title,
     required VoidCallback onTap,
     bool showDivider = true,
@@ -464,10 +457,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Icon(
-                  icon,
-                  size: 22,
-                  color: isDestructive ? Colors.red : Colors.black54,
+                SvgPicture.asset(
+                  iconPath,
+                  width: 22,
+                  height: 22,
+                  colorFilter: ColorFilter.mode(
+                    isDestructive ? Colors.red : Colors.black54,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -476,7 +473,8 @@ class _EventProfilePageState extends State<EventProfilePage> {
                     style: TextStyle(
                       fontSize: 14,
                       color: isDestructive ? Colors.red : Colors.black87,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Inter",
                     ),
                   ),
                 ),
@@ -489,13 +487,6 @@ class _EventProfilePageState extends State<EventProfilePage> {
             ),
           ),
         ),
-        // if (showDivider)
-        //   Divider(
-        //     height: 1,
-        //     indent: 52,
-        //     endIndent: 16,
-        //     color: Colors.grey.shade200,
-        //   ),
       ],
     );
   }
