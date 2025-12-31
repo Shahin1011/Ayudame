@@ -61,20 +61,20 @@ class _BottomNavEScreenState extends State<BottomNavEScreen> {
             top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
           ),
         ),
-        height: 95.h,
+        height: 100.h,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           currentIndex: selectedIndex,
           selectedItemColor: AppColors.mainAppColor,
           selectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
+            fontFamily: 'Inter',
             fontWeight: FontWeight.w700,
             fontSize: 12.sp,
             color: AppColors.mainAppColor,
           ),
           unselectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
+            fontFamily: 'Inter',
             fontWeight: FontWeight.w600,
             fontSize: 12.sp,
             color: AppColors.grey,

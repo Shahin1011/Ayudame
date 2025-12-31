@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgColor,
       body: Container(
         // Three-color linear gradient background
         decoration: const BoxDecoration(

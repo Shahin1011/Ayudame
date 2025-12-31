@@ -116,7 +116,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      appBar: _buildAppBar(),
+      appBar: CustomAppBar(title: "Activities", showBackButton: false,),
       body: Column(
         children: [
           // Time Filter Tabs

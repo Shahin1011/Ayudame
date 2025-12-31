@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../core/routes/app_routes.dart';
 import '../../../widgets/provider_ui_card.dart';
@@ -12,19 +13,7 @@ class BusinessEmployeeListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        title: Text(
-          'Employees',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(title: "Employee "),
       body: ListView.builder(
         padding: EdgeInsets.all(16.w),
         itemCount: 3,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/views/business/profile/business_profile_screen.dart';
 import 'package:middle_ware/views/business/profile/payment.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/custom_appbar.dart';
 import '../home/BusinessNotificationPage.dart';
 import 'bank_information.dart';
 import 'edit_profile_screen.dart';
@@ -21,49 +23,9 @@ class _BusinessprofileState extends State<Businessprofile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Profile", showBackButton: false,),
       body: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF1C5941),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 4,
-                  right: 16,
-                  top: 8,
-                  bottom: 16,
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 48,
-                    ), // Spacer to balance the right button
-                    const Expanded(
-                      child: Text(
-                        'Profile',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
-            ),
-          ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -89,28 +51,10 @@ class _BusinessprofileState extends State<Businessprofile> {
                         ),
                         child: const CircleAvatar(
                           radius: 50,
-                          backgroundImage: NetworkImage(
-                            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                          ),
+                          backgroundImage: AssetImage('assets/images/profile.png'),
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2D6A4F),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+
                     ],
                   ),
 
@@ -129,7 +73,7 @@ class _BusinessprofileState extends State<Businessprofile> {
 
                   const Text(
                     'seamr7845@gmail.com',
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                    style: TextStyle(fontSize: 13, color: Colors.black54,fontFamily: 'Inter'),
                   ),
                   const SizedBox(height: 20),
 
@@ -172,7 +116,7 @@ class _BusinessprofileState extends State<Businessprofile> {
                           icon: Icons.history,
                           title: 'Business profile',
                           onTap: () {
-                            Navigator.pushNamed(context, '/provider/order');
+                          Get.to(() => const BusinessProfileScreen());
                           },
                         ),
                         _buildMenuItem(
@@ -551,9 +495,10 @@ class _BusinessprofileState extends State<Businessprofile> {
                   child: Text(
                     title,
                     style: TextStyle(
+                      fontFamily: "Inter",
                       fontSize: 14,
                       color: isDestructive ? Colors.red : Colors.black87,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

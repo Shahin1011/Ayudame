@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../viewmodels/BankController.dart';
@@ -48,7 +49,7 @@ class BankInformationScreen extends StatelessWidget {
                   child: Text(
                     'Add Bank Account',
                     style: TextStyle(
-                      color: const Color(0xFF1E5631),
+                      color: AppColors.mainAppColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14.sp,
                     ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/event_manager/profile/EventEditProfile.dart';
 
 import '../../../widgets/custom_appbar.dart';
 
@@ -8,31 +11,16 @@ class ProfileInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-      appBar: CustomAppBar(title: "Profile Info"),
-      // appBar: AppBar(
-      //   backgroundColor: const Color(0xFF1C5941),
-      //   elevation: 0,
-      //   title: const Text(
-      //     'Profile Info',
-      //     style: TextStyle(fontWeight: FontWeight.w600),
-      //   ),
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.group_outlined),
-      //       onPressed: () {},
-      //     ),
-      //   ],
-      //   shape: const RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.vertical(
-      //       bottom: Radius.circular(20),
-      //     ),
-      //   ),
-      // ),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Profile Info",
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () {
+              Get.to(() => const EventEditProfileScreen());
+            },
+          )
+        ],),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -45,7 +33,7 @@ class ProfileInfoScreen extends StatelessWidget {
                     const CircleAvatar(
                       radius: 48,
                       backgroundImage: AssetImage(
-                        'assets/images/profile.jpg', // replace image
+                        'assets/images/profile.png', // replace image
                       ),
                     ),
                     Positioned(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProviderUICard extends StatelessWidget {
   final String imageUrl;
@@ -35,8 +36,11 @@ class ProviderUICard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+
+
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -152,7 +156,7 @@ class ProviderUICard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   serviceTitle,
-                  style: const TextStyle(fontSize: 14, height: 1.5),
+                  style: const TextStyle(fontSize: 14, height: 1.5, fontWeight: FontWeight.w600),
                 ),
 
                 const SizedBox(height: 10),
