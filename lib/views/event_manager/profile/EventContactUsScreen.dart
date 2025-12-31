@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class EventContactUsScreen extends StatelessWidget {
   const EventContactUsScreen({Key? key}) : super(key: key);
@@ -6,50 +8,10 @@ class EventContactUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F0ED),
+      appBar: CustomAppBar(title: "Contact Us"),
+      backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D5F4C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Contact Us',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
 
           const SizedBox(height: 16),
 
@@ -166,7 +128,7 @@ class EventContactUsScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(fontSize: 15, color: Colors.black87),
+                style: const TextStyle(fontSize: 15, color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'Inter'),
               ),
             ),
           ],

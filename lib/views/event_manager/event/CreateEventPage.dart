@@ -22,15 +22,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _eventTypeController = TextEditingController();
   final TextEditingController _eventManagerController = TextEditingController();
-  final TextEditingController _eventLocationController = TextEditingController();
-  final TextEditingController _ticketStartDateController = TextEditingController();
-  final TextEditingController _ticketEndDateController = TextEditingController();
-  final TextEditingController _eventStartDateController = TextEditingController();
+  final TextEditingController _eventLocationController =
+      TextEditingController();
+  final TextEditingController _ticketStartDateController =
+      TextEditingController();
+  final TextEditingController _ticketEndDateController =
+      TextEditingController();
+  final TextEditingController _eventStartDateController =
+      TextEditingController();
   final TextEditingController _eventEndDateController = TextEditingController();
   final TextEditingController _ticketPriceController = TextEditingController();
   final TextEditingController _maxTicketsController = TextEditingController();
-  final TextEditingController _confirmationCodeController = TextEditingController();
-  final TextEditingController _eventDescriptionController = TextEditingController();
+  final TextEditingController _confirmationCodeController =
+      TextEditingController();
+  final TextEditingController _eventDescriptionController =
+      TextEditingController();
 
   String? _selectedImagePath;
 
@@ -105,13 +111,32 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 title: 'Event Information',
                 child: Column(
                   children: [
-                    _buildTextField(controller: _eventNameController, hintText: 'Event Name'),
+                    _buildTextField(
+                      controller: _eventNameController,
+                      hintText: 'Event Name',
+                    ),
                     const SizedBox(height: 12),
-                    _buildDropdownField(controller: _eventTypeController, hintText: 'Event Type'),
+                    _buildDropdownField(
+                      controller: _eventTypeController,
+                      hintText: 'Event Type',
+                      items: [
+                        'Concert / Music Show',
+                        'Cultural Program',
+                        'Seminar / Conference',
+                        'Sports Event',
+                        'Festival / Fair',
+                      ],
+                    ),
                     const SizedBox(height: 12),
-                    _buildTextField(controller: _eventManagerController, hintText: 'Event Manager Name'),
+                    _buildTextField(
+                      controller: _eventManagerController,
+                      hintText: 'Event Manager Name',
+                    ),
                     const SizedBox(height: 12),
-                    _buildLocationField(controller: _eventLocationController, hintText: 'Event Location'),
+                    _buildLocationField(
+                      controller: _eventLocationController,
+                      hintText: 'Event Location',
+                    ),
                   ],
                 ),
               ),
@@ -122,13 +147,25 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 title: 'Dates & Times',
                 child: Column(
                   children: [
-                    _buildDateField(controller: _ticketStartDateController, hintText: 'Ticket Sales Start Date'),
+                    _buildDateField(
+                      controller: _ticketStartDateController,
+                      hintText: 'Ticket Sales Start Date',
+                    ),
                     const SizedBox(height: 12),
-                    _buildDateField(controller: _ticketEndDateController, hintText: 'Ticket Sales End Date'),
+                    _buildDateField(
+                      controller: _ticketEndDateController,
+                      hintText: 'Ticket Sales End Date',
+                    ),
                     const SizedBox(height: 12),
-                    _buildDateTimeField(controller: _eventStartDateController, hintText: 'Event Start Date & Time'),
+                    _buildDateTimeField(
+                      controller: _eventStartDateController,
+                      hintText: 'Event Start Date & Time',
+                    ),
                     const SizedBox(height: 12),
-                    _buildDateTimeField(controller: _eventEndDateController, hintText: 'Event End Date & Time'),
+                    _buildDateTimeField(
+                      controller: _eventEndDateController,
+                      hintText: 'Event End Date & Time',
+                    ),
                   ],
                 ),
               ),
@@ -140,11 +177,23 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTextField(controller: _ticketPriceController, hintText: 'Ticket Price (\$)', keyboardType: TextInputType.number),
+                    _buildTextField(
+                      controller: _ticketPriceController,
+                      hintText: 'Ticket Price (\$)',
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 12),
-                    _buildTextField(controller: _maxTicketsController, hintText: 'Maximum Number of Tickets', keyboardType: TextInputType.number),
+                    _buildTextField(
+                      controller: _maxTicketsController,
+                      hintText: 'Maximum Number of Tickets',
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 12),
-                    _buildTextField(controller: _confirmationCodeController, hintText: 'Confirmation Code Prefix', keyboardType: TextInputType.numberWithOptions() ),
+                    _buildTextField(
+                      controller: _confirmationCodeController,
+                      hintText: 'Confirmation Code Prefix',
+                      keyboardType: TextInputType.numberWithOptions(),
+                    ),
                     const SizedBox(height: 6),
                     Text(
                       'This will be used to generate unique confirmation codes for attendees.',
@@ -158,7 +207,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
               // ৫. Description Card
               _buildSectionCard(
                 title: 'Ticket Information',
-                child: _buildTextField(controller: _eventDescriptionController, hintText: 'Event Description', maxLines: 4),
+                child: _buildTextField(
+                  controller: _eventDescriptionController,
+                  hintText: 'Event Description',
+                  maxLines: 4,
+                ),
               ),
               const SizedBox(height: 32),
 
@@ -170,9 +223,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  child: const Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -202,18 +264,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.cloud_upload_outlined,
-              size: 32,
-              color: AppColors.grey,
-            ),
+            Icon(Icons.cloud_upload_outlined, size: 32, color: AppColors.grey),
             const SizedBox(height: 8),
             Text(
               'Upload your event flier or promotional image',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.grey,
-              ),
+              style: TextStyle(fontSize: 12, color: AppColors.grey),
             ),
           ],
         ),
@@ -241,10 +296,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         readOnly: readOnly,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
@@ -258,6 +310,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   Widget _buildDropdownField({
     required TextEditingController controller,
     required String hintText,
+    required List<String> items,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -265,28 +318,29 @@ class _CreateEventPageState extends State<CreateEventPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFE0E0E0)),
       ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: true,
-        onTap: () {
-          // Show dropdown
-        },
+      child: DropdownButtonFormField<String>(
+        value: controller.text.isEmpty ? null : controller.text,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-          ),
-          suffixIcon: Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.grey,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
-            vertical: 12,
+            vertical: 4,
           ),
         ),
+        icon: Icon(Icons.keyboard_arrow_down, color: AppColors.grey),
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item, style: const TextStyle(fontSize: 14)),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            controller.text = newValue ?? "";
+          });
+        },
       ),
     );
   }
@@ -305,10 +359,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           prefixIcon: Icon(
             Icons.location_on_outlined,
             size: 20,
@@ -350,10 +401,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         },
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           suffixIcon: Icon(
             Icons.calendar_today_outlined,
             size: 20,
@@ -368,6 +416,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ),
     );
   }
+
   Widget _buildSectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -380,13 +429,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
           const SizedBox(height: 16),
           child,
         ],
       ),
     );
   }
+
   Widget _buildDateTimeField({
     required TextEditingController controller,
     required String hintText,
@@ -413,16 +470,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              controller.text = '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
+              controller.text =
+                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
             }
           }
         },
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color:AppColors.grey,
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           suffixIcon: Icon(
             Icons.calendar_today_outlined,
             size: 20,
@@ -456,12 +511,11 @@ class EventPreviewPage extends StatelessWidget {
     this.imagePath,
   });
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
-      appBar: CustomAppBar(title: "Event Create",),
+      appBar: CustomAppBar(title: "Event Create"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -483,7 +537,6 @@ class EventPreviewPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -496,13 +549,16 @@ class EventPreviewPage extends StatelessWidget {
                           width: double.infinity,
                           height: 180,
                           color: Colors.grey[300],
-                          child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                          child: const Icon(
+                            Icons.image,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
                         );
                       },
                     ),
                   ),
                   const SizedBox(height: 20),
-
 
                   Text(
                     eventName,
@@ -514,13 +570,23 @@ class EventPreviewPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  _buildInfoRow(Icons.calendar_today_outlined, 'Date & Time',
-                      'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM'),
+                  _buildInfoRow(
+                    Icons.calendar_today_outlined,
+                    'Date & Time',
+                    'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
+                  ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(Icons.location_on_outlined, 'Location', location),
+                  _buildInfoRow(
+                    Icons.location_on_outlined,
+                    'Location',
+                    location,
+                  ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(Icons.confirmation_number_outlined, 'Ticket Price',
-                      '\$${ticketPrice} per ticket'),
+                  _buildInfoRow(
+                    Icons.confirmation_number_outlined,
+                    'Ticket Price',
+                    '\$${ticketPrice} per ticket',
+                  ),
                   const SizedBox(height: 20),
 
                   const Text(
@@ -545,7 +611,6 @@ class EventPreviewPage extends StatelessWidget {
                   const Divider(thickness: 0.8),
                   const SizedBox(height: 16),
 
-
                   const Text(
                     'Confirmation Code Prefix',
                     style: TextStyle(
@@ -557,13 +622,9 @@ class EventPreviewPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     confirmationCode,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 24),
-
 
                   Row(
                     children: [
@@ -609,6 +670,7 @@ class EventPreviewPage extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,6 +704,7 @@ class EventPreviewPage extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildSectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -654,13 +717,21 @@ class EventPreviewPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
           const SizedBox(height: 16),
           child,
         ],
       ),
     );
   }
+
   void _showSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -678,11 +749,7 @@ class EventPreviewPage extends StatelessWidget {
                   color: Color(0xFF4CAF50),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 40,
-                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 40),
               ),
               const SizedBox(height: 16),
               const Text(
@@ -703,10 +770,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Event Name',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -730,10 +794,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Location',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -757,10 +818,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Ticket Price',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -793,10 +851,7 @@ class EventPreviewPage extends StatelessWidget {
                   ),
                   child: const Text(
                     'Go Home',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

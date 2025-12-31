@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/profile/EventEditProfile.dart';
 
@@ -12,15 +14,23 @@ class ProfileInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Profile Info",
+      appBar: CustomAppBar(
+        title: "Profile Info",
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
+            icon: SvgPicture.asset(
+              AppIcons.create,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
             onPressed: () {
               Get.to(() => const EventEditProfileScreen());
             },
-          )
-        ],),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -45,27 +55,30 @@ class ProfileInfoScreen extends StatelessWidget {
                           color: Color(0xFF1C5941),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.camera_alt,
-                          size: 16,
-                          color: Colors.white,
+                        child: SvgPicture.asset(
+                          AppIcons.create,
+                          width: 16,
+                          height: 16,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 const Text(
                   'Seam Rahman',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1C5941),
                     borderRadius: BorderRadius.circular(20),
@@ -89,12 +102,12 @@ class ProfileInfoScreen extends StatelessWidget {
               title: 'Personal Information',
               children: const [
                 _InfoRow(
-                  icon: Icons.person_outline,
+                  iconPath: AppIcons.profileIcon,
                   label: 'Full Name',
                   value: 'Seam Rahman',
                 ),
                 _InfoRow(
-                  icon: Icons.calendar_today_outlined,
+                  iconPath: AppIcons.date,
                   label: 'Date of Birth',
                   value: 'May 15, 1990',
                 ),
@@ -108,12 +121,12 @@ class ProfileInfoScreen extends StatelessWidget {
               title: 'Contact Information',
               children: const [
                 _InfoRow(
-                  icon: Icons.email_outlined,
+                  iconPath: AppIcons.email,
                   label: 'Email',
                   value: 'alice@example.com',
                 ),
                 _InfoRow(
-                  icon: Icons.phone_outlined,
+                  iconPath: AppIcons.phone,
                   label: 'Phone',
                   value: '+1 (555) 123-4567',
                 ),
@@ -127,12 +140,12 @@ class ProfileInfoScreen extends StatelessWidget {
               title: 'Identification',
               children: const [
                 _InfoRow(
-                  icon: Icons.badge_outlined,
+                  iconPath: AppIcons.id,
                   label: 'ID Type',
                   value: 'Passport',
                 ),
                 _InfoRow(
-                  icon: Icons.confirmation_number_outlined,
+                  iconPath: AppIcons.id,
                   label: 'ID Number',
                   value: 'P123456789',
                 ),
@@ -146,12 +159,12 @@ class ProfileInfoScreen extends StatelessWidget {
               title: 'Business Information',
               children: const [
                 _InfoRow(
-                  icon: Icons.category_outlined,
+                  iconPath: AppIcons.category,
                   label: 'Category',
                   value: 'Entertainment',
                 ),
                 _InfoRow(
-                  icon: Icons.location_on_outlined,
+                  iconPath: AppIcons.location,
                   label: 'Address',
                   value: '123 Event Street, New York, NY 10001',
                 ),
@@ -187,10 +200,7 @@ class ProfileInfoScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           ...children,
@@ -202,12 +212,12 @@ class ProfileInfoScreen extends StatelessWidget {
 
 // Reusable Row Widget
 class _InfoRow extends StatelessWidget {
-  final IconData icon;
+  final String iconPath;
   final String label;
   final String value;
 
   const _InfoRow({
-    required this.icon,
+    required this.iconPath,
     required this.label,
     required this.value,
   });
@@ -219,7 +229,12 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
+          SvgPicture.asset(
+            iconPath,
+            width: 20,
+            height: 20,
+            colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -227,10 +242,7 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 2),
                 Text(

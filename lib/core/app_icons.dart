@@ -1,16 +1,55 @@
 class AppIcons {
-  static String home = "assets/icons/home_nav.svg";
-  static String homes = "assets/icons/homes.svg";
+  static const String _basePath = "assets/icons";
 
-  static String employee = "assets/icons/employee.svg";
-  static String employees = "assets/icons/employees.svg";
+  static const String home = "$_basePath/home_nav.svg";
+  static const String homes = "$_basePath/homes.svg";
+  static const String employee = "$_basePath/employee.svg";
+  static const String employees = "$_basePath/employees.svg";
+  static const String profile = "$_basePath/profileIcon.svg";
+  static const String profileIcon = "$_basePath/profileIco.svg";
+  static const String profiles = "$_basePath/profilesIcon.svg";
+  static const String activity = "$_basePath/activity.svg";
+  static const String activitys = "$_basePath/activitys.svg";
+  static const String create = "$_basePath/create.svg";
+  static const String creates = "$_basePath/creates.svg";
 
-  static String profile = "assets/icons/profileIcon.svg";
-  static String profiles = "assets/icons/profilesIcon.svg";
-
-  static String activity = "assets/icons/activity.svg";
-  static String activitys = "assets/icons/activitys.svg";
-
-  static String create = "assets/icons/create.svg";
-  static String creates = "assets/icons/creates.svg";
+  static const String activityIcon = "$_basePath/activity.svg";
+  static const String add = "$_basePath/add.svg";
+  static const String arrowBack = "$_basePath/arrow_back.svg";
+  static const String block = "$_basePath/block.svg";
+  static const String booking = "$_basePath/booking.svg";
+  static const String call = "$_basePath/call.svg";
+  static const String cancel = "$_basePath/cancel.svg";
+  static const String category = "$_basePath/category.svg";
+  static const String check = "$_basePath/check.svg";
+  static const String clean = "$_basePath/clean.svg";
+  static const String date = "$_basePath/date.svg";
+  static const String delete = "$_basePath/delate.svg";
+  static const String email = "$_basePath/email.svg";
+  static const String help = "$_basePath/help.svg";
+  static const String id = "$_basePath/id.svg";
+  static const String inbox = "$_basePath/inbox.svg";
+  static const String income = "$_basePath/income.svg";
+  static const String job = "$_basePath/job.svg";
+  static const String join = "$_basePath/join.svg";
+  static const String location = "$_basePath/location.svg";
+  static const String logout = "$_basePath/logout.svg";
+  static const String message = "$_basePath/message-02.svg";
+  static const String notification = "$_basePath/notification.svg";
+  static const String bank = "$_basePath/bank.svg";
+  static const String payment = "$_basePath/payment.svg";
+  static const String phone = "$_basePath/phone.svg";
+  static const String business = "$_basePath/businessIcon.svg";
+  static const String portfolio = "$_basePath/portfolio.svg";
+  static const String privacy = "$_basePath/privacy.svg";
+  static const String rating = "$_basePath/rating.svg";
+  static const String remove = "$_basePath/remove.svg";
+  static const String search01 = "$_basePath/search-01.svg";
+  static const String search = "$_basePath/search.svg";
+  static const String settings = "$_basePath/settingsIcon.svg";
+  static const String star = "$_basePath/star.svg";
+  static const String terms = "$_basePath/terms.svg";
+  static const String ticket = "$_basePath/ticket.svg";
+  static const String user = "$_basePath/user.svg";
+  static const String whatsapp = "$_basePath/whatsapp.svg";
 }

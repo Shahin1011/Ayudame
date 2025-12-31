@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/home/EventNotificationPage.dart';
 import '../../../core/routes/app_routes.dart';
@@ -52,9 +54,12 @@ class EventHomeScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Icon(
-                Icons.notifications_outlined,
-                color: AppColors.mainAppColor,
+              icon: SvgPicture.asset(
+                AppIcons.notification,
+                colorFilter: ColorFilter.mode(
+                  AppColors.mainAppColor,
+                  BlendMode.srcIn,
+                ),
               ),
               onPressed: () {
                 Get.to(() => EventNotificationPage());
@@ -152,7 +157,15 @@ class EventHomeScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 120,
                     color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 50, color: Colors.grey),
+                    child: SvgPicture.asset(
+                      AppIcons.create,
+                      width: 50,
+                      height: 50,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.grey,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -305,10 +318,14 @@ class EventHomeScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: Colors.grey[600],
+                      SvgPicture.asset(
+                        AppIcons.location,
+                        width: 16,
+                        height: 16,
+                        colorFilter: ColorFilter.mode(
+                          Colors.grey[600]!,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       Expanded(

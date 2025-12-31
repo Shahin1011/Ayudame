@@ -32,10 +32,10 @@ class WelcomeScreen extends StatelessWidget {
           ),
 
           Positioned(
-            bottom: 280, // Higher position for the first image
+            bottom: 280,
             left: 0,
             child: Container(
-              height: 150, // Fixed height
+              height: 150,
 
               child: Center(
                 child: Image.asset(
@@ -47,7 +47,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 280, // Higher position for the first image
+            bottom: 280,
             left: 0,
             child: Container(
               height: 110, // Fixed height
