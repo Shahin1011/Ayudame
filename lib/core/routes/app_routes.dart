@@ -59,7 +59,7 @@ import '../../views/user/auth/SignUpScreen.dart';
 import '../../views/user/auth/VerificationCodeScreen.dart';
 import '../../views/user/auth/user_new_password_screen.dart';
 import '../../views/user/bottom_nav/bottom_nav.dart';
-import '../../views/user/home/CategoriesPage.dart';
+import '../../views/user/categories/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
 import '../../views/user/home/ProviderDetailsScreen.dart';

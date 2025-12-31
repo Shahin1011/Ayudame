@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/views/common/NotificationPage.dart';
-import 'package:middle_ware/views/user/home/CategoriesPage.dart';
+import 'package:middle_ware/views/user/categories/CategoriesPage.dart';
 import 'package:middle_ware/views/user/home/HomeScreen.dart';
 import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import '../../../core/theme/app_colors.dart';
@@ -67,7 +67,7 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
             ),
           ),
         ),
-        height: MediaQuery.of(context).size.height * 0.14,
+        height: MediaQuery.of(context).size.height * 0.15,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
