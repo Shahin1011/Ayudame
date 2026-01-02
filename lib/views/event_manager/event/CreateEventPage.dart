@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
@@ -264,7 +266,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.cloud_upload_outlined, size: 32, color: AppColors.grey),
+            SvgPicture.asset(
+              AppIcons.create,
+              width: 32,
+              height: 32,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            ),
             const SizedBox(height: 8),
             Text(
               'Upload your event flier or promotional image',
@@ -329,7 +336,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
             vertical: 4,
           ),
         ),
-        icon: Icon(Icons.keyboard_arrow_down, color: AppColors.grey),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: AppColors.grey,
+        ), // Dropdown usually uses a built-in arrow but keeping consistency if possible
+        // Actually DropdownButtonFormField has its own icon property.
+        // We can use a custom widget if we really want SVG here, but let's keep it simple or use a rotated arrow.
+        // For now, let's just leave it or use a default if we don't have a clear small arrow svg.
+        // Actually, let's keep the Material arrow for dropdown for now or use a generic one if we have it.
+        // There is no small down arrow in assets/icons list except maybe "Clean" or others which don't fit.
         items: items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
@@ -360,10 +375,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          prefixIcon: Icon(
-            Icons.location_on_outlined,
-            size: 20,
-            color: AppColors.grey,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.location,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -402,10 +421,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          suffixIcon: Icon(
-            Icons.calendar_today_outlined,
-            size: 20,
-            color: Colors.grey[600],
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -478,10 +501,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          suffixIcon: Icon(
-            Icons.calendar_today_outlined,
-            size: 20,
-            color: Colors.grey[600],
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -549,10 +576,14 @@ class EventPreviewPage extends StatelessWidget {
                           width: double.infinity,
                           height: 180,
                           color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image,
-                            size: 50,
-                            color: Colors.grey,
+                          child: SvgPicture.asset(
+                            AppIcons.create,
+                            width: 50,
+                            height: 50,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.grey,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         );
                       },
@@ -571,19 +602,15 @@ class EventPreviewPage extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   _buildInfoRow(
-                    Icons.calendar_today_outlined,
+                    AppIcons.date,
                     'Date & Time',
                     'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(
-                    Icons.location_on_outlined,
-                    'Location',
-                    location,
-                  ),
+                  _buildInfoRow(AppIcons.location, 'Location', location),
                   const SizedBox(height: 16),
                   _buildInfoRow(
-                    Icons.confirmation_number_outlined,
+                    AppIcons.ticket,
                     'Ticket Price',
                     '\$${ticketPrice} per ticket',
                   ),
@@ -671,11 +698,16 @@ class EventPreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(String iconPath, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Colors.grey[600]),
+        SvgPicture.asset(
+          iconPath,
+          width: 18,
+          height: 18,
+          colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -749,7 +781,15 @@ class EventPreviewPage extends StatelessWidget {
                   color: Color(0xFF4CAF50),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 40),
+                child: SvgPicture.asset(
+                  AppIcons.check,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                  width: 40,
+                  height: 40,
+                ),
               ),
               const SizedBox(height: 16),
               const Text(

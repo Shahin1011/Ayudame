@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/auth/LoginProviderScreen.dart';
 
 class SignUpProviderScreen extends StatefulWidget {
   const SignUpProviderScreen({Key? key}) : super(key: key);
@@ -52,12 +57,12 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -348,9 +353,7 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Handle sign up
-                      }
+                      Get.to(() => LoginProviderScreen () );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1C5941),

@@ -515,10 +515,14 @@ class _BusinessprofileState extends State<Businessprofile> {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: isDestructive ? Colors.red : Colors.black38,
+                SvgPicture.asset(
+                  AppIcons.arrow_right,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    isDestructive ? Colors.red : Colors.black38,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ],
             ),

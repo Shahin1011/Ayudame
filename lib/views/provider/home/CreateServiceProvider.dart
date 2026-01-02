@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class CreateServicePage extends StatefulWidget {
   const CreateServicePage({Key? key}) : super(key: key);
@@ -166,52 +168,10 @@ class _CreateServicePageState extends State<CreateServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: CustomAppBar(title: "Create Service" ),
+      backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
-          // Header
-          Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D6A4F),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 8,
-              bottom: 16,
-              left: 8,
-              right: 16,
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Expanded(
-                  child: Text(
-                    'Create Service',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 40),
-              ],
-            ),
-          ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
@@ -226,7 +186,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Upload your service photo',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 14,
+                        fontFamily: "Inter",
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -268,7 +229,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Select category',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -294,9 +256,11 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         hint: const Text(
                           'Select service category',
                           style: TextStyle(
+                            fontFamily: "Inter",
                             fontSize: 13,
                             color: Color(0xFF999999),
                           ),
+
                         ),
                         value: _selectedCategory,
                         icon: const Icon(
@@ -337,7 +301,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Headline',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -387,7 +352,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'About this service',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -457,7 +423,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Why choose us',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -507,7 +474,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Service pricing',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -573,7 +541,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         const Text(
                           'Make an Appointment',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontFamily: "Inter",
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),
@@ -604,7 +573,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       const Text(
                         'Available time',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontFamily: "Inter",
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.black87,
                         ),
@@ -651,48 +621,36 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       const SizedBox(height: 20),
 
                       // Add Duration & Price button
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
+                 
+                        Container(
+                          height: 12,
+                        decoration: BoxDecoration(color: AppColors.white,borderRadius: BorderRadius.circular(8), border: Border.all(color: AppColors.grey)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Add Duration & Price',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                  fontFamily: "Inter",
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 22,
+                                height: 22,
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.black,
+                                  size: 16,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Add Duration & Price',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 22,
-                              height: 22,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2D6A4F),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      
                       const SizedBox(height: 20),
 
                       // Duration and Price pairs
@@ -709,7 +667,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                     const Text(
                                       'Duration',
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -767,7 +726,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                     const Text(
                                       'Price',
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),

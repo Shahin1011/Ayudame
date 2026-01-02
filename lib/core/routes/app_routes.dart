@@ -109,7 +109,7 @@ class AppRoutes {
   // PROVIDER ROUTES
   // ============================================
   static const String providerLogin = '/provider-login';
-  static const String providerRegister = '/provider-register';
+  static const String providerRegister = '/SignUpProviderScreen';
   static const String providerHome = '/provider-home';
   static const String providerProfile = '/provider-profile';
   static const String providerCreateService = '/provider-create-service';

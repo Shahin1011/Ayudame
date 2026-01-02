@@ -5,7 +5,7 @@ class AppIcons {
   static const String homes = "$_basePath/homes.svg";
   static const String employee = "$_basePath/employee.svg";
   static const String employees = "$_basePath/employees.svg";
-  static const String profile = "$_basePath/profileIcon.svg";
+  static const String profile = "$_basePath/profileIconn.svg";
   static const String profileIcon = "$_basePath/profileIco.svg";
   static const String profiles = "$_basePath/profilesIcon.svg";
   static const String activity = "$_basePath/activity.svg";
@@ -18,6 +18,10 @@ class AppIcons {
   static const String arrowBack = "$_basePath/arrow_back.svg";
   static const String block = "$_basePath/block.svg";
   static const String booking = "$_basePath/booking.svg";
+  static const String oder_history = "$_basePath/o_history.svg";
+  static const String my_order = "$_basePath/my_order.svg";
+  static const String total_income = "$_basePath/total_income.svg";
+  static const String all_service = "$_basePath/service.svg";
   static const String call = "$_basePath/call.svg";
   static const String cancel = "$_basePath/cancel.svg";
   static const String category = "$_basePath/category.svg";
@@ -52,4 +56,5 @@ class AppIcons {
   static const String ticket = "$_basePath/ticket.svg";
   static const String user = "$_basePath/user.svg";
   static const String whatsapp = "$_basePath/whatsapp.svg";
+  static const String arrow_right = "$_basePath/arrow-right.svg";
 }

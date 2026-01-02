@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
 import '../../../widgets/custom_appbar.dart';
 
@@ -8,7 +9,7 @@ class BusinessPrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       appBar: CustomAppBar(title: 'Privacy Policy'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
