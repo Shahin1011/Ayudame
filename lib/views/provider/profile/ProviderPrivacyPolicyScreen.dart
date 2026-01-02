@@ -3,8 +3,8 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 
 import '../../../widgets/custom_appbar.dart';
 
-class BusinessPrivacyPolicyScreen extends StatelessWidget {
-  const BusinessPrivacyPolicyScreen({Key? key}) : super(key: key);
+class ProviderPrivacyPolicyScreen extends StatelessWidget {
+  const ProviderPrivacyPolicyScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

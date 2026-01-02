@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
 
 class HomeProviderScreen extends StatefulWidget {
@@ -37,7 +40,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -68,17 +71,19 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                           Text(
                             'Welcome Back',
                             style: TextStyle(
+                              fontFamily: "Inter",
                               color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           SizedBox(height: 2),
                           Text(
                             'Seam Rahman',
                             style: TextStyle(
+                              fontFamily: "Inter",
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -91,15 +96,21 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         shape: BoxShape.circle,
                       ),
                       padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.notifications_outlined,
-                        color: Color(0xFF2D6A4F),
-                        size: 20,
+                      child: SvgPicture.asset(
+                        AppIcons.notification,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF2D6A4F),
+                          BlendMode.srcIn,
+                        ),
+                        width: 20,
+                        height: 20,
                       ),
                     ),
                   ],
                 ),
               ),
+
+              //  <----- end of appbar  ------>
               const SizedBox(height: 16),
               // Stats Cards
               Padding(
@@ -134,9 +145,9 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                       child: const Text(
                         'See all',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF2D6A4F),
+                          color: AppColors.mainAppColor,
                         ),
                       ),
                     ),
@@ -202,21 +213,53 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           selectedFontSize: 11,
           unselectedFontSize: 11,
           elevation: 0,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined, size: 24),
+              icon: SvgPicture.asset(
+                AppIcons.home,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  _selectedIndex == 0 ? const Color(0xFF2D6A4F) : Colors.grey,
+                  BlendMode.srcIn,
+                ),
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, size: 24),
+              icon: SvgPicture.asset(
+                AppIcons.add,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  _selectedIndex == 1 ? const Color(0xFF2D6A4F) : Colors.grey,
+                  BlendMode.srcIn,
+                ),
+              ),
               label: 'Create service',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.description_outlined, size: 24),
+              icon: SvgPicture.asset(
+                AppIcons.booking,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  _selectedIndex == 2 ? const Color(0xFF2D6A4F) : Colors.grey,
+                  BlendMode.srcIn,
+                ),
+              ),
               label: 'Order history',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline, size: 24),
+              icon: SvgPicture.asset(
+                AppIcons.profileIcon,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  _selectedIndex == 3 ? const Color(0xFF2D6A4F) : Colors.grey,
+                  BlendMode.srcIn,
+                ),
+              ),
               label: 'Profile',
             ),
           ],
@@ -231,7 +274,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: AppColors.mainAppColor),
         ),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Column(
@@ -239,7 +282,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               title,
               style: const TextStyle(
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF666666),
               ),
@@ -250,7 +293,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               value,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -305,7 +348,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
@@ -313,12 +356,12 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.star, size: 12, color: Colors.amber),
+                        SvgPicture.asset(AppIcons.star, width: 12, height: 12),
                         const SizedBox(width: 4),
                         Text(
                           '$rating($reviews reviews)',
                           style: const TextStyle(
-                            fontSize: 11,
+                            fontSize: 14,
                             color: Color(0xFF666666),
                           ),
                         ),
@@ -330,7 +373,8 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
               const Text(
                 '12:25 pm',
                 style: TextStyle(
-                  fontSize: 11,
+                  fontFamily: "Inter",
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF666666),
                 ),
@@ -339,22 +383,63 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           ),
           const SizedBox(height: 10),
           // Address
-          Text(
-            'Address: $address',
-            style: const TextStyle(fontSize: 11, color: Color(0xFF666666)),
+          RichText(
+            text: TextSpan(
+              children: [
+                const TextSpan(
+                  text: 'Address: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: address,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 6),
           // Date
-          Text(
-            'Date: $date',
-            style: const TextStyle(fontSize: 11, color: Color(0xFF666666)),
+          RichText(
+            text: TextSpan(
+              children: [
+                const TextSpan(
+                  text: 'Date: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: date,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           // Problem Note
           const Text(
             'Problem Note:',
             style: TextStyle(
-              fontSize: 11,
+              fontFamily: "Inter",
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
@@ -363,7 +448,8 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           Text(
             problemNote,
             style: const TextStyle(
-              fontSize: 11,
+              fontFamily: "Inter",
+              fontSize: 12,
               color: Color(0xFF666666),
               height: 1.4,
             ),
@@ -377,17 +463,33 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                 Text(
                   'Total Price: \$$totalPrice',
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: AppColors.mainAppColor,
                   ),
                 ),
-                Text(
-                  'Down payment: \$$downPayment',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF666666),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Down payment: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.mainAppColor,
+                          fontFamily: "Inter",
+                        ),
+                      ),
+                      TextSpan(
+                        text: '\$$downPayment',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.mainAppColor,
+                          fontFamily: "Inter",
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -396,9 +498,9 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               'Price: \$$price',
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: AppColors.mainAppColor,
               ),
             ),
           ],
@@ -424,7 +526,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                           style: TextStyle(
                             color: Color(0xFF2D6A4F),
                             fontWeight: FontWeight.w600,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -446,7 +548,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -488,9 +590,10 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     child: const Text(
                       'Cancel',
                       style: TextStyle(
+                        fontFamily: "Inter",
                         color: Color(0xFFE74C3C),
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     ),
                   ),

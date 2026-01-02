@@ -4,10 +4,12 @@ class OrderHistoryProviderScreen extends StatefulWidget {
   const OrderHistoryProviderScreen({Key? key}) : super(key: key);
 
   @override
-  State<OrderHistoryProviderScreen> createState() => _OrderHistoryProviderScreenState();
+  State<OrderHistoryProviderScreen> createState() =>
+      _OrderHistoryProviderScreenState();
 }
 
-class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen> {
+class _OrderHistoryProviderScreenState
+    extends State<OrderHistoryProviderScreen> {
   int _selectedTab = 0;
   int _selectedIndex = 2; // For bottom navigation bar
 
@@ -173,11 +175,21 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
       children: [
         _buildAcceptedCard(context, price: 500, isOngoing: false),
         const SizedBox(height: 16),
-        _buildAcceptedCard(context, price: 1000, downPayment: 2, isOngoing: true),
+        _buildAcceptedCard(
+          context,
+          price: 1000,
+          downPayment: 2,
+          isOngoing: true,
+        ),
         const SizedBox(height: 16),
         _buildAcceptedCard(context, price: 50, isOngoing: false),
         const SizedBox(height: 16),
-        _buildAcceptedCard(context, price: 1000, downPayment: 200, isOngoing: true),
+        _buildAcceptedCard(
+          context,
+          price: 1000,
+          downPayment: 200,
+          isOngoing: true,
+        ),
         const SizedBox(height: 16),
       ],
     );
@@ -216,9 +228,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
   }
 
   Widget _buildEmptyTab() {
-    return const Center(
-      child: Text('No event found'),
-    );
+    return const Center(child: Text('No event found'));
   }
 
   Widget _buildAppointmentCard(BuildContext context) {
@@ -255,21 +265,26 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                     const Text(
                       'Seam Rahman',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontFamily: "Inter",
+                        fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
                     Row(
                       children: const [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
+                        Icon(Icons.star, color: Colors.amber, size: 14),
                         SizedBox(width: 4),
                         Text(
                           '4.8',
-                          style: TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 14, fontFamily: "Inter"),
                         ),
                         Text(
                           '(448 reviews)',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF666666),
+                            fontFamily: "Inter",
+                          ),
                         ),
                       ],
                     ),
@@ -278,39 +293,96 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
               ),
               const Text(
                 '12:25 pm',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF666666),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           // Address
-          const Text(
-            'Address: 123 Oak Street Spring,ILB 64558',
-            style: TextStyle(fontSize: 13),
+          RichText(
+            text: const TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Address: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: '123 Oak Street Spring,ILB 64558',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           // Date
-          const Text(
-            'Date: 29 October, 2025',
-            style: TextStyle(fontSize: 13),
+          RichText(
+            text: const TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Date: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: '29 October, 2025',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           // Problem note
           const Text(
             'Problem Note:',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontFamily: "Inter",
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
           ),
+          const SizedBox(height: 4),
           const Text(
             'Please ensure all windows are securely locked after cleaning.',
-            style: TextStyle(fontSize: 13, color: Colors.grey),
+            style: TextStyle(
+              fontFamily: "Inter",
+              fontSize: 12,
+              color: Color(0xFF666666),
+              height: 1.4,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           // Price
           const Text(
             'Price: \$120',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF2C5F4F),
             ),
           ),
           const SizedBox(height: 16),
@@ -329,7 +401,11 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                   ),
                   child: const Text(
                     'Reschedule',
-                    style: TextStyle(color: Color(0xFF2C5F4F)),
+                    style: TextStyle(
+                      color: Color(0xFF2C5F4F),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -346,7 +422,11 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                   ),
                   child: const Text(
                     'Accept',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -359,7 +439,12 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
               onPressed: () {},
               child: const Text(
                 'Cancel',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  color: Color(0xFFE74C3C),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -368,8 +453,12 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
     );
   }
 
-  Widget _buildAcceptedCard(BuildContext context,
-      {required int price, int? downPayment, required bool isOngoing}) {
+  Widget _buildAcceptedCard(
+    BuildContext context, {
+    required int price,
+    int? downPayment,
+    required bool isOngoing,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -411,10 +500,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                       children: const [
                         Icon(Icons.star, color: Colors.amber, size: 16),
                         SizedBox(width: 4),
-                        Text(
-                          '4.8',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        Text('4.8', style: TextStyle(fontSize: 12)),
                         Text(
                           '(448 reviews)',
                           style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -438,10 +524,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
           ),
           const SizedBox(height: 8),
           // Date
-          const Text(
-            'Date: 29 October, 2025',
-            style: TextStyle(fontSize: 13),
-          ),
+          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
           const SizedBox(height: 8),
           // Problem note
           const Text(
@@ -457,36 +540,31 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
           if (downPayment != null) ...[
             Text(
               'Total Price: \$$price',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Row(
               children: [
                 Text(
                   'Down payment: \$$downPayment',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
                 const SizedBox(width: 8),
                 CircleAvatar(
                   radius: 12,
                   backgroundColor: Colors.grey[300],
-                  child: const Icon(Icons.person, color: Colors.white, size: 14),
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 14,
+                  ),
                 ),
               ],
             ),
           ] else
             Text(
               'Price: \$$price',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           const SizedBox(height: 16),
           // Action button
@@ -558,10 +636,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                       children: const [
                         Icon(Icons.star, color: Colors.amber, size: 16),
                         SizedBox(width: 4),
-                        Text(
-                          '4.6',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        Text('4.6', style: TextStyle(fontSize: 12)),
                         Text(
                           '(448 reviews)',
                           style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -585,10 +660,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
           ),
           const SizedBox(height: 8),
           // Date
-          const Text(
-            'Date: 29 October, 2025',
-            style: TextStyle(fontSize: 13),
-          ),
+          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
           const SizedBox(height: 8),
           // Problem note
           const Text(
@@ -603,10 +675,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
           // Price
           const Text(
             'Price: \$120',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           // Cancelled button
@@ -635,8 +704,11 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
     );
   }
 
-  Widget _buildPendingCard(BuildContext context,
-      {required int totalPrice, required int downPayment}) {
+  Widget _buildPendingCard(
+    BuildContext context, {
+    required int totalPrice,
+    required int downPayment,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -678,10 +750,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
                       children: const [
                         Icon(Icons.star, color: Colors.amber, size: 16),
                         SizedBox(width: 4),
-                        Text(
-                          '4.6',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        Text('4.6', style: TextStyle(fontSize: 12)),
                         Text(
                           '(448 reviews)',
                           style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -705,10 +774,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
           ),
           const SizedBox(height: 8),
           // Date
-          const Text(
-            'Date: 29 October, 2025',
-            style: TextStyle(fontSize: 13),
-          ),
+          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
           const SizedBox(height: 8),
           // Problem note
           const Text(
@@ -733,10 +799,7 @@ class _OrderHistoryProviderScreenState extends State<OrderHistoryProviderScreen>
               ),
               Text(
                 'Down payment: \$$downPayment',
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
               ),
             ],
           ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class BusinessForgotPasswordScreen extends StatelessWidget {
-  const BusinessForgotPasswordScreen({super.key});
+class ProviderForgotPasswordScreen extends StatelessWidget {
+  const ProviderForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
               height: 52,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.businessOtp);
+                  Get.to(() => ProviderVerificationCodeScreen() );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1C5941),
@@ -135,7 +136,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.businessLogin);
+                          Get.toNamed(AppRoutes.eventLogin);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,

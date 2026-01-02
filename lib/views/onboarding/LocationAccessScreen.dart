@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/onboarding/UserProviderSelectionScreen.dart';
 class LocationAccessScreen extends StatelessWidget {
   const LocationAccessScreen({super.key});
@@ -21,7 +22,7 @@ class LocationAccessScreen extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF1B5E20),
+                  color: AppColors.mainAppColor,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(

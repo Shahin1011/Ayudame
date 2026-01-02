@@ -105,7 +105,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/profileIcon.svg',
+              'assets/icons/profileIconn.svg',
               width: 24,
               height: 24,
             ),

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/auth/LoginProviderScreen.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class EventVerificationCodeScreen extends StatefulWidget {
-  const EventVerificationCodeScreen({super.key});
+class ProviderVerificationCodeScreen extends StatefulWidget {
+  const ProviderVerificationCodeScreen({super.key});
 
   @override
-  State<EventVerificationCodeScreen> createState() => _EventVerificationCodeScreenState();
+  State<ProviderVerificationCodeScreen> createState() => _ProviderVerificationCodeScreenState();
 }
 
-class _EventVerificationCodeScreenState extends State<EventVerificationCodeScreen> {
+class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCodeScreen> {
   final List<TextEditingController> _controllers = List.generate(
     6,
     (_) => TextEditingController(),
@@ -31,7 +33,7 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
@@ -176,7 +178,7 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
               height: 52,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.eventLogin);
+          Get.to(() => LoginProviderScreen());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1C5941),
@@ -227,7 +229,7 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
             // Back to Login
             TextButton(
               onPressed: () {
-                Get.toNamed(AppRoutes.eventLogin);
+                Get.to(() => LoginProviderScreen());
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
