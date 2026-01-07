@@ -1,480 +1,440 @@
 import 'package:flutter/material.dart';
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:get/get.dart';
+import '../../../core/theme/app_colors.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
+class ProfilePage extends StatelessWidget {
+   ProfilePage({Key? key}) : super(key: key);
 
-class _ProfilePageState extends State<ProfilePage> {
-  bool isProvider = true;
 
-  @override
+   final _controller = ValueNotifier<bool>(false);
+
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: Column(
-        children: [
-          // Header
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D5F4C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(28),
-                bottomRight: Radius.circular(28),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
+      appBar: CustomAppBar(title: "Profile"),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Profile',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    const SizedBox(height: 24),
+
+                    // Profile Picture and Name
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: NetworkImage(
+                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
                       ),
                     ),
+
+                    const SizedBox(height: 16),
+
+                    const Text(
+                      'Seam Rahman',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    const Text(
+                      'slamr7845@gmail.com',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.030),
+
+                    /// Account Information Details
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: Color(0xFFE3E6F0),
+                          width: 0.6,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            offset: const Offset(0, 2),
+                            blurRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Account Information",
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+                          settingsTile(
+                            iconPath: "assets/icons/editProfile.svg",
+                            title: "Edit Profile",
+                            onTap: () {
+                              //Get.to(() => EditProfileScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Image.asset("assets/icons/people.png", width: 24, height: 24, color: Color(0xFF4d4d4d),),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    "Switch to provider",
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat-Regular',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF4d4d4d),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              AdvancedSwitch(
+                                activeColor: AppColors.mainAppColor,
+                                inactiveColor: Color(0xFF787880).withOpacity(0.16),
+                                width: 48.w,
+                                height: 25.h,
+                                controller: _controller,
+                                borderRadius: BorderRadius.circular(77),
+                              ),
+
+                            ],
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            iconPath: "assets/icons/wishlistIcon.svg",
+                            title: "Wishlist",
+                            onTap: () {
+                              //Get.to(() => BookingsScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            iconPath: "assets/icons/eventIcon.svg",
+                            title: "My events",
+                            onTap: () {
+                              //Get.to(() => PaymentsScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            iconPath: "assets/icons/orderHistory.svg",
+                            title: "order history",
+                            onTap: () {
+                              //Get.to(() => PaymentsScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            iconPath: "assets/icons/bankIcon.svg",
+                            title: "Bank Information",
+                            onTap: () {
+                              //Get.to(() => PaymentsScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+
+                    /// Policy Center Details
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: Color(0xFFE3E6F0),
+                          width: 0.6,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            offset: const Offset(0, 2),
+                            blurRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Policy Center",
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+                          settingsTile(
+                            iconPath: "assets/icons/privacyIcon.svg",
+                            title: "Privacy Policy",
+                            onTap: () {
+                              //Get.to(() => PrivacyPolicyScreen());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            iconPath: "assets/icons/termsIcon.svg",
+                            title: "Terms & Conditions",
+                            onTap: () {
+                             // Get.to(() => TermsConditionScreen());
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+
+                    /// Settings Details
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: Color(0xFFE3E6F0),
+                          width: 0.6,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            offset: const Offset(0, 2),
+                            blurRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Settings",
+                            style: GoogleFonts.inter(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            title: "Notification",
+                            onTap: () {
+                              //Get.to(() => AccountSettings());
+                            },
+                            iconPath: 'assets/icons/notification.svg',
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            title: "Help & support",
+                            onTap: () {
+                              //Get.to(() => AccountSettings());
+                            },
+                            iconPath: 'assets/icons/helpIcon.svg',
+                          ),
+                          SizedBox(height: 16.h),
+                          settingsTile(
+                            title: "Log out",
+                            onTap: () {
+                              //Get.to(() => AccountSettings());
+                            },
+                            iconPath: 'assets/icons/logout.svg',
+                          ),
+                          SizedBox(height: 16.h),
+                          GestureDetector(
+                            onTap: (){
+                              _showDeleteDialog(context);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset("assets/icons/delete.svg"),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          "Delete Account",
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat-Regular',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Icon(Icons.arrow_forward_ios, size: 18, color: Colors.red),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.025),
                   ],
                 ),
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-
-                  // Profile Picture and Name
-                  Stack(
-                    children: [
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2D5F4C),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  const Text(
-                    'Seam Rahman',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  const Text(
-                    'slamr7845@gmail.com',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Account Information Section
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            'Account Information',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.person_outline,
-                          title: 'Edit Profile',
-                          showDivider: true,
-                          onTap: () {
-                            Navigator.pushNamed(context, '/profile/edit');
-                          },
-                        ),
-                        _buildSwitchMenuItem(
-                          icon: Icons.person_outline,
-                          title: 'Switch to provider',
-                          value: isProvider,
-                          showDivider: true,
-                          onChanged: (value) {
-                            setState(() {
-                              isProvider = value;
-                            });
-                          },
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.favorite_outline,
-                          title: 'Wishlist',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/wishlist');
-                          },
-                          showDivider: true,
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.history,
-                          title: 'Order history',
-                          onTap: () {Navigator.pushNamed(context, '/order');},
-                          showDivider: true,
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.account_balance_outlined,
-                          title: 'Bank Information',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/provider/bank/add');
-                          },
-                          showDivider: false,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Policy Center Section
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            'Policy Center',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-
-                            ),
-                          ),
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.security_outlined,
-                          title: 'Privacy Policy',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/privacy');
-                          },
-                          showDivider: true,
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.description_outlined,
-                          title: 'Terms & Condition',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/terms');
-                          },
-                          showDivider: false,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Settings Section
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            'Settings',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.notifications_none,
-                          title: 'Notification',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/notifications');
-                          },
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.help_outline,
-                          title: 'Help & Support',
-                          onTap: () {
-                            Navigator.pushNamed(context, '/help');
-                          },
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.logout,
-                          title: 'Log Out',
-                          onTap: () {},
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.delete_outline,
-                          title: 'Delete Account',
-                          onTap: () {
-                            _showDeleteAccountDialog(context);
-                          },
-                          isDestructive: true,
-                          showDivider: false,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
+  Widget settingsTile({
+    required String iconPath,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(iconPath, color: Color(0xFF4d4d4d),),
+              SizedBox(width: 8.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Montserrat-Regular',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF4d4d4d),
+                ),
               ),
-            ),
+            ],
           ),
+          Icon(Icons.arrow_forward_ios, size: 17, color: Color(0xFF4d4d4d),),
         ],
       ),
     );
   }
-  void _showDeleteAccountDialog(BuildContext context) {
+  
+
+  // -------------------- Delete Confirmation Dialog --------------------
+  void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    size: 32,
-                    color: Colors.red.shade400,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Delete',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Are you sure to delete this account?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          // Add your delete account logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account deleted successfully'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool showDivider = true,
-    bool isDestructive = false,
-  }) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  size: 24,
-                  color: isDestructive ? Colors.red : Colors.black54,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: isDestructive ? Colors.red : Colors.black87,
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: isDestructive ? Colors.red : Colors.black38,
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (showDivider)
-          const Divider(height: 1, indent: 56, endIndent: 16),
-      ],
-    );
-  }
-
-  Widget _buildSwitchMenuItem({
-    required IconData icon,
-    required String title,
-    required bool value,
-    bool showDivider = true,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(25),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: Padding(
+          padding: EdgeInsets.all(14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 24,
-                color: Colors.black54,
+              Center(
+                child: SvgPicture.asset("assets/icons/deleteIcon.svg"),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                  ),
+              SizedBox(height: 12.h),
+              Text(
+                "Delete Account",
+                style: GoogleFonts.inter(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.mainAppColor,
                 ),
               ),
-              Switch(
-                value: value,
-                onChanged: onChanged,
-                activeColor: const Color(0xFF2D5F4C),
+              SizedBox(height: 12.h),
+              Text(
+                "Are you sure to delete this account?",
+                style: GoogleFonts.inter(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF494949),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.grey, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontFamily: 'Prompt_regular',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.mainAppColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontFamily: 'Prompt_regular',
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        if (showDivider)
-          const Divider(height: 1, indent: 56, endIndent: 16),
-      ],
+      ),
     );
   }
 }

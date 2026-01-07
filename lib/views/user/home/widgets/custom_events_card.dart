@@ -90,7 +90,7 @@ class CustomEventCard extends StatelessWidget {
                           Text(
                             date,
                             style: GoogleFonts.inter(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -103,7 +103,7 @@ class CustomEventCard extends StatelessWidget {
                           Text(
                             timeRange,
                             style: GoogleFonts.inter(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -122,7 +122,7 @@ class CustomEventCard extends StatelessWidget {
                           Text(
                             location,
                             style: GoogleFonts.inter(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -135,7 +135,7 @@ class CustomEventCard extends StatelessWidget {
                           Text(
                             '$attendingCount attending',
                             style: GoogleFonts.inter(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.grey[600],
                             ),
                           ),

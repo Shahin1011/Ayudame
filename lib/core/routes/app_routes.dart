@@ -184,7 +184,7 @@ class AppRoutes {
     GetPage(name: userHome, page: () => const HomePage()),
     GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
 
-    GetPage(name: userProfile, page: () => const ProfilePage()),
+    GetPage(name: userProfile, page: () => ProfilePage()),
     GetPage(name: userEditProfile, page: () => const EditProfileScreen()),
     GetPage(name: userCategories, page: () => const CategoriesPage()),
 
