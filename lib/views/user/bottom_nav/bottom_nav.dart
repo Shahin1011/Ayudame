@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/views/common/NotificationPage.dart';
 import 'package:middle_ware/views/user/categories/CategoriesPage.dart';
 import 'package:middle_ware/views/user/home/HomeScreen.dart';
+import 'package:middle_ware/views/user/orders/OrderHistoryScreen.dart';
 import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/app_icons.dart';
@@ -29,7 +30,7 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
   final List<Widget> _pages = [
     HomePage(),
     CategoriesPage(),
-    NotificationPage(),
+    OrderHistoryScreen(),
     ProfilePage(),
   ];
 

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/views/user/orders/OrderDetailsScreen.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key}) : super(key: key);
@@ -137,22 +141,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
     switch (statusType) {
       case 'ongoing':
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
         break;
       case 'pending':
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
         break;
       case 'cancelled':
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
         break;
       case 'completed':
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
         break;
       case 'reschedule':
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
         break;
       default:
-        Navigator.pushNamed(context, '/order/details');
+        Get.to(()=> OrderDetailsScreen());
     }
   }
 
@@ -160,45 +164,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+      appBar: CustomAppBar(title: "Order History"),
       body: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D5F4C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 12, 16, 16),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Order history',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
           const SizedBox(height: 16),
 
           // Tabs
