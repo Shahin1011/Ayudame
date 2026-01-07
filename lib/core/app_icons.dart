@@ -23,6 +23,7 @@ class AppIcons {
   static const String total_income = "$_basePath/total_income.svg";
   static const String all_service = "$_basePath/service.svg";
   static const String call = "$_basePath/call.svg";
+  static const String camera = "$_basePath/camera.svg";
   static const String cancel = "$_basePath/cancel.svg";
   static const String category = "$_basePath/category.svg";
   static const String check = "$_basePath/check.svg";

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
 import '../../../core/routes/app_routes.dart';
 
 class HomeProviderScreen extends StatefulWidget {
@@ -40,76 +41,94 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: AppColors.mainAppColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+          ),
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Color(0xFFD4B896),
+                  backgroundImage: AssetImage('assets/images/men.png'),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Seam Rahman',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  ProviderNotificationPage(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      AppIcons.notification,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF2D6A4F),
+                        BlendMode.srcIn,
+                      ),
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      ),
+
       backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Card
-              Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2D6A4F),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 24,
-                      backgroundColor: Color(0xFFD4B896),
-                      backgroundImage: AssetImage('assets/images/men.png'),
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Welcome Back',
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Seam Rahman',
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: SvgPicture.asset(
-                        AppIcons.notification,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF2D6A4F),
-                          BlendMode.srcIn,
-                        ),
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               //  <----- end of appbar  ------>
               const SizedBox(height: 16),
               // Stats Cards
@@ -135,6 +154,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     const Text(
                       'Recent Bookings',
                       style: TextStyle(
+                        fontFamily: "Inter",
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -145,6 +165,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                       child: const Text(
                         'See all',
                         style: TextStyle(
+                          fontFamily: "Inter",
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: AppColors.mainAppColor,
@@ -282,6 +303,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               title,
               style: const TextStyle(
+                fontFamily: "Inter",
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF666666),
@@ -293,6 +315,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               value,
               style: const TextStyle(
+                fontFamily: "Inter",
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -348,6 +371,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     Text(
                       name,
                       style: const TextStyle(
+                        fontFamily: "Inter",
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
@@ -361,6 +385,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         Text(
                           '$rating($reviews reviews)',
                           style: const TextStyle(
+                            fontFamily: "Inter",
                             fontSize: 14,
                             color: Color(0xFF666666),
                           ),
@@ -389,6 +414,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                 const TextSpan(
                   text: 'Address: ',
                   style: TextStyle(
+
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -463,6 +489,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                 Text(
                   'Total Price: \$$totalPrice',
                   style: const TextStyle(
+                     fontFamily: "Inter",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.mainAppColor,
@@ -483,8 +510,8 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                       TextSpan(
                         text: '\$$downPayment',
                         style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: AppColors.mainAppColor,
                           fontFamily: "Inter",
                         ),
@@ -498,6 +525,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             Text(
               'Price: \$$price',
               style: const TextStyle(
+                fontFamily: "Inter",
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.mainAppColor,
@@ -524,6 +552,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         child: const Text(
                           'Reschedule',
                           style: TextStyle(
+                            fontFamily: "Inter",
                             color: Color(0xFF2D6A4F),
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -546,6 +575,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         child: const Text(
                           'Accept',
                           style: TextStyle(
+                            fontFamily: "Inter",
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -565,9 +595,10 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     child: const Text(
                       'Cancel',
                       style: TextStyle(
+                        fontFamily: "Inter",
                         color: Color(0xFFE74C3C),
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -613,6 +644,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     child: const Text(
                       'Accept',
                       style: TextStyle(
+                        fontFamily: "Inter",
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,

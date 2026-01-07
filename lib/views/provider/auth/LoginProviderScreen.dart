@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.toNamed(AppRoutes.eventForgotPass);
+                        Get.toNamed(AppRoutes.providerForgotPass);
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,

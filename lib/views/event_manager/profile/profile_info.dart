@@ -19,7 +19,7 @@ class ProfileInfoScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: SvgPicture.asset(
-              AppIcons.create,
+              AppIcons.profileIcon,
               colorFilter: const ColorFilter.mode(
                 Colors.white,
                 BlendMode.srcIn,
@@ -56,13 +56,10 @@ class ProfileInfoScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: SvgPicture.asset(
-                          AppIcons.create,
+                          AppIcons.camera,
                           width: 16,
                           height: 16,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
+
                         ),
                       ),
                     ),
@@ -71,7 +68,7 @@ class ProfileInfoScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 const Text(
                   'Seam Rahman',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -86,8 +83,9 @@ class ProfileInfoScreen extends StatelessWidget {
                   child: const Text(
                     'Event Manager',
                     style: TextStyle(
+                      fontFamily: "Inter",
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -200,7 +198,7 @@ class ProfileInfoScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           ...children,
@@ -242,13 +240,14 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12,fontFamily: "Inter", color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontFamily: "Inter",
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

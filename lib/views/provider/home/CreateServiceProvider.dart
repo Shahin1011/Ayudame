@@ -1,5 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/home/HomeProviderScreen.dart';
+import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class CreateServicePage extends StatefulWidget {
@@ -22,6 +27,17 @@ class _CreateServicePageState extends State<CreateServicePage> {
   bool _makeAppointment = false;
   String? _selectedCategory;
   int _charCount = 0;
+  XFile? _image;
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = image;
+      });
+    }
+  }
 
   // Appointment fields
   final TextEditingController _availableTimeController = TextEditingController(
@@ -111,7 +127,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.to(() => const HomeProviderScreen());
                       // Handle create service/appointment action
                     },
                     style: ElevatedButton.styleFrom(
@@ -138,7 +154,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.to(() => const HomeProviderScreen());
                       // Handle go home action
                     },
                     style: TextButton.styleFrom(
@@ -168,7 +184,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Create Service" ),
+      appBar: CustomAppBar(title: "Create Service"),
       backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
@@ -193,34 +209,50 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF2D6A4F),
-                          style: BorderStyle.solid,
-                          width: 1.5,
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CustomPaint(
+                        painter: DashedBorderPainter(
+                          color: const Color(0xFF2D6A4F), // Your theme green
+                          strokeWidth: 1.5,
+                          dashWidth: 6,
+                          dashSpace: 4,
+                          borderRadius: 8,
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF2D6A4F),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                        child: Container(
+                          width: double.infinity,
+                          height: 134,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
+                          child: _image != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    File(_image!.path),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF2D6A4F),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -260,7 +292,6 @@ class _CreateServicePageState extends State<CreateServicePage> {
                             fontSize: 13,
                             color: Color(0xFF999999),
                           ),
-
                         ),
                         value: _selectedCategory,
                         icon: const Icon(
@@ -557,7 +588,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                               });
                             },
                             activeColor: Colors.white,
-                            activeTrackColor: const Color(0xFF2D6A4F),
+                            activeTrackColor: AppColors.mainAppColor,
                             inactiveThumbColor: Colors.white,
                             inactiveTrackColor: const Color(0xFFE0E0E0),
                           ),
@@ -584,7 +615,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         controller: _availableTimeController,
                         style: const TextStyle(fontSize: 13),
                         decoration: InputDecoration(
-                          hintText: '06:00am-09:00pm',
+                          hintText: '06:00am to 09:00pm',
                           hintStyle: const TextStyle(
                             fontSize: 13,
                             color: Color(0xFF999999),
@@ -621,12 +652,27 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       const SizedBox(height: 20),
 
                       // Add Duration & Price button
-                 
-                        Container(
-                          height: 12,
-                        decoration: BoxDecoration(color: AppColors.white,borderRadius: BorderRadius.circular(8), border: Border.all(color: AppColors.grey)),
+                      CustomPaint(
+                        painter: DashedBorderPainter(
+                          color: AppColors.grey,
+                          strokeWidth: 1.5,
+                          dashWidth: 5,
+                          dashSpace: 3,
+                          borderRadius: 8,
+                        ),
+                        child: Container(
+                          // Increased height from 12 to a functional size (e.g., 48)
+                          height: 48,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize:
+                                MainAxisSize.min, // Adjusts width to content
                             children: [
                               const Text(
                                 'Add Duration & Price',
@@ -638,19 +684,15 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Container(
-                                width: 22,
-                                height: 22,
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.black,
-                                  size: 16,
-                                ),
+                              const Icon(
+                                Icons.add,
+                                color: Colors.black,
+                                size: 16,
                               ),
                             ],
                           ),
                         ),
-                      
+                      ),
                       const SizedBox(height: 20),
 
                       // Duration and Price pairs
@@ -798,7 +840,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       }).toList(),
                     ],
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 15),
 
                     // Create Service/Appointment Button
                     SizedBox(

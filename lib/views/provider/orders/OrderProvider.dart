@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class OrderHistoryProviderScreen extends StatefulWidget {
   const OrderHistoryProviderScreen({Key? key}) : super(key: key);
@@ -11,831 +14,926 @@ class OrderHistoryProviderScreen extends StatefulWidget {
 class _OrderHistoryProviderScreenState
     extends State<OrderHistoryProviderScreen> {
   int _selectedTab = 0;
-  int _selectedIndex = 2; // For bottom navigation bar
+  int _selectedIndex = 2;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Order History"),
+      body: Column(
+        children: [
+          _buildFilterTabs(),
+          Expanded(child: _buildCurrentTabContent()),
+        ],
+      ),
+    );
+  }
 
-    // Navigate to different routes based on index
-    switch (index) {
+  Widget _buildFilterTabs() {
+    final tabs = ['Appointment', 'Accepted', 'Cancelled', 'Pending'];
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: tabs.length,
+        itemBuilder: (context, index) {
+          bool isSelected = _selectedTab == index;
+          return GestureDetector(
+            onTap: () => setState(() => _selectedTab = index),
+            child: Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF2C5F4F) : Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: isSelected ? Colors.transparent : Colors.grey.shade300,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  tabs[index],
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCurrentTabContent() {
+    switch (_selectedTab) {
       case 0:
-        Navigator.pushNamed(context, '/provider/home');
-        break;
+        return _buildAppointmentList();
       case 1:
-        Navigator.pushNamed(context, '/provider/create');
-        break;
+        return _buildAcceptedList();
       case 2:
-        Navigator.pushNamed(context, '/provider/order');
-        break;
+        return _buildCancelledList();
       case 3:
-        Navigator.pushNamed(context, '/provider/profile');
-        break;
+        return _buildPendingList();
+      default:
+        return const Center(child: Text("No Data Found"));
+    }
+  }
+
+  Widget _buildAppointmentList() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: 2,
+      itemBuilder: (context, index) => _buildOrderCard(
+        status: "Appointment",
+        onTap: () => _navigateToDetails("Appointment"),
+      ),
+    );
+  }
+
+  Widget _buildAcceptedList() {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      children: [
+        _buildOrderCard(
+          status: "Accepted appointment",
+          onTap: () => _navigateToDetails("Accepted"),
+        ),
+        const SizedBox(height: 12),
+        _buildOrderCard(
+          status: "On Going",
+          isOngoing: true,
+          onTap: () => _navigateToDetails("On Going"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCancelledList() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: 2,
+      itemBuilder: (context, index) => _buildOrderCard(
+        status: "Cancelled",
+        onTap: () => _navigateToDetails("Cancelled"),
+      ),
+    );
+  }
+
+  Widget _buildPendingList() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: 2,
+      itemBuilder: (context, index) => _buildOrderCard(
+        status: "Pending",
+        onTap: () => _navigateToDetails("Pending"),
+      ),
+    );
+  }
+
+  void _navigateToDetails(String status) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderDetailsScreen(initialStatus: status),
+      ),
+    );
+  }
+
+  Widget _buildOrderCard({
+    required String status,
+    bool isOngoing = false,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage('assets/images/men.png'),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Seam Rahman",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 14),
+                          Text(
+                            " 4.8(448 reviews)",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Text(
+                  "12:25 pm",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Address
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Address: ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                  const TextSpan(
+                    text: '123 Oak Street Spring,ILB 64558',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF666666),
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 6),
+            // Date
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Date: ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                  const TextSpan(
+                    text: '29 October, 2025',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF666666),
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Problem Note
+            const Text(
+              'Problem Note:',
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              "Please ensure all windows are securely locked after cleaning.",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 12,
+                color: Color(0xFF666666),
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            if (status == "On Going" || status == "Pending")
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Total Price: \$500",
+                    style: TextStyle(
+                      color: Color(0xFF2C5F4F),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Down payment: \$200",
+                    style: TextStyle(
+                      color: Color(0xFF2C5F4F),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )
+            else
+              const Text(
+                "Price: \$120",
+                style: TextStyle(
+                  color: Color(0xFF2C5F4F),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+            const SizedBox(height: 16),
+            _buildCardButtons(status),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardButtons(String status) {
+    if (status == "Appointment") {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.white,
+                    side: const BorderSide(
+                      color: AppColors.mainAppColor,
+                      width: 1.5,
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "Reschedule",
+                    style: TextStyle(color: AppColors.mainAppColor),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2C5F4F),
+                  ),
+                  child: const Text(
+                    "Accept",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          TextButton(
+            onPressed: () =>
+                _showConfirmationDialog(context, "cancel the appointment"),
+            child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      );
+    } else if (status == "Pending") {
+      return Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () =>
+                  _showConfirmationDialog(context, "cancel the order"),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.red),
+              ),
+              child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2C5F4F),
+              ),
+              child: const Text(
+                "Accept",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (status == "Cancelled") {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Center(
+          child: Text("Cancelled", style: TextStyle(color: Colors.grey)),
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2C5F4F),
+          ),
+          child: Text(status, style: const TextStyle(color: Colors.white)),
+        ),
+      );
+    }
+  }
+}
+
+class OrderDetailsScreen extends StatefulWidget {
+  final String initialStatus;
+  const OrderDetailsScreen({super.key, required this.initialStatus});
+
+  @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  bool isRescheduling = false;
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.mainAppColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime ?? TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.mainAppColor,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2C5F4F),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Order history',
-          style: TextStyle(color: Colors.white, fontSize: 18),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Filter tabs - now scrollable
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  _buildFilterChip('Appointment', 0),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('Accepted', 1),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('Cancelled', 2),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('Pending', 3),
-                ],
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Order Details"),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: AppColors.white,
               ),
-            ),
-          ),
-          // Order list
-          Expanded(
-            child: _selectedTab == 0
-                ? _buildAppointmentTab()
-                : _selectedTab == 1
-                ? _buildAcceptedTab()
-                : _selectedTab == 2
-                ? _buildCancelledTab()
-                : _selectedTab == 3
-                ? _buildPendingTab()
-                : _buildEmptyTab(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFF2D6A4F),
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 11,
-          unselectedFontSize: 11,
-          elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined, size: 24),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, size: 24),
-              label: 'Create service',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.description_outlined, size: 24),
-              label: 'Order history',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline, size: 24),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String label, int index) {
-    final isSelected = _selectedTab == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedTab = index;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF2C5F4F) : Colors.grey[200],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppointmentTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        _buildAppointmentCard(context),
-        const SizedBox(height: 16),
-        _buildAppointmentCard(context),
-        const SizedBox(height: 16),
-        _buildAppointmentCard(context),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildAcceptedTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        _buildAcceptedCard(context, price: 500, isOngoing: false),
-        const SizedBox(height: 16),
-        _buildAcceptedCard(
-          context,
-          price: 1000,
-          downPayment: 2,
-          isOngoing: true,
-        ),
-        const SizedBox(height: 16),
-        _buildAcceptedCard(context, price: 50, isOngoing: false),
-        const SizedBox(height: 16),
-        _buildAcceptedCard(
-          context,
-          price: 1000,
-          downPayment: 200,
-          isOngoing: true,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildCancelledTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        _buildCancelledCard(context),
-        const SizedBox(height: 16),
-        _buildCancelledCard(context),
-        const SizedBox(height: 16),
-        _buildCancelledCard(context),
-        const SizedBox(height: 16),
-        _buildCancelledCard(context),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildPendingTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        _buildPendingCard(context, totalPrice: 1200, downPayment: 200),
-        const SizedBox(height: 16),
-        _buildPendingCard(context, totalPrice: 1000, downPayment: 200),
-        const SizedBox(height: 16),
-        _buildPendingCard(context, totalPrice: 450, downPayment: 90),
-        const SizedBox(height: 16),
-        _buildPendingCard(context, totalPrice: 800, downPayment: 160),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildEmptyTab() {
-    return const Center(child: Text('No event found'));
-  }
-
-  Widget _buildAppointmentCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with profile and time
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: const AssetImage('assets/images/men.png'),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Seam Rahman',
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Row(
-                      children: const [
-                        Icon(Icons.star, color: Colors.amber, size: 14),
-                        SizedBox(width: 4),
-                        Text(
-                          '4.8',
-                          style: TextStyle(fontSize: 14, fontFamily: "Inter"),
-                        ),
-                        Text(
-                          '(448 reviews)',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF666666),
-                            fontFamily: "Inter",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Text(
-                '12:25 pm',
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF666666),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Address
-          RichText(
-            text: const TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Address: ',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                    fontFamily: "Inter",
-                  ),
-                ),
-                TextSpan(
-                  text: '123 Oak Street Spring,ILB 64558',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF666666),
-                    fontFamily: "Inter",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 6),
-          // Date
-          RichText(
-            text: const TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Date: ',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                    fontFamily: "Inter",
-                  ),
-                ),
-                TextSpan(
-                  text: '29 October, 2025',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF666666),
-                    fontFamily: "Inter",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Problem note
-          const Text(
-            'Problem Note:',
-            style: TextStyle(
-              fontFamily: "Inter",
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Please ensure all windows are securely locked after cleaning.',
-            style: TextStyle(
-              fontFamily: "Inter",
-              fontSize: 12,
-              color: Color(0xFF666666),
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Price
-          const Text(
-            'Price: \$120',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF2C5F4F),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF2C5F4F)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text(
-                    'Reschedule',
-                    style: TextStyle(
-                      color: Color(0xFF2C5F4F),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2C5F4F),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text(
-                    'Accept',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Cancel button
-          Center(
-            child: TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  color: Color(0xFFE74C3C),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                    _buildProfileHeader(),
+                    const SizedBox(height: 24),
 
-  Widget _buildAcceptedCard(
-    BuildContext context, {
-    required int price,
-    int? downPayment,
-    required bool isOngoing,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with profile and time
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
                     const Text(
-                      'Seam Rahman',
+                      "Title:",
                       style: TextStyle(
+                        color: Color(0xFF2C5F4F),
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
                       ),
                     ),
-                    Row(
-                      children: const [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        SizedBox(width: 4),
-                        Text('4.8', style: TextStyle(fontSize: 12)),
-                        Text(
-                          '(448 reviews)',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ],
+                    const Text(
+                      "Expert House Cleaning Services: Making Every Corner Sparkle",
                     ),
+
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Note",
+                      style: TextStyle(
+                        color: Color(0xFF2C5F4F),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    _buildNoteBox(),
+
+                    const SizedBox(height: 24),
+
+                    if (widget.initialStatus == "Pending" ||
+                        widget.initialStatus == "On Going")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Date: ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                    fontFamily: "Inter",
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '12/6/2025',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFF666666),
+                                    fontFamily: "Inter",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            "Due: \$300",
+                            style: TextStyle(
+                              color: Color(0xFF2C5F4F),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (isRescheduling)
+                      _buildRescheduleForm()
+                    else
+                      _buildInfoSection(),
+
+                    const SizedBox(height: 32),
+                    _buildBottomActions(),
                   ],
                 ),
               ),
-              const Text(
-                '12:25 pm',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader() {
+    return Row(
+      children: [
+        const CircleAvatar(
+          radius: 28,
+          backgroundImage: AssetImage('assets/images/men.png'),
+        ),
+        const SizedBox(width: 12),
+        const Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Tamim Sarkar",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                "Dhanmondi, Dhaka 1209",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Address
-          const Text(
-            'Address: 123 Oak Street Spring,ILB 64558',
-            style: TextStyle(fontSize: 13),
+        ),
+        Text(
+          widget.initialStatus == "Appointment"
+              ? "Date: 18/09/2025"
+              : "Time: 12:00pm",
+          style: const TextStyle(fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoteBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.green.shade100),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Text(
+        "Please ensure all windows are securely locked after cleaning. Kindly use eco-friendly cleaning products as we prefer them.",
+      ),
+    );
+  }
+
+  Widget _buildInfoSection() {
+    return Row(
+      children: [
+        Expanded(child: _buildStaticField("Time", "02 hour")),
+        const SizedBox(width: 16),
+        Expanded(child: _buildStaticField("Price", "\$120")),
+      ],
+    );
+  }
+
+  Widget _buildStaticField(String label, String val) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const SizedBox(height: 8),
-          // Date
-          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
-          const SizedBox(height: 8),
-          // Problem note
-          const Text(
-            'Problem Note:',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          const Text(
-            'Please ensure all windows are securely locked after cleaning.',
-            style: TextStyle(fontSize: 13, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
-          // Price or Total Price
-          if (downPayment != null) ...[
+          child: Text(val),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRescheduleForm() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildInputField(
+                "Date",
+                selectedDate != null
+                    ? DateFormat('MM/dd/yy').format(selectedDate!)
+                    : "mm/dd/yy",
+                Icons.calendar_month,
+                onTap: () => _selectDate(context),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildInputField(
+                "Time",
+                selectedTime != null
+                    ? selectedTime!.format(context)
+                    : "12:25pm",
+                Icons.access_time,
+                onTap: () => _selectTime(context),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             Text(
-              'Total Price: \$$price',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              "Duration: 02 hour",
+              style: TextStyle(
+                color: Color(0xFF2C5F4F),
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Text(
-                  'Down payment: \$$downPayment',
-                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+            Text("Price: \$120", style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInputField(
+    String label,
+    String hint,
+    IconData icon, {
+    VoidCallback? onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            child: TextField(
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(
+                  color:
+                      (label == "Date" && selectedDate != null) ||
+                          (label == "Time" && selectedTime != null)
+                      ? Colors.black
+                      : Colors.grey,
                 ),
-                const SizedBox(width: 8),
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Colors.grey[300],
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+                suffixIcon: Icon(icon, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
+              ),
             ),
-          ] else
-            Text(
-              'Price: \$$price',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomActions() {
+    if (isRescheduling) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2C5F4F),
+            padding: const EdgeInsets.all(16),
+          ),
+          child: const Text("Send", style: TextStyle(color: Colors.white)),
+        ),
+      );
+    }
+
+    if (widget.initialStatus == "Pending") {
+      return Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () =>
+                  _showConfirmationDialog(context, "cancel the order"),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.red),
+              ),
+              child: const Text("Cancel", style: TextStyle(color: Colors.red)),
             ),
-          const SizedBox(height: 16),
-          // Action button
-          SizedBox(
-            width: double.infinity,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C5F4F),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: Text(
-                isOngoing ? 'On Going' : 'Accepted appointment',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: const Text(
+                "Accept",
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildCancelledCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+    if (widget.initialStatus == "On Going") {
+      return Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => _showConfirmationDialog(
+                context,
+                "completed the work properly?",
+                isSuccess: true,
+              ),
+              child: const Text("Done"),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () => _showConfirmationDialog(
+                context,
+                "ask for the remaining money?",
+                isMoney: true,
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2C5F4F),
+              ),
+              child: const Text(
+                "Ask for due payment",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with profile and time
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Seam Rahman',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Row(
-                      children: const [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        SizedBox(width: 4),
-                        Text('4.6', style: TextStyle(fontSize: 12)),
-                        Text(
-                          '(448 reviews)',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Text(
-                '12:25 pm',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Address
-          const Text(
-            'Address: 123 Oak Street Spring,ILB 64558',
-            style: TextStyle(fontSize: 13),
-          ),
-          const SizedBox(height: 8),
-          // Date
-          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
-          const SizedBox(height: 8),
-          // Problem note
-          const Text(
-            'Problem Note:',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          const Text(
-            'Please ensure all windows are securely locked after cleaning.',
-            style: TextStyle(fontSize: 13, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
-          // Price
-          const Text(
-            'Price: \$120',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          // Cancelled button
-          SizedBox(
-            width: double.infinity,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Center(
-                child: Text(
-                  'Cancelled',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+      );
+    }
+
+    if (widget.initialStatus == "Cancelled") {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Center(
+          child: Text("Cancelled", style: TextStyle(color: Colors.grey)),
+        ),
+      );
+    }
+    //
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => setState(() => isRescheduling = true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  side: const BorderSide(
+                    color: AppColors.mainAppColor,
+                    width: 1.5,
                   ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  "Reschedule",
+                  style: TextStyle(color: AppColors.mainAppColor),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2C5F4F),
+                ),
+                child: const Text(
+                  "Accept",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+        TextButton(
+          onPressed: () =>
+              _showConfirmationDialog(context, "cancel the appointment"),
+          child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildPendingCard(
-    BuildContext context, {
-    required int totalPrice,
-    required int downPayment,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+void _showConfirmationDialog(
+  BuildContext context,
+  String message, {
+  bool isSuccess = false,
+  bool isMoney = false,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Header with profile and time
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[300],
-                child: const Icon(Icons.person, color: Colors.white),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Seam Rahman',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Row(
-                      children: const [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        SizedBox(width: 4),
-                        Text('4.6', style: TextStyle(fontSize: 12)),
-                        Text(
-                          '(448 reviews)',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Text(
-                '12:25 pm',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
+          Icon(
+            isMoney ? Icons.monetization_on : Icons.check,
+            color: isSuccess || isMoney ? const Color(0xFF2C5F4F) : Colors.red,
+            size: 40,
           ),
           const SizedBox(height: 16),
-          // Address
-          const Text(
-            'Address: 123 Oak Street Spring,ILB 64558',
-            style: TextStyle(fontSize: 13),
+          Text(
+            "Are you sure you want to $message?",
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 8),
-          // Date
-          const Text('Date: 29 October, 2025', style: TextStyle(fontSize: 13)),
-          const SizedBox(height: 8),
-          // Problem note
-          const Text(
-            'Problem Note:',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-          const Text(
-            'Please ensure all windows are securely locked after cleaning.',
-            style: TextStyle(fontSize: 13, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
-          // Price information
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total Price: \$$totalPrice',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Down payment: \$$downPayment',
-                style: const TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Action buttons
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.red),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(
+                      color: isSuccess || isMoney
+                          ? const Color(0xFF2C5F4F)
+                          : Colors.red,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.red),
+                  child: Text(
+                    "No",
+                    style: TextStyle(
+                      color: isSuccess || isMoney
+                          ? const Color(0xFF2C5F4F)
+                          : Colors.red,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2C5F4F),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    backgroundColor: isSuccess || isMoney
+                        ? const Color(0xFF2C5F4F)
+                        : Colors.red,
                   ),
                   child: const Text(
-                    'Accept',
+                    "Yes",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -844,6 +942,6 @@ class _OrderHistoryProviderScreenState
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
 }

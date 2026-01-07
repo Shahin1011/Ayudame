@@ -61,7 +61,7 @@ class _BottomNavEScreenState extends State<BottomNavEScreen> {
             top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
           ),
         ),
-        height: 100.h,
+        height: 80.h,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,

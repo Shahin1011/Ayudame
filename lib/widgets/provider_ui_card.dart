@@ -198,8 +198,8 @@ class ProviderUICard extends StatelessWidget {
                     Text(
                       price,
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     ElevatedButton(
