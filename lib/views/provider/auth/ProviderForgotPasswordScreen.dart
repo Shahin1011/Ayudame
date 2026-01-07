@@ -136,7 +136,7 @@ class ProviderForgotPasswordScreen extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.eventLogin);
+                          Get.toNamed(AppRoutes.providerLogin);
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,

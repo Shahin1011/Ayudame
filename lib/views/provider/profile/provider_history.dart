@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-class OrderHistoryProviderScreen extends StatefulWidget {
-  const OrderHistoryProviderScreen({Key? key}) : super(key: key);
+class ProviderHistoryProviderScreen extends StatefulWidget {
+  const ProviderHistoryProviderScreen({Key? key}) : super(key: key);
 
   @override
-  State<OrderHistoryProviderScreen> createState() =>
-      _OrderHistoryProviderScreenState();
+  State<ProviderHistoryProviderScreen> createState() =>
+      _ProviderHistoryProviderScreenState();
 }
 
-class _OrderHistoryProviderScreenState
-    extends State<OrderHistoryProviderScreen> {
+class _ProviderHistoryProviderScreenState
+    extends State<ProviderHistoryProviderScreen> {
   int _selectedTab = 0;
   int _selectedIndex = 2;
 
@@ -20,7 +20,7 @@ class _OrderHistoryProviderScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Order History"),
+      appBar: CustomAppBar(title: "Order History", showBackButton: false),
       body: Column(
         children: [
           _buildFilterTabs(),
@@ -319,23 +319,14 @@ class _OrderHistoryProviderScreenState
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
+                child: OutlinedButton(
                   onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.white,
-                    side: const BorderSide(
-                      color: AppColors.mainAppColor,
-                      width: 1.5,
-                    ),
-                    elevation: 0,
-                  ),
                   child: const Text(
                     "Reschedule",
-                    style: TextStyle(color: AppColors.mainAppColor),
+                    style: TextStyle(color: Color(0xFF2C5F4F)),
                   ),
                 ),
               ),
-
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
@@ -413,6 +404,7 @@ class _OrderHistoryProviderScreenState
   }
 }
 
+// --- ডিটেইলস স্ক্রিন (Pending ও Due সহ) ---
 class OrderDetailsScreen extends StatefulWidget {
   final String initialStatus;
   const OrderDetailsScreen({super.key, required this.initialStatus});
@@ -530,7 +522,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RichText(
-                            text: TextSpan(
+                            text: const TextSpan(
                               children: [
                                 TextSpan(
                                   text: 'Date: ',
@@ -829,25 +821,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         ),
       );
     }
-    //
+
     return Column(
       children: [
         Row(
           children: [
             Expanded(
-              child: ElevatedButton(
+              child: OutlinedButton(
                 onPressed: () => setState(() => isRescheduling = true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.white,
-                  side: const BorderSide(
-                    color: AppColors.mainAppColor,
-                    width: 1.5,
-                  ),
-                  elevation: 0,
-                ),
                 child: const Text(
                   "Reschedule",
-                  style: TextStyle(color: AppColors.mainAppColor),
+                  style: TextStyle(color: Color(0xFF2C5F4F)),
                 ),
               ),
             ),

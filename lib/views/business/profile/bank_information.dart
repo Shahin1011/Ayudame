@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../viewmodels/BankController.dart';
@@ -32,12 +33,14 @@ class BankInformationScreen extends StatelessWidget {
                 controller.clearFields();
                 Get.to(() => const AddBankInfoScreen());
               },
-              child: DottedBorder(
-             // color :,
-             //    strokeWidth: 1,
-             //    dashPattern: const [6, 3],
-             //    borderType: BorderType.RRect,
-             //    radius: const Radius.circular(12),
+              child: CustomPaint(
+                painter: DashedBorderPainter(
+                  color: AppColors.mainAppColor,
+                  strokeWidth: 1.5,
+                  dashWidth: 6,
+                  dashSpace: 4,
+                  borderRadius: 12.r,
+                ),
                 child: Container(
                   width: double.infinity,
                   height: 60.h,

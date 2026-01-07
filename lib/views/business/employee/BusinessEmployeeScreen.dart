@@ -306,8 +306,8 @@ SizedBox(height: 30,),
                 child: SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  width: 30,
-                  height: 30,
+                  width: 17,
+                  height: 15,
                 ),
               ),
               const SizedBox(width: 8),
@@ -390,7 +390,7 @@ SizedBox(height: 30,),
         children: [
           SvgPicture.asset(
             iconPath,
-            color: Colors.green,
+            color: AppColors.mainAppColor,
             width: 22,
             height: 22,
           ),
@@ -567,7 +567,7 @@ SizedBox(height: 30,),
             ),
             const SizedBox(height: 20),
             Container(
-              width: 360,
+              width: 300,
               height: 54,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
@@ -587,7 +587,7 @@ SizedBox(height: 30,),
             ),
 SizedBox(height: 20,),
             Container(
-              width: 360,
+              width: 300,
               height: 54,
               decoration: BoxDecoration(
                 color: Color(0xFFFEF2F2),

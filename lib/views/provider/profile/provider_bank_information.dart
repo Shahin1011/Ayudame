@@ -1,19 +1,16 @@
-import 'dart:ui' as BorderType;
-
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_bank_information.dart';
+import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../viewmodels/BankController.dart';
 import 'Business_bank_information.dart';
 
-
-class provider_BankInformationScreen extends StatelessWidget {
-  const provider_BankInformationScreen({super.key});
+class BankInformationScreen extends StatelessWidget {
+  const BankInformationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +19,6 @@ class provider_BankInformationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
       appBar: CustomAppBar(title: "Bank Information"),
-
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Obx(() {
@@ -33,12 +29,15 @@ class provider_BankInformationScreen extends StatelessWidget {
                 controller.clearFields();
                 Get.to(() => const AddBankInfoScreen());
               },
-              child: DottedBorder(
-             // color :,
-             //    strokeWidth: 1,
-             //    dashPattern: const [6, 3],
-             //    borderType: BorderType.RRect,
-             //    radius: const Radius.circular(12),
+
+              child: CustomPaint(
+                painter: DashedBorderPainter(
+                  color: AppColors.mainAppColor,
+                  strokeWidth: 1.5,
+                  dashWidth: 6,
+                  dashSpace: 4,
+                  borderRadius: 12.r,
+                ),
                 child: Container(
                   width: double.infinity,
                   height: 60.h,
@@ -91,7 +90,7 @@ class provider_BankInformationScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         controller.loadBankInfo();
-                        Get.to(() => providerEditBankInfoScreen());
+                        Get.to(() => const providerEditBankInfoScreen());
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(

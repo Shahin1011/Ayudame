@@ -3,12 +3,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/orders/OrderProvider.dart';
 import 'package:middle_ware/views/provider/profile/ProviderHelpSupportScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
+import 'package:middle_ware/views/provider/profile/ProviderPortfolioPage.dart';
 import 'package:middle_ware/views/provider/profile/ProviderPrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.dart';
+import 'package:middle_ware/views/provider/profile/all_service.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
+import 'package:middle_ware/views/provider/profile/provider_history.dart';
+import 'package:middle_ware/views/provider/profile/provider_payment.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderProfilePage extends StatefulWidget {
@@ -30,7 +35,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
               // Navigator.pushNamed(context, '/edit/profile');
             },
             icon: SvgPicture.asset(
-              AppIcons.add,
+              AppIcons.profileIcon,
               colorFilter: const ColorFilter.mode(
                 Colors.white,
                 BlendMode.srcIn,
@@ -289,38 +294,38 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.all_service,
                           title: 'All Services',
                           onTap: () {
-                            Navigator.pushNamed(context, '/service');
+                           Get.to (()=> allCreateServicePage());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.oder_history,
                           title: 'Order History',
                           onTap: () {
-                            Navigator.pushNamed(context, '/provider/order');
+                           Get.to (()=> ProviderHistoryProviderScreen());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.portfolio,
                           title: 'Portfolio',
                           onTap: () {
-                            Navigator.pushNamed(context, '/provider/portfolio');
+                            // Get.to(() => PortfolioPage());
+                                  Get.to(() => PortfolioListScreen());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.payment,
                           title: 'Payment History',
                           onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/provider/payment/history',
-                            );
+                            Get.to(() => const provider_PaymentHistoryScreen());
+
+
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.bank,
                           title: 'Bank Information',
                           onTap: () {
-                            Get.to(() => provider_BankInformationScreen());
+                            Get.to(() => BankInformationScreen());
                           },
                           showDivider: false,
                         ),

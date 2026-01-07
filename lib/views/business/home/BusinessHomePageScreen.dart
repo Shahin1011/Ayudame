@@ -6,6 +6,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/employee/all_employee.dart';
 import 'package:middle_ware/views/business/home/provider.dart';
 import 'package:middle_ware/views/business/profile/BusinessProfile.dart';
+import '../../../core/app_icons.dart';
 import '../../../core/routes/app_routes.dart';
 import '../Activities/ActivitiesPage.dart';
 import 'BusinessNotificationPage.dart';
@@ -132,72 +133,86 @@ class _HomeContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: AppColors.mainAppColor,
-        elevation: 0,
-        toolbarHeight: 90.h,
-        leadingWidth: 80.w,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 20.w, top: 10.h, bottom: 10.h),
-          child: const CircleAvatar(
-
-            radius: 40.0,
-            backgroundColor: Color(0xFFFFFFFF),
-            child: CircleAvatar(
-              radius: 36.0,
-              backgroundImage: AssetImage('assets/images/profile.png'),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: AppColors.mainAppColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
           ),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-            Text(
-              'Welcome Back',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.white,
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              'Seam Rahman',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.white,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20.w),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(30),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const BusinessNotificationPage(),
-                  ),
-                );
-              },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.white,
-                child: SvgPicture.asset(
-                  'assets/icons/notification.svg',
-                  width: 38,
-                  height: 38,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Color(0xFFD4B896),
+                  backgroundImage: AssetImage('assets/images/men.png'),
                 ),
-              ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Seam Rahman',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  BusinessNotificationPage(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      AppIcons.notification,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF2D6A4F),
+                        BlendMode.srcIn,
+                      ),
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+
+              ],
             ),
           ),
-        ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -215,7 +230,7 @@ class _HomeContent extends StatelessWidget {
               ),
               padding: EdgeInsets.fromLTRB(
                 16.w,
-                kToolbarHeight + 90.h,
+                kToolbarHeight + 80.h,
                 16.w,
                 24.h,
               ),
@@ -362,7 +377,7 @@ class _HomeContent extends StatelessWidget {
               child: GestureDetector(
 
                 onTap: () {
-
+                  Get.to(() => BusinessProvidersScreen());
                 },
 
                 child: ProviderUICard(

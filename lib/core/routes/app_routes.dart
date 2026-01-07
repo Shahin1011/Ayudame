@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:middle_ware/views/provider/auth/ProviderForgotPasswordScreen.dart';
+import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.dart';
 
 // Common/Shared Views
 import '../../views/business/Activities/ActivitiesPage.dart';
@@ -29,6 +31,7 @@ import '../../views/business/employee/BusinessEmployeeScreen.dart'; // Import Em
 // Event Manager Feature Views
 
 import '../../views/event_manager/home/EditEventPage.dart';
+import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../widgets/bottom_nave.dart';
 // Event Manager Feature Views mappings removed as they are imported above directly
 
@@ -38,9 +41,7 @@ import '../../views/provider/auth/SignUpProviderScreen.dart';
 import '../../views/provider/home/CreateServiceProvider.dart';
 import '../../views/provider/home/HomeProviderScreen.dart';
 import '../../views/provider/orders/OrderProvider.dart';
-import '../../views/provider/profile/AddPortfolioScreen.dart';
 import '../../views/provider/profile/BankAcountAddScreen.dart';
-import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../views/provider/profile/ProviderProfilePage.dart';
 import '../../views/provider/profile/providerBankPayoutView.dart';
 import '../../views/provider/profile/provider_AddBankInfo.dart';
@@ -110,10 +111,12 @@ class AppRoutes {
   // ============================================
   static const String providerLogin = '/provider-login';
   static const String providerRegister = '/SignUpProviderScreen';
+  static const String providerForgotPass = '/ProviderForgotPasswordScreen';
+  static const String providerOtp = '/providerVerificationCodeScreen';
   static const String providerHome = '/provider-home';
-  static const String providerProfile = '/provider-profile';
-  static const String providerCreateService = '/provider-create-service';
-  static const String providerOrders = '/provider-event';
+  static const String providerProfile = '/ProviderProfilePage';
+  static const String providerCreateService = '/CreateServiceProvider';
+  static const String providerOrders = '/OrderProvider';
   static const String providerPortfolio = '/provider-portfolio';
   static const String providerAddPortfolio = '/provider-add-portfolio';
   static const String providerBankAdd = '/provider-bank-add';
@@ -184,8 +187,8 @@ class AppRoutes {
     GetPage(name: userAppointment, page: () => const AppointmentScreen()),
     GetPage(name: userBooking, page: () => const BookingScreen()),
     GetPage(name: userBookingPaid, page: () => const BookingPaidScreen()),
-    GetPage(name: userOrderHistory, page: () => const OrderHistoryScreen()),
-    GetPage(name: userOrderDetails, page: () => const OrderDetailsScreen()),
+    GetPage(name: userOrderHistory, page: () => const OrderHistoryProviderScreen()),
+    // GetPage(name: userOrderDetails, page: () => const OrderHistoryProviderScreen()),
     GetPage(name: userWishlist, page: () => const WishlistScreen()),
     GetPage(name: userChat, page: () => const ChatScreen()),
     GetPage(name: userPayment, page: () => const PaymentScreen()),
@@ -193,14 +196,23 @@ class AppRoutes {
     // Provider Auth & Features
     GetPage(name: providerLogin, page: () => const LoginProviderScreen()),
     GetPage(name: providerRegister, page: () => const SignUpProviderScreen()),
+    GetPage(
+      name: providerForgotPass,
+      page: () => ProviderForgotPasswordScreen(),
+    ),
+    GetPage(
+      name: providerOtp,
+      page: () => const ProviderVerificationCodeScreen(),
+    ),
+
     GetPage(name: providerHome, page: () => const HomeProviderScreen()),
-    GetPage(name: providerProfile, page: () => const ProviderProfilePage()),
-    GetPage(name: providerCreateService, page: () => const CreateServicePage()),
+    GetPage(name: providerProfile, page: () => ProviderProfilePage()),
+    GetPage(name: providerCreateService, page: () => CreateServicePage()),
     GetPage(
       name: providerOrders,
-      page: () => const OrderHistoryProviderScreen(),
+      page: () => OrderHistoryProviderScreen(),
     ),
-    GetPage(name: providerPortfolio, page: () => const PortfolioPage()),
+    GetPage(name: providerPortfolio, page: () => const PortfolioListScreen()),
     GetPage(name: providerAddPortfolio, page: () => const AddPortfolioScreen()),
     GetPage(
       name: providerBankAdd,
