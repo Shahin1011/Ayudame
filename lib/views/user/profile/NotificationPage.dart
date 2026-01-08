@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -7,44 +8,11 @@ class NotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(title: "Notification"),
       body: SafeArea(
         child: Column(
           children: [
-
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF2D6A4F),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Notification',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            
             // Notifications List
             Expanded(
             child: Container(
