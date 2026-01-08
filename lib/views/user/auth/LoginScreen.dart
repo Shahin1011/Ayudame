@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
 
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class UserLoginScreen extends StatefulWidget {
+  const UserLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<UserLoginScreen> createState() => _UserLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _UserLoginScreenState extends State<UserLoginScreen> {
   bool _rememberMe = false;
   bool _obscurePassword = true;
 

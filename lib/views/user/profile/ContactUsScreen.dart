@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({Key? key}) : super(key: key);
@@ -7,51 +9,10 @@ class ContactUsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE8F0ED),
+      appBar: CustomAppBar(title: "Contract us"),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D5F4C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Contact Us',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
+          SizedBox(height: 20.h),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -4,8 +4,20 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/views/user/auth/LoginScreen.dart';
+import 'package:middle_ware/views/user/orders/OrderHistoryScreen.dart';
+import 'package:middle_ware/views/user/profile/EditProfileScreen.dart';
+import 'package:middle_ware/views/user/profile/HelpSupportScreen.dart';
+import 'package:middle_ware/views/user/profile/NotificationPage.dart';
+import 'package:middle_ware/views/user/profile/WishlistScreen.dart';
+import 'package:middle_ware/views/user/profile/my_events.dart';
+import 'package:middle_ware/views/user/profile/user_bank_form_screen.dart';
+import 'package:middle_ware/views/user/profile/user_bank_information.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+
+import 'PrivacyPolicyScreen.dart';
+import 'TermsConditionScreen.dart';
 
 class ProfilePage extends StatelessWidget {
    ProfilePage({Key? key}) : super(key: key);
@@ -93,7 +105,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/editProfile.svg",
                             title: "Edit Profile",
                             onTap: () {
-                              //Get.to(() => EditProfileScreen());
+                              Get.to(() => EditProfileScreen());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -132,7 +144,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/wishlistIcon.svg",
                             title: "Wishlist",
                             onTap: () {
-                              //Get.to(() => BookingsScreen());
+                              Get.to(() => WishlistScreen());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -140,7 +152,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/eventIcon.svg",
                             title: "My events",
                             onTap: () {
-                              //Get.to(() => PaymentsScreen());
+                              Get.to(() => MyEvents());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -148,7 +160,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/orderHistory.svg",
                             title: "order history",
                             onTap: () {
-                              //Get.to(() => PaymentsScreen());
+                              Get.to(() => OrderHistoryScreen());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -156,7 +168,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/bankIcon.svg",
                             title: "Bank Information",
                             onTap: () {
-                              //Get.to(() => PaymentsScreen());
+                              Get.to(() => userBankInformation());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -202,7 +214,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/privacyIcon.svg",
                             title: "Privacy Policy",
                             onTap: () {
-                              //Get.to(() => PrivacyPolicyScreen());
+                              Get.to(() => PrivacyPolicyScreen());
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -210,7 +222,7 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/termsIcon.svg",
                             title: "Terms & Conditions",
                             onTap: () {
-                             // Get.to(() => TermsConditionScreen());
+                              Get.to(() => TermsConditionScreen());
                             },
                           ),
                         ],
@@ -252,7 +264,7 @@ class ProfilePage extends StatelessWidget {
                           settingsTile(
                             title: "Notification",
                             onTap: () {
-                              //Get.to(() => AccountSettings());
+                              Get.to(() => NotificationPage());
                             },
                             iconPath: 'assets/icons/notification.svg',
                           ),
@@ -260,7 +272,7 @@ class ProfilePage extends StatelessWidget {
                           settingsTile(
                             title: "Help & support",
                             onTap: () {
-                              //Get.to(() => AccountSettings());
+                              Get.to(() => HelpSupportScreen());
                             },
                             iconPath: 'assets/icons/helpIcon.svg',
                           ),
@@ -268,7 +280,7 @@ class ProfilePage extends StatelessWidget {
                           settingsTile(
                             title: "Log out",
                             onTap: () {
-                              //Get.to(() => AccountSettings());
+                              Get.to(() => UserLoginScreen());
                             },
                             iconPath: 'assets/icons/logout.svg',
                           ),

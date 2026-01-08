@@ -7,12 +7,9 @@ import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
 import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
 import '../../views/business/profile/BusinessProfile.dart';
-import '../../views/common/ContactUsScreen.dart';
-import '../../views/common/FaqScreen.dart';
-import '../../views/common/HelpSupportScreen.dart';
-import '../../views/common/NotificationPage.dart';
-import '../../views/common/PrivacyPolicyScreen.dart';
-import '../../views/common/TermsConditionScreen.dart';
+import '../../views/user/profile/NotificationPage.dart';
+import '../../views/user/profile/PrivacyPolicyScreen.dart';
+import '../../views/user/profile/TermsConditionScreen.dart';
 import '../../views/onboarding/LocationAccessScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
@@ -176,7 +173,7 @@ class AppRoutes {
     GetPage(name: notifications, page: () => const NotificationPage()),
 
     // User Auth & Features
-    GetPage(name: userlogin, page: () => const LoginScreen()),
+    GetPage(name: userlogin, page: () => const UserLoginScreen()),
     GetPage(name: userregister, page: () => const SignUpScreen()),
     GetPage(name: userforgotPassword, page: () => const ForgotPasswordScreen()),
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),

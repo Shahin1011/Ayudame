@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
 
 
 
@@ -10,24 +10,7 @@ class TermsConditionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2D5F4F),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Terms & Condition',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+      appBar: CustomAppBar(title: "Terms & Conditions"),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

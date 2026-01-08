@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
 
 
 
@@ -9,46 +10,9 @@ class WishlistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF3F8F4),
+      appBar: CustomAppBar(title: "Wishlist"),
       body: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D5F4C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Wishlist',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Wishlist Items
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(16),

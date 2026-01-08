@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:middle_ware/views/common/NotificationPage.dart';
+import 'package:middle_ware/views/user/profile/NotificationPage.dart';
 import 'package:middle_ware/views/user/categories/CategoriesPage.dart';
 import 'package:middle_ware/views/user/home/HomeScreen.dart';
 import 'package:middle_ware/views/user/orders/OrderHistoryScreen.dart';
