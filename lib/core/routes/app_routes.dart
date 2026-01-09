@@ -25,13 +25,14 @@ import '../../views/onboarding/onboardinglanguage_screen.dart';
 import '../../views/onboarding/splash_screen.dart';
 
 // Business Feature Views
-import '../../views/business/home/BusinessHomePageScreen.dart';
+
 import '../../views/business/employee/BusinessEmployeeScreen.dart'; // Import EmployeeDetailsScreen
 
 // Event Manager Feature Views
 
 import '../../views/event_manager/home/EditEventPage.dart';
 import '../../views/provider/profile/ProviderPortfolioPage.dart';
+import '../../widgets/bottom_navb.dart';
 import '../../widgets/bottom_nave.dart';
 // Event Manager Feature Views mappings removed as they are imported above directly
 
@@ -187,7 +188,10 @@ class AppRoutes {
     GetPage(name: userAppointment, page: () => const AppointmentScreen()),
     GetPage(name: userBooking, page: () => const BookingScreen()),
     GetPage(name: userBookingPaid, page: () => const BookingPaidScreen()),
-    GetPage(name: userOrderHistory, page: () => const OrderHistoryProviderScreen()),
+    GetPage(
+      name: userOrderHistory,
+      page: () => const OrderHistoryProviderScreen(),
+    ),
     // GetPage(name: userOrderDetails, page: () => const OrderHistoryProviderScreen()),
     GetPage(name: userWishlist, page: () => const WishlistScreen()),
     GetPage(name: userChat, page: () => const ChatScreen()),
@@ -208,10 +212,7 @@ class AppRoutes {
     GetPage(name: providerHome, page: () => const HomeProviderScreen()),
     GetPage(name: providerProfile, page: () => ProviderProfilePage()),
     GetPage(name: providerCreateService, page: () => CreateServicePage()),
-    GetPage(
-      name: providerOrders,
-      page: () => OrderHistoryProviderScreen(),
-    ),
+    GetPage(name: providerOrders, page: () => OrderHistoryProviderScreen()),
     GetPage(name: providerPortfolio, page: () => const PortfolioListScreen()),
     GetPage(name: providerAddPortfolio, page: () => const AddPortfolioScreen()),
     GetPage(
@@ -236,7 +237,7 @@ class AppRoutes {
     ),
 
     // Business
-    GetPage(name: businessHome, page: () => BusinessHomePageScreen()),
+    GetPage(name: businessHome, page: () => const BottomNavScreen()),
     GetPage(name: businessLogin, page: () => const BusinessLoginScreen()),
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(

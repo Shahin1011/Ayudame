@@ -10,6 +10,7 @@ import 'package:middle_ware/views/provider/profile/ProviderPortfolioPage.dart';
 import 'package:middle_ware/views/provider/profile/ProviderPrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.dart';
 import 'package:middle_ware/views/provider/profile/all_service.dart';
+import 'package:middle_ware/views/provider/profile/all_services_page.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
 import 'package:middle_ware/views/provider/profile/provider_history.dart';
@@ -294,7 +295,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.all_service,
                           title: 'All Services',
                           onTap: () {
-                           Get.to (()=> allCreateServicePage());
+                           Get.to (()=> AllServicesPage());
                           },
                         ),
                         _buildMenuItem(

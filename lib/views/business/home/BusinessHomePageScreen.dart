@@ -5,10 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/employee/all_employee.dart';
 import 'package:middle_ware/views/business/home/provider.dart';
-import 'package:middle_ware/views/business/profile/BusinessProfile.dart';
 import '../../../core/app_icons.dart';
 import '../../../core/routes/app_routes.dart';
-import '../Activities/ActivitiesPage.dart';
 import 'BusinessNotificationPage.dart';
 import '../../../widgets/provider_ui_card.dart';
 
@@ -20,114 +18,6 @@ class BusinessHomePageScreen extends StatefulWidget {
 }
 
 class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    const _HomeContent(),
-    const BusinessEmployeeListScreen(), //EmployeeDetailsScreen
-    const ActivitiesPage(),
-    const Businessprofile(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgColor,
-      body: IndexedStack(index: _selectedIndex, children: _screens),
-      bottomNavigationBar: _buildBottomNavBar(),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF1C5941),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: [
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/home_nav.svg',
-              width: 24,
-              height: 24,
-            ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/homes.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/employee.svg',
-              width: 24,
-              height: 24,
-            ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/employees.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Employee',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/activity.svg',
-              width: 24,
-              height: 24,
-            ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/activitys.svg',
-              width: 28,
-              height: 28,
-            ),
-            label: 'Activities',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/profileIconn.svg',
-              width: 24,
-              height: 24,
-            ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/profilesIcon.svg',
-              width: 24,
-              height: 24,
-              color: const Color(0xFF1C5941),
-            ),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Home Content Widget
-class _HomeContent extends StatelessWidget {
-  const _HomeContent();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,7 +77,7 @@ class _HomeContent extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  BusinessNotificationPage(),
+                        builder: (context) => BusinessNotificationPage(),
                       ),
                     );
                   },
@@ -208,7 +98,6 @@ class _HomeContent extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -371,24 +260,23 @@ class _HomeContent extends StatelessWidget {
             ),
 
             // Provider Card 1
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: GestureDetector(
-
                 onTap: () {
                   Get.to(() => BusinessProvidersScreen());
                 },
-
                 child: ProviderUICard(
-
-                  imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-                  profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+                  profileUrl:
+                      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
                   name: 'Jackson Builder',
                   location: 'Dhanmondi Dhaka 1209',
                   postedTime: '1 day ago',
                   serviceTitle: 'Expert House Cleaning Service',
-                  description: 'I take care of every corner, deep cleaning every room with care...',
+                  description:
+                      'I take care of every corner, deep cleaning every room with care...',
                   rating: 4.0,
                   reviewCount: 120,
                   price: 'Appointment Price: \$100',
@@ -396,13 +284,41 @@ class _HomeContent extends StatelessWidget {
                   onViewDetails: () {
                     Get.to(() => BusinessProvidersScreen());
                   },
-
                 ),
               ),
             ),
 
             SizedBox(height: 16.h),
-
+                                           // All Employee Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'All Employee',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Get.to(() => BusinessEmployeeListScreen());
+                    },
+                    child: Text(
+                      'View All',
+                      style: TextStyle(
+                        color: const Color(0xFF1C5941),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: GestureDetector(
@@ -410,13 +326,16 @@ class _HomeContent extends StatelessWidget {
                   Get.toNamed(AppRoutes.businessEmployee);
                 },
                 child: ProviderUICard(
-                  imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-                  profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
+                  profileUrl:
+                      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
                   name: 'Jackson Builder',
                   location: 'Dhanmondi Dhaka 1209',
                   postedTime: '1 day ago',
                   serviceTitle: 'House Cleaning',
-                  description: 'I take care of every corner, deep cleaning every room with care.',
+                  description:
+                      'I take care of every corner, deep cleaning every room with care.',
                   rating: 4.0,
                   reviewCount: 120,
                   price: 'Appointment Price: \$100',
