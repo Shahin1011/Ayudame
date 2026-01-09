@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/inbox/inbox_screen.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+
+import '../inbox/chat_screen.dart';
 
 class ProviderHistoryProviderScreen extends StatefulWidget {
   const ProviderHistoryProviderScreen({Key? key}) : super(key: key);
@@ -319,11 +325,16 @@ class _ProviderHistoryProviderScreenState
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
+                child: ElevatedButton(
                   onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.white,
+                    side: const BorderSide(color: AppColors.mainAppColor),
+                    elevation: 0,
+                  ),
                   child: const Text(
                     "Reschedule",
-                    style: TextStyle(color: Color(0xFF2C5F4F)),
+                    style: TextStyle(color: AppColors.mainAppColor),
                   ),
                 ),
               ),
@@ -353,11 +364,13 @@ class _ProviderHistoryProviderScreenState
       return Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: ElevatedButton(
               onPressed: () =>
                   _showConfirmationDialog(context, "cancel the order"),
-              style: OutlinedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.white,
                 side: const BorderSide(color: Colors.red),
+                elevation: 0,
               ),
               child: const Text("Cancel", style: TextStyle(color: Colors.red)),
             ),
@@ -404,7 +417,6 @@ class _ProviderHistoryProviderScreenState
   }
 }
 
-// --- ডিটেইলস স্ক্রিন (Pending ও Due সহ) ---
 class OrderDetailsScreen extends StatefulWidget {
   final String initialStatus;
   const OrderDetailsScreen({super.key, required this.initialStatus});
@@ -566,6 +578,42 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
               ),
             ),
+            if (widget.initialStatus == "Accepted" ||
+                widget.initialStatus == "On Going")
+              Padding(
+                padding: const EdgeInsets.only(right: 16, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(
+                          () => providerChatScreen(
+                            contactName: '',
+                            contactImage: '',
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF2C5F4F),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                          AppIcons.message,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -748,11 +796,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       return Row(
         children: [
           Expanded(
-            child: OutlinedButton(
+            child: ElevatedButton(
               onPressed: () =>
                   _showConfirmationDialog(context, "cancel the order"),
-              style: OutlinedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.white,
                 side: const BorderSide(color: Colors.red),
+                elevation: 0,
               ),
               child: const Text("Cancel", style: TextStyle(color: Colors.red)),
             ),
@@ -774,35 +824,53 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       );
     }
 
-    if (widget.initialStatus == "On Going") {
-      return Row(
+    if (widget.initialStatus == "Accepted" ||
+        widget.initialStatus == "On Going") {
+      return Column(
         children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () => _showConfirmationDialog(
-                context,
-                "completed the work properly?",
-                isSuccess: true,
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _showConfirmationDialog(
+                    context,
+                    "completed the work properly?",
+                    isSuccess: true,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.white,
+                    side: const BorderSide(color: AppColors.mainAppColor),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "done",
+                    style: TextStyle(color: AppColors.mainAppColor),
+                  ),
+                ),
               ),
-              child: const Text("Done"),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _showConfirmationDialog(
+                    context,
+                    "ask for the remaining money?",
+                    isMoney: true,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2C5F4F),
+                  ),
+                  child: const Text(
+                    "ask for due payment",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () => _showConfirmationDialog(
-                context,
-                "ask for the remaining money?",
-                isMoney: true,
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2C5F4F),
-              ),
-              child: const Text(
-                "Ask for due payment",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+          TextButton(
+            onPressed: () =>
+                _showConfirmationDialog(context, "cancel the appointment"),
+            child: const Text("Cancel", style: TextStyle(color: Colors.red)),
           ),
         ],
       );
@@ -827,11 +895,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         Row(
           children: [
             Expanded(
-              child: OutlinedButton(
+              child: ElevatedButton(
                 onPressed: () => setState(() => isRescheduling = true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  side: const BorderSide(color: AppColors.mainAppColor),
+                  elevation: 0,
+                ),
                 child: const Text(
                   "Reschedule",
-                  style: TextStyle(color: Color(0xFF2C5F4F)),
+                  style: TextStyle(color: AppColors.mainAppColor),
                 ),
               ),
             ),
