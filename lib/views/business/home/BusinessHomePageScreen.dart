@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/profile/BusinessProfile.dart';
 import '../../../core/routes/app_routes.dart';
 
@@ -34,7 +33,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
@@ -75,7 +74,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               'assets/icons/home_nav.svg',
               width: 24,
               height: 24,
-              color: AppColors.mainAppColor,
+              color: const Color(0xFF1C5941),
             ),
             label: 'Home',
           ),
@@ -90,7 +89,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               'assets/icons/employee.svg',
               width: 24,
               height: 24,
-              color: AppColors.mainAppColor,
+              color: const Color(0xFF1C5941),
             ),
             label: 'Employee',
           ),
@@ -192,7 +191,64 @@ class _HomeContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Stats Cards Section
-
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          color: const Color(0xFFFFE5E5),
+                          iconPath: 'assets/icons/calendar.svg',
+                          iconColor: const Color(0xFFFF6B6B),
+                          value: '1,237',
+                          label: 'Total Booking',
+                          percentage: '+8%',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildStatCard(
+                          color: const Color(0xFFFFE8D6),
+                          iconPath: 'assets/icons/money.svg',
+                          iconColor: const Color(0xFFFF9F43),
+                          value: '\$50,500',
+                          label: 'Total Income',
+                          percentage: '+8%',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          color: const Color(0xFFE8F5E9),
+                          iconPath: 'assets/icons/check_circle.svg',
+                          iconColor: const Color(0xFF4CAF50),
+                          value: '786',
+                          label: 'Service Completed',
+                          percentage: '+8%',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildStatCard(
+                          color: const Color(0xFFEDE7F6),
+                          iconPath: 'assets/icons/cancel.svg',
+                          iconColor: const Color(0xFF9C27B0),
+                          value: '850',
+                          label: 'Service Cancelled',
+                          percentage: '+2%',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
 
             // Search Bar
             Padding(
@@ -263,7 +319,7 @@ class _HomeContent extends StatelessWidget {
               location: 'San Francisco Way 1318',
               title: 'Expert House Cleaning Service',
               description:
-              'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
+                  'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
               rating: '4.00',
               reviews: '102',
               price: '\$63',
@@ -313,7 +369,7 @@ class _HomeContent extends StatelessWidget {
               location: 'San Francisco Way 1318',
               title: 'Expert House Cleaning Service',
               description:
-              'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
+                  'I take care of every corner, deep cleaning and scrubs without damaging your home items.',
               rating: '4.00',
               reviews: '102',
               price: '\$63',
@@ -523,7 +579,7 @@ class _HomeContent extends StatelessWidget {
                       children: [
                         ...List.generate(
                           4,
-                              (index) => SvgPicture.asset(
+                          (index) => SvgPicture.asset(
                             'assets/icons/star.svg',
                             width: 14,
                             height: 14,
@@ -672,7 +728,7 @@ class BusinessEmployeeListScreen extends StatelessWidget {
                           children: [
                             ...List.generate(
                               4,
-                                  (i) => SvgPicture.asset(
+                              (i) => SvgPicture.asset(
                                 'assets/icons/star.svg',
                                 width: 14,
                                 height: 14,

@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../core/routes/app_routes.dart';
-
+import 'package:get/get.dart';
+import 'package:get/route_manager.dart';
 class UserProviderSelectionScreen extends StatefulWidget {
   const UserProviderSelectionScreen({super.key});
 
@@ -19,7 +20,7 @@ class _UserProviderSelectionScreenState
   void _navigateToSelectedScreen() {
     switch (selectedType) {
       case 'User':
-        Get.toNamed(AppRoutes.userBottomNavScreen);
+        Get.toNamed(AppRoutes.userlogin);
         break;
       case 'Provider':
         Get.toNamed(AppRoutes.providerLogin);
@@ -50,7 +51,9 @@ class _UserProviderSelectionScreenState
           color: isSelected ? const Color(0xFF1C5941) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Color(0xFF1C5941),
+            color: isSelected
+                ? const Color(0xFF1C5941)
+                : const Color(0xFFE0E0E0),
             width: 1,
           ),
         ),

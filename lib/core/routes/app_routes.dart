@@ -7,10 +7,13 @@ import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
 import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
 import '../../views/business/profile/BusinessProfile.dart';
-import '../../views/user/profile/NotificationPage.dart';
-import '../../views/user/profile/PrivacyPolicyScreen.dart';
-import '../../views/user/profile/TermsConditionScreen.dart';
-import '../../views/onboarding/LocationAccessScreen.dart';
+import '../../views/common/ContactUsScreen.dart';
+import '../../views/user/bottom_nav/bottom_nav.dart';
+import '../../views/common/FaqScreen.dart';
+import '../../views/common/HelpSupportScreen.dart';
+import '../../views/common/NotificationPage.dart';
+import '../../views/common/PrivacyPolicyScreen.dart';
+import '../../views/common/TermsConditionScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
@@ -21,6 +24,7 @@ import '../../views/onboarding/UserProviderSelectionScreen.dart';
 import '../../views/onboarding/WelcomeScreen.dart';
 import '../../views/onboarding/onboardinglanguage_screen.dart';
 import '../../views/onboarding/splash_screen.dart';
+import '../../views/onboarding/LocationAccessScreen.dart';
 
 // Business Feature Views
 import '../../views/business/home/BusinessHomePageScreen.dart';
@@ -52,11 +56,10 @@ import '../../views/provider/settings/PaymentHistoryPage.dart';
 import '../../views/user/UserNotificationPage.dart';
 import '../../views/user/auth/ForgotPasswordScreen.dart';
 import '../../views/user/auth/LoginScreen.dart';
+import '../../views/user/auth/user_new_password_screen.dart';
 import '../../views/user/auth/SignUpScreen.dart';
 import '../../views/user/auth/VerificationCodeScreen.dart';
-import '../../views/user/auth/user_new_password_screen.dart';
-import '../../views/user/bottom_nav/bottom_nav.dart';
-import '../../views/user/categories/CategoriesPage.dart';
+import '../../views/user/home/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
 import '../../views/user/home/ProviderDetailsScreen.dart';
@@ -70,6 +73,7 @@ import '../../views/user/orders/PaymentScreen.dart';
 import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
 import '../../views/user/profile/WishlistScreen.dart';
+import '../../views/user/profile/PrivacyPolicyScreen.dart';
 
 class AppRoutes {
   // ============================================
@@ -79,7 +83,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String welcome = '/welcome';
   static const String userTypeSelection = '/user-type-selection';
-  static const String location = '/location';
+  static const String location = '/LocationAccessScreen';
   static const String terms = '/terms';
   static const String privacy = '/privacy';
   static const String notifications = '/notifications';
@@ -91,11 +95,10 @@ class AppRoutes {
   static const String userregister = '/user_register';
   static const String userforgotPassword = '/user_forgot-password';
   static const String userotp = '/user_otp';
-  static const String userNewPasswordScreen = '/user_new_password_screen';
   static const String userNotification = "/user_notification";
-  static const String userBottomNavScreen = "/bottom_nav";
 
   static const String userHome = '/user-home';
+  static const String userNewPasswordScreen = '//user_new_password_screen';
   static const String userProfile = '/user-profile';
   static const String userEditProfile = '/user-edit-profile';
   static const String userCategories = '/user-categories';
@@ -114,6 +117,7 @@ class AppRoutes {
   // PROVIDER ROUTES
   // ============================================
   static const String providerLogin = '/provider-login';
+  static const String userBottomNavScreen = '/bottom_nav/bottom_nav';
   static const String providerRegister = '/provider-register';
   static const String providerHome = '/provider-home';
   static const String providerProfile = '/provider-profile';
@@ -167,7 +171,7 @@ class AppRoutes {
       name: userTypeSelection,
       page: () => const UserProviderSelectionScreen(),
     ),
-    GetPage(name: location, page: () => const LocationAccessScreen()),
+    GetPage(name: location, page: () =>  LocationAccessScreen()),
     GetPage(name: terms, page: () => const TermsConditionScreen()),
     GetPage(name: privacy, page: () => const PrivacyPolicyScreen()),
     GetPage(name: notifications, page: () => const NotificationPage()),
