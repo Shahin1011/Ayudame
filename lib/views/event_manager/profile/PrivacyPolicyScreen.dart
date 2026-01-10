@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 
 class EventPrivacyPolicyScreen extends StatelessWidget {
@@ -8,25 +10,8 @@ class EventPrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2D5F4C),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Privacy Policy',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Privacy Policy"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

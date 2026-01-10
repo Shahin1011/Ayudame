@@ -1,4 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/provider/home/HomeProviderScreen.dart';
+import 'package:middle_ware/widgets/CustomDashedBorder.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class CreateServicePage extends StatefulWidget {
   const CreateServicePage({Key? key}) : super(key: key);
@@ -20,10 +27,22 @@ class _CreateServicePageState extends State<CreateServicePage> {
   bool _makeAppointment = false;
   String? _selectedCategory;
   int _charCount = 0;
+  XFile? _image;
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _image = image;
+      });
+    }
+  }
 
   // Appointment fields
-  final TextEditingController _availableTimeController = TextEditingController(text: '06:00am-09:00pm');
+  final TextEditingController _availableTimeController = TextEditingController(
+    text: '06:00am-09:00pm',
+  );
   final List<Map<String, TextEditingController>> _durationPriceControllers = [
     {
       'duration': TextEditingController(text: '30 min'),
@@ -70,8 +89,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 8),
-                // Success icon
 
+                // Success icon
                 Container(
                   width: 80,
                   height: 80,
@@ -108,7 +127,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.to(() => const HomeProviderScreen());
                       // Handle create service/appointment action
                     },
                     style: ElevatedButton.styleFrom(
@@ -135,7 +154,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Get.to(() => const HomeProviderScreen());
                       // Handle go home action
                     },
                     style: TextButton.styleFrom(
@@ -162,57 +181,20 @@ class _CreateServicePageState extends State<CreateServicePage> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: CustomAppBar(title: "Create Service"),
+      backgroundColor: AppColors.bgColor,
       body: Column(
         children: [
-          // Header
-          Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D6A4F),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 8,
-              bottom: 16,
-              left: 8,
-              right: 16,
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Expanded(
-                  child: Text(
-                    'Create Service',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 40),
-              ],
-            ),
-          ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -220,40 +202,57 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Upload your service photo',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 14,
+                        fontFamily: "Inter",
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF2D6A4F),
-                          style: BorderStyle.solid,
-                          width: 1.5,
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CustomPaint(
+                        painter: DashedBorderPainter(
+                          color: const Color(0xFF2D6A4F), // Your theme green
+                          strokeWidth: 1.5,
+                          dashWidth: 6,
+                          dashSpace: 4,
+                          borderRadius: 8,
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF2D6A4F),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                        child: Container(
+                          width: double.infinity,
+                          height: 134,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
+                          child: _image != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    File(_image!.path),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF2D6A4F),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        color: Colors.white,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -262,7 +261,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Select category',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -272,28 +272,54 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFF2D6A4F), width: 1.5),
+                        border: Border.all(
+                          color: const Color(0xFF2D6A4F),
+                          width: 1.5,
+                        ),
                       ),
                       child: DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                           border: InputBorder.none,
                         ),
                         hint: const Text(
                           'Select service category',
                           style: TextStyle(
+                            fontFamily: "Inter",
                             fontSize: 13,
                             color: Color(0xFF999999),
                           ),
                         ),
                         value: _selectedCategory,
-                        icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF2D6A4F), size: 24),
-                        items: ['Cleaning', 'Plumbing', 'Electrical', 'Carpentry']
-                            .map((category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category, style: const TextStyle(fontSize: 13)),
-                        ))
-                            .toList(),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color(0xFF2D6A4F),
+                          size: 24,
+                        ),
+                        items:
+                            [
+                                  'Event / Show Organizer',
+                                  'Music / Band / DJ',
+                                  'Film / Media Production',
+                                  'Theatre / Drama',
+                                  'Gaming / Esports',
+                                  'Amusement / Fun Zone',
+                                  'Content Creator / Studio',
+                                  'Ticketing / Promotions',
+                                ]
+                                .map(
+                                  (category) => DropdownMenuItem(
+                                    value: category,
+                                    child: Text(
+                                      category,
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedCategory = value;
@@ -303,11 +329,11 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     ),
                     const SizedBox(height: 20),
 
-
                     const Text(
                       'Headline',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -324,18 +350,30 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         ),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ),
@@ -345,7 +383,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'About this service',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -369,15 +408,24 @@ class _CreateServicePageState extends State<CreateServicePage> {
                             contentPadding: const EdgeInsets.all(14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFD0D0D0),
+                                width: 1.5,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2D6A4F),
+                                width: 1.5,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2D6A4F),
+                                width: 1.5,
+                              ),
                             ),
                             counterText: '',
                           ),
@@ -406,7 +454,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Why choose us',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -421,18 +470,30 @@ class _CreateServicePageState extends State<CreateServicePage> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFD0D0D0),
+                                width: 1.5,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2D6A4F),
+                                width: 1.5,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF2D6A4F),
+                                width: 1.5,
+                              ),
                             ),
                           ),
                         ),
@@ -444,7 +505,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                     const Text(
                       'Service pricing',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontFamily: "Inter",
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
@@ -462,23 +524,42 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         ),
                         prefixIcon: const Padding(
                           padding: EdgeInsets.only(left: 14, right: 8),
-                          child: Icon(Icons.attach_money, color: Color(0xFF999999), size: 18),
+                          child: Icon(
+                            Icons.attach_money,
+                            color: Color(0xFF999999),
+                            size: 18,
+                          ),
                         ),
-                        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
                         filled: true,
                         fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFD0D0D0),
+                            width: 1.5,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ),
@@ -491,7 +572,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         const Text(
                           'Make an Appointment',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontFamily: "Inter",
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),
@@ -506,7 +588,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                               });
                             },
                             activeColor: Colors.white,
-                            activeTrackColor: const Color(0xFF2D6A4F),
+                            activeTrackColor: AppColors.mainAppColor,
                             inactiveThumbColor: Colors.white,
                             inactiveTrackColor: const Color(0xFFE0E0E0),
                           ),
@@ -522,7 +604,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       const Text(
                         'Available time',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontFamily: "Inter",
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.black87,
                         ),
@@ -532,65 +615,82 @@ class _CreateServicePageState extends State<CreateServicePage> {
                         controller: _availableTimeController,
                         style: const TextStyle(fontSize: 13),
                         decoration: InputDecoration(
-                          hintText: '06:00am-09:00pm',
+                          hintText: '06:00am to 09:00pm',
                           hintStyle: const TextStyle(
                             fontSize: 13,
                             color: Color(0xFF999999),
                           ),
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFD0D0D0),
+                              width: 1.5,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFD0D0D0),
+                              width: 1.5,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF2D6A4F),
+                              width: 1.5,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
 
                       // Add Duration & Price button
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: Colors.grey.shade300, width: 1),
-                            bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-                          ),
+                      CustomPaint(
+                        painter: DashedBorderPainter(
+                          color: AppColors.grey,
+                          strokeWidth: 1.5,
+                          dashWidth: 5,
+                          dashSpace: 3,
+                          borderRadius: 8,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Add Duration & Price',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
+                        child: Container(
+                          // Increased height from 12 to a functional size (e.g., 48)
+                          height: 48,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize:
+                                MainAxisSize.min, // Adjusts width to content
+                            children: [
+                              const Text(
+                                'Add Duration & Price',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                  fontFamily: "Inter",
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 22,
-                              height: 22,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2D6A4F),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Icon(
+                              const SizedBox(width: 8),
+                              const Icon(
                                 Icons.add,
-                                color: Colors.white,
+                                color: Colors.black,
                                 size: 16,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -609,7 +709,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                     const Text(
                                       'Duration',
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -621,18 +722,37 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                       decoration: InputDecoration(
                                         filled: true,
                                         fillColor: Colors.white,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                              vertical: 12,
+                                            ),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFD0D0D0),
+                                            width: 1.5,
+                                          ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFD0D0D0),
+                                            width: 1.5,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF2D6A4F),
+                                            width: 1.5,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -648,7 +768,8 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                     const Text(
                                       'Price',
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.black87,
                                       ),
@@ -659,24 +780,54 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                       style: const TextStyle(fontSize: 13),
                                       decoration: InputDecoration(
                                         prefixIcon: const Padding(
-                                          padding: EdgeInsets.only(left: 14, right: 8),
-                                          child: Icon(Icons.attach_money, color: Color(0xFF999999), size: 18),
+                                          padding: EdgeInsets.only(
+                                            left: 14,
+                                            right: 8,
+                                          ),
+                                          child: Icon(
+                                            Icons.attach_money,
+                                            color: Color(0xFF999999),
+                                            size: 18,
+                                          ),
                                         ),
-                                        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                                        prefixIconConstraints:
+                                            const BoxConstraints(
+                                              minWidth: 0,
+                                              minHeight: 0,
+                                            ),
                                         filled: true,
                                         fillColor: Colors.white,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                              vertical: 12,
+                                            ),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFD0D0D0),
+                                            width: 1.5,
+                                          ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFFD0D0D0), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFD0D0D0),
+                                            width: 1.5,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          borderSide: const BorderSide(color: Color(0xFF2D6A4F), width: 1.5),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF2D6A4F),
+                                            width: 1.5,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -689,7 +840,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                       }).toList(),
                     ],
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 15),
 
                     // Create Service/Appointment Button
                     SizedBox(
@@ -707,7 +858,9 @@ class _CreateServicePageState extends State<CreateServicePage> {
                           elevation: 0,
                         ),
                         child: Text(
-                          _makeAppointment ? 'Create Appointment' : 'Create Service',
+                          _makeAppointment
+                              ? 'Create Appointment'
+                              : 'Create Service',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,

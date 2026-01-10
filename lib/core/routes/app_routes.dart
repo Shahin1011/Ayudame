@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:middle_ware/views/provider/auth/ProviderForgotPasswordScreen.dart';
+import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.dart';
 
 // Common/Shared Views
 import '../../views/business/Activities/ActivitiesPage.dart';
@@ -6,20 +8,17 @@ import '../../views/business/auth/BusinessForgotPasswordScreen.dart';
 import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
 import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
+import '../../views/business/home/BusinessNotificationPage.dart';
 import '../../views/business/profile/BusinessProfile.dart';
-import '../../views/common/ContactUsScreen.dart';
-import '../../views/user/bottom_nav/bottom_nav.dart';
-import '../../views/common/FaqScreen.dart';
-import '../../views/common/HelpSupportScreen.dart';
-import '../../views/common/NotificationPage.dart';
-import '../../views/common/PrivacyPolicyScreen.dart';
-import '../../views/common/TermsConditionScreen.dart';
+import '../../views/business/profile/BusinessTermsConditionScreen.dart';
+import '../../views/business/profile/PrivacyPolicyScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
 import '../../views/event_manager/auth/auth/EventVerificationCodeScreen.dart';
 import '../../views/event_manager/event/CreateEventPage.dart';
 import '../../views/event_manager/profile/EventProfile.dart';
+import '../../views/onboarding/LocationAccessScreen.dart';
 import '../../views/onboarding/UserProviderSelectionScreen.dart';
 import '../../views/onboarding/WelcomeScreen.dart';
 import '../../views/onboarding/onboardinglanguage_screen.dart';
@@ -27,13 +26,15 @@ import '../../views/onboarding/splash_screen.dart';
 import '../../views/onboarding/LocationAccessScreen.dart';
 
 // Business Feature Views
-import '../../views/business/home/BusinessHomePageScreen.dart';
+
 import '../../views/business/employee/BusinessEmployeeScreen.dart'; // Import EmployeeDetailsScreen
 
 // Event Manager Feature Views
 
 import '../../views/event_manager/home/EditEventPage.dart';
-import '../../views/event_manager/home/EventHomeScreen.dart';
+import '../../views/provider/profile/ProviderPortfolioPage.dart';
+import '../../widgets/bottom_navb.dart';
+import '../../widgets/bottom_nave.dart';
 // Event Manager Feature Views mappings removed as they are imported above directly
 
 // Provider Feature Views
@@ -42,11 +43,8 @@ import '../../views/provider/auth/SignUpProviderScreen.dart';
 import '../../views/provider/home/CreateServiceProvider.dart';
 import '../../views/provider/home/HomeProviderScreen.dart';
 import '../../views/provider/orders/OrderProvider.dart';
-import '../../views/provider/profile/AddPortfolioScreen.dart';
 import '../../views/provider/profile/BankAcountAddScreen.dart';
-import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../views/provider/profile/ProviderProfilePage.dart';
-import '../../views/provider/profile/ProviderProfileScreen.dart';
 import '../../views/provider/profile/providerBankPayoutView.dart';
 import '../../views/provider/profile/provider_AddBankInfo.dart';
 import '../../views/provider/settings/PaymentHistoryDetailPage.dart';
@@ -117,12 +115,15 @@ class AppRoutes {
   // PROVIDER ROUTES
   // ============================================
   static const String providerLogin = '/provider-login';
+  static const String providerRegister = '/SignUpProviderScreen';
+  static const String providerForgotPass = '/ProviderForgotPasswordScreen';
+  static const String providerOtp = '/providerVerificationCodeScreen';
   static const String userBottomNavScreen = '/bottom_nav/bottom_nav';
   static const String providerRegister = '/provider-register';
   static const String providerHome = '/provider-home';
-  static const String providerProfile = '/provider-profile';
-  static const String providerCreateService = '/provider-create-service';
-  static const String providerOrders = '/provider-event';
+  static const String providerProfile = '/ProviderProfilePage';
+  static const String providerCreateService = '/CreateServiceProvider';
+  static const String providerOrders = '/OrderProvider';
   static const String providerPortfolio = '/provider-portfolio';
   static const String providerAddPortfolio = '/provider-add-portfolio';
   static const String providerBankAdd = '/provider-bank-add';
@@ -142,8 +143,6 @@ class AppRoutes {
   static const String businessEmployee = '/BusinessEmployeeScreen';
   static const String businessOrders = '/business-orders';
   static const String businessActivity = '/ActivitiesPage';
-
-
 
   static const String businessProfile = '/BusinessProfile';
 
@@ -171,10 +170,10 @@ class AppRoutes {
       name: userTypeSelection,
       page: () => const UserProviderSelectionScreen(),
     ),
-    GetPage(name: location, page: () =>  LocationAccessScreen()),
-    GetPage(name: terms, page: () => const TermsConditionScreen()),
-    GetPage(name: privacy, page: () => const PrivacyPolicyScreen()),
-    GetPage(name: notifications, page: () => const NotificationPage()),
+    GetPage(name: location, page: () => const LocationAccessScreen()),
+    GetPage(name: terms, page: () => const BusinessTermsConditionScreen()),
+    GetPage(name: privacy, page: () => const BusinessPrivacyPolicyScreen()),
+    GetPage(name: notifications, page: () => const BusinessNotificationPage()),
 
     // User Auth & Features
     GetPage(name: userlogin, page: () => const UserLoginScreen()),
@@ -198,8 +197,11 @@ class AppRoutes {
     GetPage(name: userAppointment, page: () => const AppointmentScreen()),
     GetPage(name: userBooking, page: () => const BookingScreen()),
     GetPage(name: userBookingPaid, page: () => const BookingPaidScreen()),
-    GetPage(name: userOrderHistory, page: () => const OrderHistoryScreen()),
-    GetPage(name: userOrderDetails, page: () => const OrderDetailsScreen()),
+    GetPage(
+      name: userOrderHistory,
+      page: () => const OrderHistoryProviderScreen(),
+    ),
+    // GetPage(name: userOrderDetails, page: () => const OrderHistoryProviderScreen()),
     GetPage(name: userWishlist, page: () => const WishlistScreen()),
     GetPage(name: userChat, page: () => const ChatScreen()),
     GetPage(name: userPayment, page: () => const PaymentScreen()),
@@ -207,14 +209,20 @@ class AppRoutes {
     // Provider Auth & Features
     GetPage(name: providerLogin, page: () => const LoginProviderScreen()),
     GetPage(name: providerRegister, page: () => const SignUpProviderScreen()),
-    GetPage(name: providerHome, page: () => const HomeProviderScreen()),
-    GetPage(name: providerProfile, page: () => const ProviderProfilePage()),
-    GetPage(name: providerCreateService, page: () => const CreateServicePage()),
     GetPage(
-      name: providerOrders,
-      page: () => const OrderHistoryProviderScreen(),
+      name: providerForgotPass,
+      page: () => ProviderForgotPasswordScreen(),
     ),
-    GetPage(name: providerPortfolio, page: () => const PortfolioPage()),
+    GetPage(
+      name: providerOtp,
+      page: () => const ProviderVerificationCodeScreen(),
+    ),
+
+    GetPage(name: providerHome, page: () => const HomeProviderScreen()),
+    GetPage(name: providerProfile, page: () => ProviderProfilePage()),
+    GetPage(name: providerCreateService, page: () => CreateServicePage()),
+    GetPage(name: providerOrders, page: () => OrderHistoryProviderScreen()),
+    GetPage(name: providerPortfolio, page: () => const PortfolioListScreen()),
     GetPage(name: providerAddPortfolio, page: () => const AddPortfolioScreen()),
     GetPage(
       name: providerBankAdd,
@@ -237,8 +245,8 @@ class AppRoutes {
       page: () => const PaymentHistoryDetailPage(),
     ),
 
-                         // Business
-    GetPage(name: businessHome, page: () => const BusinessHomePageScreen()),
+    // Business
+    GetPage(name: businessHome, page: () => const BottomNavScreen()),
     GetPage(name: businessLogin, page: () => const BusinessLoginScreen()),
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(
@@ -257,11 +265,10 @@ class AppRoutes {
       name: businessOrders,
       page: () => const OrderHistoryProviderScreen(),
     ), // Reuse provider orders for now
-    GetPage(name: businessProfile, page: () => const BusinessProfilePage()),
+    GetPage(name: businessProfile, page: () => const Businessprofile()),
     GetPage(name: businessActivity, page: () => const ActivitiesPage()),
 
-
-                                // Event Manager
+    // Event Manager
     GetPage(name: eventLogin, page: () => const EventLoginScreen()),
     GetPage(name: eventRegister, page: () => const EventSignUpScreen()),
     GetPage(
@@ -269,7 +276,7 @@ class AppRoutes {
       page: () => const EventForgotPasswordScreen(),
     ),
     GetPage(name: eventOtp, page: () => const EventVerificationCodeScreen()),
-    GetPage(name: eventHome, page: () => const EventHomeScreen()),
+    GetPage(name: eventHome, page: () => const BottomNavEScreen()),
     GetPage(name: eventCreate, page: () => const CreateEventPage()),
     GetPage(name: eventEdit, page: () => const EditEventPage()),
     GetPage(name: eventProfile, page: () => const EventProfilePage()),

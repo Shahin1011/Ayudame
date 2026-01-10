@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/home/EventNotificationPage.dart';
 import '../../../core/routes/app_routes.dart';
 import 'EventDetailPage.dart';
+import 'cancel.dart';
 
 class EventHomeScreen extends StatelessWidget {
   const EventHomeScreen({super.key});
@@ -10,61 +15,92 @@ class EventHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundImage: AssetImage('assets/images/profile.png'),
-          ),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Welcome Back',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Text(
-              'John Doe',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.notifications_outlined,
-                color: Color(0xFF1C5941),
-              ),
-              onPressed: () {
-                 Get.to(() =>  EventNotificationPage());
-              },
+      backgroundColor: AppColors.bgColor,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: AppColors.mainAppColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
           ),
-        ],
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Color(0xFFD4B896),
+                  backgroundImage: AssetImage('assets/images/men.png'),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Seam Rahman',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  EventNotificationPage(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      AppIcons.notification,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF2D6A4F),
+                        BlendMode.srcIn,
+                      ),
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _buildEventCard(
-
             context,
             imageUrl: 'assets/images/event_detail.png',
             event: "Event Name",
@@ -91,7 +127,6 @@ class EventHomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
@@ -145,7 +180,15 @@ class EventHomeScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 120,
                     color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 50, color: Colors.grey),
+                    child: SvgPicture.asset(
+                      AppIcons.create,
+                      width: 50,
+                      height: 50,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.grey,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -298,18 +341,23 @@ class EventHomeScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                        color: Colors.grey[600],
+                      SvgPicture.asset(
+                        AppIcons.location,
+                        width: 16,
+                        height: 16,
+                        colorFilter: ColorFilter.mode(
+                          Colors.grey[600]!,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           location,
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.dark,
                           ),
                         ),
                       ),
@@ -322,10 +370,12 @@ class EventHomeScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
+                          
                           onPressed: () {
                             Get.toNamed(AppRoutes.eventEdit);
                           },
                           style: OutlinedButton.styleFrom(
+                            backgroundColor: Color(0xFFF3F8F4),
                             foregroundColor: const Color(0xFF1C5941),
                             side: const BorderSide(color: Color(0xFF1C5941)),
                             shape: RoundedRectangleBorder(
@@ -343,9 +393,12 @@ class EventHomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
+
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showCancelEventDialog(context);
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1C5941),
                             foregroundColor: Colors.white,
@@ -372,82 +425,6 @@ class EventHomeScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // Home button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventHome);
-                },
-                child: _buildNavItem(
-                  Icons.home,
-                  'Home',
-                  true,
-                ),
-              ),
-              // Create Event button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventCreate);
-                },
-                child: _buildNavItem(
-                  Icons.event_outlined,
-                  'Create Event',
-                  false,
-                ),
-              ),
-              // Profile button
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.eventProfile);
-                },
-                child: _buildNavItem(Icons.person_outline, 'Profile', false),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isActive ? const Color(0xFF1C5941) : Colors.grey,
-          size: 24,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isActive ? const Color(0xFF1C5941) : Colors.grey,
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ],
     );
   }
 }
