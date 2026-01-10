@@ -40,6 +40,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     _navItem(AppIcons.profile, AppIcons.profiles, "Profile", 3),
   ];
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
