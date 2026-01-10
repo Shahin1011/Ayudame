@@ -36,6 +36,7 @@ class userNotificationPage extends StatelessWidget {
                   const Text(
                     'Notification',
                     style: TextStyle(
+                      fontFamily: "Inter",
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -150,6 +151,7 @@ class userNotificationPage extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
+                    fontFamily: "Inter",
                     fontSize: 12,
                     color: Colors.grey[600],
                     height: 1.5,
@@ -159,6 +161,7 @@ class userNotificationPage extends StatelessWidget {
                 Text(
                   time,
                   style: TextStyle(
+                    fontFamily: "Inter",
                     fontSize: 11,
                     color: Colors.grey[500],
                   ),

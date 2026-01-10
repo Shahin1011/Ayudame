@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class BusinessNotificationPage extends StatelessWidget {
   const BusinessNotificationPage({Key? key}) : super(key: key);
@@ -7,43 +8,10 @@ class BusinessNotificationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(title: "Notification"),
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFF2D6A4F),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/arrow_back.svg',
-                      color: Colors.white,
-                      width: 20,
-                      height: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Notification',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
             // Notifications List
             Expanded(
@@ -137,12 +105,7 @@ class BusinessNotificationPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SvgPicture.asset(
-                      'assets/icons/more_vert.svg',
-                      width: 18,
-                      height: 18,
-                      color: Colors.grey[400],
-                    ),
+                    Icon(Icons.more_vert, size: 18, color: Colors.grey[400]),
                   ],
                 ),
                 const SizedBox(height: 6),

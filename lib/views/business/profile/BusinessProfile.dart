@@ -1,68 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
+import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/views/business/profile/business_profile_screen.dart';
+import 'package:middle_ware/views/business/profile/payment.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../widgets/custom_appbar.dart';
+import '../home/BusinessNotificationPage.dart';
+import 'bank_information.dart';
+import 'edit_profile_screen.dart';
+import 'BusinessHelpSupportScreen.dart';
+import 'BusinessTermsConditionScreen.dart';
+import 'PrivacyPolicyScreen.dart';
 
-import 'EventHelpSupportScreen.dart';
-import 'EventTermsConditionScreen.dart';
-
-class BusinessProfilePage extends StatefulWidget {
-  const BusinessProfilePage({Key? key}) : super(key: key);
+class Businessprofile extends StatefulWidget {
+  const Businessprofile({Key? key}) : super(key: key);
 
   @override
-  State<BusinessProfilePage> createState() => _BusinessProfilePageState();
+  State<Businessprofile> createState() => _BusinessprofileState();
 }
 
-class _BusinessProfilePageState extends State<BusinessProfilePage> {
+class _BusinessprofileState extends State<Businessprofile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Profile", showBackButton: false),
       body: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D6A4F),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 4,
-                  right: 16,
-                  top: 8,
-                  bottom: 16,
-                ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'Profile',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    // IconButton(
-                    //   onPressed: () {
-                    //     Navigator.pushNamed(context, '/profile/edit');
-                    //   },
-                    //   icon: const Icon(Icons.add, color: Colors.white, size: 24),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -88,26 +53,8 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                         ),
                         child: const CircleAvatar(
                           radius: 50,
-                          backgroundImage: NetworkImage(
-                            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2D6A4F),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: SvgPicture.asset(
-                            'assets/icons/edit.svg',
-                            width: 14,
-                            height: 14,
-                            color: Colors.white,
+                          backgroundImage: AssetImage(
+                            'assets/images/profile.png',
                           ),
                         ),
                       ),
@@ -129,7 +76,11 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
 
                   const Text(
                     'seamr7845@gmail.com',
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                      fontFamily: 'Inter',
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -162,46 +113,34 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                           ),
                         ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/profile.svg',
+                          iconPath: AppIcons.profileIcon,
                           title: 'Profile info',
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => const EditProfileScreen());
+                          },
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.work_outline,
-                        //   title: 'All Services',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/service');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.history,
-                        //   title: 'Order History',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/order');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.dashboard_outlined,
-                        //   title: 'Portfolio',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/portfolio');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.receipt_long_outlined,
-                        //   title: 'Payment History',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/payment/history');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.account_balance_outlined,
-                        //   title: 'Bank Information',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/provider/bank/add');
-                        //   },
-                        //   showDivider: false,
-                        // ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.business,
+                          title: 'Business profile',
+                          onTap: () {
+                            Get.to(() => const BusinessProfileScreen());
+                          },
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.payment,
+                          title: 'Payment History',
+                          onTap: () {
+                            Get.to(() => PaymentHistoryScreen());
+                          },
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.bank,
+                          title: 'Bank Information',
+                          onTap: () {
+                            Get.to(() => BankInformationScreen());
+                          },
+                          showDivider: false,
+                        ),
                       ],
                     ),
                   ),
@@ -236,19 +175,20 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                             ),
                           ),
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.shield_outlined,
-                        //   title: 'Privacy Policy',
-                        //     onTap: () => Get.to(() => EventPrivacyPolicyScreen ()),
-                        //
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.description_outlined,
-                        //   title: 'Terms & Condition',
-                        //
-                        //     onTap: () => Get.to(() => EventTermsConditionScreen ()),
-                        //   showDivider: false,
-                        // ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.privacy,
+                          title: 'Privacy Policy',
+                          onTap: () =>
+                              Get.to(() => BusinessPrivacyPolicyScreen()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.terms,
+                          title: 'Terms & Condition',
+
+                          onTap: () =>
+                              Get.to(() => BusinessTermsConditionScreen()),
+                          showDivider: false,
+                        ),
                       ],
                     ),
                   ),
@@ -283,25 +223,24 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                             ),
                           ),
                         ),
-                        // _buildMenuItem(
-                        //   icon: Icons.notifications_none_outlined,
-                        //   title: 'Notification',
-                        //   onTap: () {
-                        //     Navigator.pushNamed(context, '/notifications');
-                        //   },
-                        // ),
-                        // _buildMenuItem(
-                        //   icon: Icons.help_outline,
-                        //   title: 'Help & Support',
-                        //  onTap: () => Get.to(() => EventHelpSupportScreen()),
-                        // ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/logout.svg',
+                          iconPath: AppIcons.notification,
+                          title: 'Notification',
+                          onTap: () => Get.to(() => BusinessNotificationPage()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.help,
+                          title: 'Help & Support',
+                          onTap: () =>
+                              Get.to(() => BusinessHelpSupportScreen()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.logout,
                           title: 'Log Out',
                           onTap: _showLogoutDialog,
                         ),
                         _buildMenuItem(
-                          iconPath: 'assets/icons/delete.svg',
+                          iconPath: AppIcons.delete,
                           title: 'Delete Account',
                           onTap: () {
                             _showDeleteAccountDialog(context);
@@ -343,10 +282,13 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                     shape: BoxShape.circle,
                   ),
                   child: SvgPicture.asset(
-                    'assets/icons/logout.svg',
+                    AppIcons.logout,
                     width: 32,
                     height: 32,
-                    color: Colors.orange.shade400,
+                    colorFilter: ColorFilter.mode(
+                      Colors.orange.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -449,10 +391,13 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                     shape: BoxShape.circle,
                   ),
                   child: SvgPicture.asset(
-                    'assets/icons/delete.svg',
+                    AppIcons.delete,
                     width: 32,
                     height: 32,
-                    color: Colors.red.shade400,
+                    colorFilter: ColorFilter.mode(
+                      Colors.red.shade400,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -553,36 +498,36 @@ class _BusinessProfilePageState extends State<BusinessProfilePage> {
                   iconPath,
                   width: 22,
                   height: 22,
-                  color: isDestructive ? Colors.red : Colors.black54,
+                  colorFilter: ColorFilter.mode(
+                    isDestructive ? Colors.red : Colors.black54,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     title,
                     style: TextStyle(
+                      fontFamily: "Inter",
                       fontSize: 14,
                       color: isDestructive ? Colors.red : Colors.black87,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 SvgPicture.asset(
-                  'assets/icons/arrow_forward.svg',
-                  width: 14,
-                  height: 14,
-                  color: isDestructive ? Colors.red : Colors.black38,
+                  AppIcons.arrow_right,
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    isDestructive ? Colors.red : Colors.black38,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ],
             ),
           ),
         ),
-        // if (showDivider)
-        //   Divider(
-        //     height: 1,
-        //     indent: 52,
-        //     endIndent: 16,
-        //     color: Colors.grey.shade200,
-        //   ),
       ],
     );
   }

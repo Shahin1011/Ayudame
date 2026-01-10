@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../core/routes/app_routes.dart';
 
@@ -19,15 +24,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _eventTypeController = TextEditingController();
   final TextEditingController _eventManagerController = TextEditingController();
-  final TextEditingController _eventLocationController = TextEditingController();
-  final TextEditingController _ticketStartDateController = TextEditingController();
-  final TextEditingController _ticketEndDateController = TextEditingController();
-  final TextEditingController _eventStartDateController = TextEditingController();
+  final TextEditingController _eventLocationController =
+      TextEditingController();
+  final TextEditingController _ticketStartDateController =
+      TextEditingController();
+  final TextEditingController _ticketEndDateController =
+      TextEditingController();
+  final TextEditingController _eventStartDateController =
+      TextEditingController();
   final TextEditingController _eventEndDateController = TextEditingController();
   final TextEditingController _ticketPriceController = TextEditingController();
   final TextEditingController _maxTicketsController = TextEditingController();
-  final TextEditingController _confirmationCodeController = TextEditingController();
-  final TextEditingController _eventDescriptionController = TextEditingController();
+  final TextEditingController _confirmationCodeController =
+      TextEditingController();
+  final TextEditingController _eventDescriptionController =
+      TextEditingController();
 
   String? _selectedImagePath;
 
@@ -81,23 +92,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Create Event',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Event Create", showBackButton: false),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -105,144 +101,119 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Event Flier Section
-              const Text(
-                'Event Flier',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              // ১. Event Flier Card
+              _buildSectionCard(
+                title: 'Event Flier',
+                child: _buildImageUploadBox(),
+              ),
+              const SizedBox(height: 16),
+
+              // ২. Event Information Card
+              _buildSectionCard(
+                title: 'Event Information',
+                child: Column(
+                  children: [
+                    _buildTextField(
+                      controller: _eventNameController,
+                      hintText: 'Event Name',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDropdownField(
+                      controller: _eventTypeController,
+                      hintText: 'Event Type',
+                      items: [
+                        'Concert / Music Show',
+                        'Cultural Program',
+                        'Seminar / Conference',
+                        'Sports Event',
+                        'Festival / Fair',
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _eventManagerController,
+                      hintText: 'Event Manager Name',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildLocationField(
+                      controller: _eventLocationController,
+                      hintText: 'Event Location',
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              _buildImageUploadBox(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
-              // Event Information Section
-              const Text(
-                'Event Information',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              // ৩. Dates & Times Card
+              _buildSectionCard(
+                title: 'Dates & Times',
+                child: Column(
+                  children: [
+                    _buildDateField(
+                      controller: _ticketStartDateController,
+                      hintText: 'Ticket Sales Start Date',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDateField(
+                      controller: _ticketEndDateController,
+                      hintText: 'Ticket Sales End Date',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDateTimeField(
+                      controller: _eventStartDateController,
+                      hintText: 'Event Start Date & Time',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDateTimeField(
+                      controller: _eventEndDateController,
+                      hintText: 'Event End Date & Time',
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              _buildTextField(
-                controller: _eventNameController,
-                hintText: 'Event Name',
-              ),
-              const SizedBox(height: 12),
-
-              _buildDropdownField(
-                controller: _eventTypeController,
-                hintText: 'Event Type',
-              ),
-              const SizedBox(height: 12),
-
-              _buildTextField(
-                controller: _eventManagerController,
-                hintText: 'Event Manager Name',
-              ),
-              const SizedBox(height: 12),
-
-              _buildLocationField(
-                controller: _eventLocationController,
-                hintText: 'Event Location',
-              ),
-              const SizedBox(height: 24),
-
-              // Dates & Times Section
-              const Text(
-                'Dates & Times',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              // ৪. Ticket Information Card
+              _buildSectionCard(
+                title: 'Ticket Information',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildTextField(
+                      controller: _ticketPriceController,
+                      hintText: 'Ticket Price (\$)',
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _maxTicketsController,
+                      hintText: 'Maximum Number of Tickets',
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _confirmationCodeController,
+                      hintText: 'Confirmation Code Prefix',
+                      keyboardType: TextInputType.numberWithOptions(),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'This will be used to generate unique confirmation codes for attendees.',
+                      style: TextStyle(fontSize: 11, color: AppColors.dark),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              _buildDateField(
-                controller: _ticketStartDateController,
-                hintText: 'Ticket Sales Start Date',
-              ),
-              const SizedBox(height: 12),
-
-              _buildDateField(
-                controller: _ticketEndDateController,
-                hintText: 'Ticket Sales End Date',
-              ),
-              const SizedBox(height: 12),
-
-              _buildDateTimeField(
-                controller: _eventStartDateController,
-                hintText: 'Event Start Date & Time',
-              ),
-              const SizedBox(height: 12),
-
-              _buildDateTimeField(
-                controller: _eventEndDateController,
-                hintText: 'Event End Date & Time',
-              ),
-              const SizedBox(height: 24),
-
-              // Ticket Information Section
-              const Text(
-                'Ticket Information',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              // ৫. Description Card
+              _buildSectionCard(
+                title: 'Ticket Information',
+                child: _buildTextField(
+                  controller: _eventDescriptionController,
+                  hintText: 'Event Description',
+                  maxLines: 4,
                 ),
-              ),
-              const SizedBox(height: 12),
-
-              _buildTextField(
-                controller: _ticketPriceController,
-                hintText: 'Ticket Price (\$)',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 12),
-
-              _buildTextField(
-                controller: _maxTicketsController,
-                hintText: 'Maximum Number of Tickets',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 12),
-
-              _buildTextField(
-                controller: _confirmationCodeController,
-                hintText: 'Confirmation Code Prefix (e.g MDR23012)',
-                readOnly: true,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'This will be used to generate unique confirmation codes for attendees.',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Ticket Information (Description) Section
-              const Text(
-                'Ticket Information',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              _buildTextField(
-                controller: _eventDescriptionController,
-                hintText: 'Event Description',
-                maxLines: 4,
               ),
               const SizedBox(height: 32),
 
@@ -253,18 +224,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   onPressed: _handleNext,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: const Text(
                     'Next',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -296,18 +266,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.cloud_upload_outlined,
-              size: 32,
-              color: Colors.grey[400],
+            SvgPicture.asset(
+              AppIcons.create,
+              width: 32,
+              height: 32,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
             ),
             const SizedBox(height: 8),
             Text(
               'Upload your event flier or promotional image',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: AppColors.grey),
             ),
           ],
         ),
@@ -335,10 +303,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         readOnly: readOnly,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
@@ -352,6 +317,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   Widget _buildDropdownField({
     required TextEditingController controller,
     required String hintText,
+    required List<String> items,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -359,28 +325,37 @@ class _CreateEventPageState extends State<CreateEventPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFE0E0E0)),
       ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: true,
-        onTap: () {
-          // Show dropdown
-        },
+      child: DropdownButtonFormField<String>(
+        value: controller.text.isEmpty ? null : controller.text,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
-          suffixIcon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.grey[600],
-          ),
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
-            vertical: 12,
+            vertical: 4,
           ),
         ),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: AppColors.grey,
+        ), // Dropdown usually uses a built-in arrow but keeping consistency if possible
+        // Actually DropdownButtonFormField has its own icon property.
+        // We can use a custom widget if we really want SVG here, but let's keep it simple or use a rotated arrow.
+        // For now, let's just leave it or use a default if we don't have a clear small arrow svg.
+        // Actually, let's keep the Material arrow for dropdown for now or use a generic one if we have it.
+        // There is no small down arrow in assets/icons list except maybe "Clean" or others which don't fit.
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item, style: const TextStyle(fontSize: 14)),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            controller.text = newValue ?? "";
+          });
+        },
       ),
     );
   }
@@ -399,14 +374,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(
-            Icons.location_on_outlined,
-            size: 20,
-            color: Colors.grey[600],
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.location,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -444,14 +420,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
         },
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
-          suffixIcon: Icon(
-            Icons.calendar_today_outlined,
-            size: 20,
-            color: Colors.grey[600],
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -459,6 +436,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
             vertical: 12,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
       ),
     );
   }
@@ -489,20 +493,22 @@ class _CreateEventPageState extends State<CreateEventPage> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              controller.text = '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
+              controller.text =
+                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
             }
           }
         },
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 14,
-          ),
-          suffixIcon: Icon(
-            Icons.calendar_today_outlined,
-            size: 20,
-            color: Colors.grey[600],
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -535,149 +541,156 @@ class EventPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C5941),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Create Event',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+      backgroundColor: const Color(0xFFF9F9F9),
+      appBar: CustomAppBar(title: "Event Create"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Event Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imagePath ?? 'assets/images/event_preview.jpg',
-                width: double.infinity,
-                height: 150,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 150,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                  );
-                },
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-
-            Text(
-              eventName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            _buildInfoRow(Icons.calendar_today_outlined, 'Date & Time', 'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM'),
-            const SizedBox(height: 12),
-            _buildInfoRow(Icons.location_on_outlined, 'Location', location),
-            const SizedBox(height: 12),
-            _buildInfoRow(Icons.confirmation_number_outlined, 'Ticket Price', '\$${ticketPrice} per ticket'),
-            const SizedBox(height: 16),
-
-            const Text(
-              'Description',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Join us for an unforgettable night of music under the stars! Featuring top artists and bands from around the world.',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[700],
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            const Text(
-              'Confirmation Code Prefix',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              confirmationCode,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF1C5941),
-                      side: const BorderSide(color: Color(0xFF1C5941)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text(
-                      'Edit Event',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      imagePath ?? 'assets/images/event_detail.png',
+                      width: double.infinity,
+                      height: 180,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: double.infinity,
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: SvgPicture.asset(
+                            AppIcons.create,
+                            width: 50,
+                            height: 50,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.grey,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.eventHome);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text(
-                      'Create Event',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  const SizedBox(height: 20),
+
+                  Text(
+                    eventName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+
+                  _buildInfoRow(
+                    AppIcons.date,
+                    'Date & Time',
+                    'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(AppIcons.location, 'Location', location),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    AppIcons.ticket,
+                    'Ticket Price',
+                    '\$${ticketPrice} per ticket',
+                  ),
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    'Description',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Join us for an unforgettable night of music under the stars! Featuring top artists and bands from around the world.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  const Divider(thickness: 0.8),
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    'Confirmation Code Prefix',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    confirmationCode,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF1C5941),
+                            side: const BorderSide(color: Color(0xFF1C5941)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: const Text('Edit Event'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.eventHome);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1C5941),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: const Text('Create Event'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -685,11 +698,16 @@ class EventPreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(String iconPath, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Colors.grey[600]),
+        SvgPicture.asset(
+          iconPath,
+          width: 18,
+          height: 18,
+          colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -698,23 +716,51 @@ class EventPreviewPage extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
+                  fontSize: 16,
+                  color: AppColors.dark,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: AppColors.grey,
                 ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSectionCard({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
     );
   }
 
@@ -735,10 +781,14 @@ class EventPreviewPage extends StatelessWidget {
                   color: Color(0xFF4CAF50),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 40,
+                child: SvgPicture.asset(
+                  AppIcons.check,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                  width: 40,
+                  height: 40,
                 ),
               ),
               const SizedBox(height: 16),
@@ -760,10 +810,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Event Name',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -787,10 +834,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Location',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -814,10 +858,7 @@ class EventPreviewPage extends StatelessWidget {
                       children: [
                         Text(
                           'Ticket Price',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         SizedBox(height: 4),
                         Text(
@@ -850,10 +891,7 @@ class EventPreviewPage extends StatelessWidget {
                   ),
                   child: const Text(
                     'Go Home',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

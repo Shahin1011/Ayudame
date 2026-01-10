@@ -16,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F8F4),
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
@@ -67,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       flag: '🇪🇸',
                       textColor: Colors.black,
                       imagePath: 'assets/images/spain.png',
-                      cardColor: Color(0xFFEAEFE9),
+                      cardColor: AppColors.mainAppColor.withOpacity(0.1),
                       onTap: () {
                         _handleLanguageSelection(context, 'Spanish');
                       },
@@ -167,7 +167,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.bgColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -198,7 +198,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Description
                     Text(
@@ -210,7 +210,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 15),
 
                     Text(
                       'The personal information that we collect depends on the context of your interactions with us and the [app/service], the choices you make, and the products and features you use.',
@@ -221,7 +221,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Section 1
                     const Text(
@@ -267,7 +267,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 25),
 
                     // Accept Terms Checkbox
                     InkWell(
@@ -297,7 +297,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                                 : null,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           const Text(
                             'Accept terms & conditions',
                             style: TextStyle(
@@ -309,7 +309,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 25),
 
                     // Next Button
                     SizedBox(
@@ -393,7 +393,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Scrollable Content
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -406,7 +406,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
 
                             Text(
                               'Accessing or using our services, you agree to be bound by these Terms of Service. If you do not agree with any part of the terms, you must not use our services.',
@@ -419,7 +419,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                             const Text(
                               '2. User Responsibilities',
@@ -440,13 +440,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
 
                             _buildBulletPoint('Use the service only for lawful purposes.'),
                             _buildBulletPoint('Provide accurate and complete information when required.'),
                             _buildBulletPoint('Maintain the confidentiality of your account password.'),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                             const Text(
                               '3. Intellectual Property',
@@ -468,7 +468,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                             const Text(
                               '4. Disclaimers',
@@ -490,7 +490,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                             InkWell(
                               onTap: () {
@@ -522,7 +522,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       )
                                           : null,
                                     ),
-                                    const SizedBox(width: 12),
+                                    const SizedBox(width: 10),
                                     Text(
                                       'Accept terms & conditions',
                                       style: TextStyle(

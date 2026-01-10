@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../core/theme/app_colors.dart';
 
 class EmployeeDetailsScreen extends StatefulWidget {
@@ -17,37 +18,12 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.mainAppColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/icons/arrow_back.svg',
-            color: Colors.white,
-            width: 20,
-            height: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Employee',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/more_vert.svg',
-              color: Colors.white,
-            ),
-            onPressed: () => _showActionSheet(context),
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(title: "Employee",  actions: [
+        IconButton(
+          icon: const Icon(Icons.more_vert, color: Colors.white),
+          onPressed: () => _showActionSheet(context),
+        )
+      ],),
       body: Column(
         children: [
           _buildProfileHeader(),
@@ -103,11 +79,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           ),
           const Text(
             'Provider',
-            style: TextStyle(color: AppColors.grey, fontSize: 14),
+            style: TextStyle(color: AppColors.grey, fontSize: 14,fontWeight: FontWeight.w500),
           ),
           const Text(
             'Exper House Cleaning Service',
-            style: TextStyle(color: AppColors.grey, fontSize: 14),
+            style: TextStyle(color: AppColors.grey, fontSize: 14, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 20),
           Row(
@@ -115,7 +91,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             children: [
               _circleIcon('assets/icons/call.svg'),
               const SizedBox(width: 20),
-              _circleIcon('assets/icons/chat.svg'),
+              _circleIcon('assets/icons/message-02.svg'),
             ],
           ),
         ],
@@ -127,9 +103,10 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        shape: BoxShape.rectangle,
         color: AppColors.mainAppColor,
         border: Border.all(color: Colors.white24),
+        borderRadius: BorderRadius.circular(12)
       ),
       child: SvgPicture.asset(
         iconPath,
@@ -208,59 +185,93 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           crossAxisSpacing: 15,
           children: [
             _statTile(
-              'assets/icons/calendar.svg',
+              'assets/icons/job.svg',
               "Total Jobs",
               "1,247",
-              const Color(0xFFFFEAEA),
-              Colors.red,
+              const Color(0xFFCC75D4),
+              Colors.white,
             ),
             _statTile(
-              'assets/icons/star.svg',
+              'assets/icons/rating.svg',
               "Rating",
               "4.9",
-              const Color(0xFFFFEAEA),
-              Colors.red,
+              const Color(0xFFFF9F19),
+              Colors.white,
             ),
             _statTile(
-              'assets/icons/wallet.svg',
+              'assets/icons/income.svg',
               "Earnings",
               "\$ 12,222",
-              const Color(0xFFFFEAEA),
-              Colors.red,
+              const Color(0xFF70CA88),
+              Colors.white,
             ),
             _statTile(
-              'assets/icons/person_add.svg',
+              'assets/icons/join.svg',
               "Joined",
               "Jan 15, 2024",
-              const Color(0xFFFFEAEA),
-              Colors.red,
+              const Color(0xFF3C94DB),
+              Colors.white,
             ),
           ],
         ),
-        const SizedBox(height: 25),
-        const Text(
-          "Upcoming Schedules",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black87,
+        const SizedBox(height: 5),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Upcoming Schedules",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 15),
+              _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
+              Divider(height: 1),
+              _scheduleCard("Home Cleaning", "Arif hasan", "Tomorrow, 2:00 pm"),
+              Divider(height: 1),
+              _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
+
+              ]
           ),
         ),
-        const SizedBox(height: 15),
-        _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
-        _scheduleCard("Home Cleaning", "Arif hasan", "Tomorrow, 2:00 pm"),
-        const SizedBox(height: 25),
-        const Text(
-          "Contract Information",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black87,
+
+         SizedBox(height: 25),
+
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Contract Information",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                _contractItem('assets/icons/phone.svg', "Phone", "+1 235455 5255 44"),
+                _contractItem('assets/icons/email.svg', "Email", "Siamrrr85@gmail.com"),
+
+              ]
           ),
         ),
-        const SizedBox(height: 15),
-        _contractItem('assets/icons/phone.svg', "Phone", "+1 235455 5255 44"),
-        _contractItem('assets/icons/email.svg', "Email", "Siamrrr85@gmail.com"),
+SizedBox(height: 30,),
       ],
     );
   }
@@ -295,14 +306,14 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                 child: SvgPicture.asset(
                   iconPath,
                   color: iconColor,
-                  width: 14,
-                  height: 14,
+                  width: 17,
+                  height: 15,
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 12, color: AppColors.grey, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -323,7 +334,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: Colors.white),
       ),
       child: Row(
         children: [
@@ -334,8 +345,8 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: SvgPicture.asset(
-              'assets/icons/cleaning_service.svg',
-              color: Colors.green,
+              'assets/icons/clean.svg',
+              color: AppColors.mainAppColor,
               width: 20,
               height: 20,
             ),
@@ -363,7 +374,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             time,
             style: const TextStyle(
               color: Colors.green,
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -379,7 +390,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
         children: [
           SvgPicture.asset(
             iconPath,
-            color: Colors.green,
+            color: AppColors.mainAppColor,
             width: 22,
             height: 22,
           ),
@@ -404,6 +415,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       ),
     );
   }
+                            // <----------- Activities Section --------->
 
   Widget _buildActivities() {
     return ListView.builder(
@@ -461,6 +473,9 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
     );
   }
 
+                // <----------- order Section --------->
+
+
   Widget _buildOrders() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -507,7 +522,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                 style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
             ),
-            const Divider(height: 25),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -526,17 +541,19 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       ),
     );
   }
+                                     // <----------- showActionSheet --------->
 
   void _showActionSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
+        width: double.infinity,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 80),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -548,31 +565,48 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            const SizedBox(height: 10),
-            ListTile(
-              leading: SvgPicture.asset(
-                'assets/icons/block.svg',
-                color: Colors.black87,
+            const SizedBox(height: 20),
+            Container(
+              width: 300,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
               ),
-              title: const Text(
-                "Block Employee",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: SvgPicture.asset(
-                'assets/icons/remove_person.svg',
-                color: Colors.red,
-              ),
-              title: const Text(
-                "Remove Employee",
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.w500,
+              child: ListTile(
+                leading: SvgPicture.asset(
+                  'assets/icons/block.svg',
+                  color: Colors.black87,
                 ),
+                title: const Text(
+                  "Block Employee",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                onTap: () => Navigator.pop(context),
               ),
-              onTap: () => Navigator.pop(context),
+            ),
+SizedBox(height: 20,),
+            Container(
+              width: 300,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ListTile(
+                leading: SvgPicture.asset(
+                  'assets/icons/remove.svg',
+                  color: Colors.red,
+                ),
+                title: const Text(
+                  "Remove Employee",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () => Navigator.pop(context),
+              ),
             ),
             const SizedBox(height: 10),
           ],
