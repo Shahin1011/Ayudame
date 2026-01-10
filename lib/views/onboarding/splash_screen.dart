@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:middle_ware/core/routes/app_routes.dart';
-import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,7 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // Navigate to onboarding screen after 4 seconds
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 4), () {
       Navigator.pushNamed(context, '/onboarding');
     });
   }
@@ -22,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.bgColor,
       body: Container(
         // Three-color linear gradient background
         decoration: const BoxDecoration(
@@ -29,9 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF9CCCA9),
-              Color(0xFFFFFFFF),
-              Color(0xFF9CCCA9),
+              Color(0xFF9CCCA9), // #9CCCA9 - Light green
+              Color(0xFFFFFFFF), // #FFFFFF - White
+              Color(0xFF9CCCA9), // #9CCCA9 - Light green
             ],
             stops: [0.0, 0.5, 1.0], // Control the position of each color
           ),
