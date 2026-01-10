@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 
 import '../../core/routes/app_routes.dart';
-
+import 'package:get/get.dart';
+import 'package:get/route_manager.dart';
 class UserProviderSelectionScreen extends StatefulWidget {
   const UserProviderSelectionScreen({super.key});
 

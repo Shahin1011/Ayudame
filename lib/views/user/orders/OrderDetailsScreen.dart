@@ -1,39 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class OrderDetailsScreen extends StatelessWidget {
-  const OrderDetailsScreen({Key? key}) : super(key: key);
+  const OrderDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2D5F4F),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Order details',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
+      appBar: CustomAppBar(title: "Order Details"),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.040),
+
+
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF2D5F4F),
-                borderRadius: const BorderRadius.only(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                 ),
@@ -42,13 +32,13 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 28,
+                    radius: 30,
                     backgroundColor: Colors.white,
                     child: ClipOval(
                       child: Image.network(
                         'https://i.pravatar.cc/150?img=12',
-                        width: 56,
-                        height: 56,
+                        width: 60,
+                        height: 60,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
@@ -67,16 +57,16 @@ class OrderDetailsScreen extends StatelessWidget {
                         const Text(
                           'Tamim Sarkar',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Estimated Arrival time',
+                          'Dhanmondi,Dhaka 1209',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.black.withOpacity(0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -84,12 +74,12 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Date: 01/08/2025',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.black.withOpacity(0.9),
                           fontSize: 11,
                         ),
                       ),
@@ -97,7 +87,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       Text(
                         'Time: 12:00pm',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.black.withOpacity(0.9),
                           fontSize: 11,
                         ),
                       ),
@@ -106,18 +96,18 @@ class OrderDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 12.h),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Title:',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: AppColors.mainAppColor,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -130,22 +120,22 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Note:',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: AppColors.mainAppColor,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding:  EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[300]!),
+                      border: Border.all(color: AppColors.mainAppColor),
                     ),
                     child: const Text(
                       'Please ensure all windows are securely locked after cleaning. Kindly use eco-friendly cleaning products as we prefer natural solutions.',
@@ -158,7 +148,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   const Text(
-                    'Amount Paid : \$200',
+                    'Price : \$200',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,

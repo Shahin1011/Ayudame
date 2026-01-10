@@ -17,18 +17,18 @@ void _initDependencies() {
   // Auth Controller
   // Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
 
-  // TODO: Add more controllers here as you create them
-  // User Controllers
-  // Get.lazyPut<UserHomeController>(() => UserHomeController(), fenix: true);
+import 'core/routes/app_routes.dart';
 
-  // Provider Controllers
-  // Get.lazyPut<ProviderHomeController>(() => ProviderHomeController(), fenix: true);
 
-  // Business Controllers
-  // Get.lazyPut<BusinessHomeController>(() => BusinessHomeController(), fenix: true);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+  ));
 
-  // Event Manager Controllers
-  // Get.lazyPut<EventManagerHomeController>(() => EventManagerHomeController(), fenix: true);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -118,7 +118,6 @@ class _BookingScreenState extends State<BookingPaidScreen> {
                     ),
                     const SizedBox(height: 24),
 
-
                     const Text(
                       'Date',
                       style: TextStyle(
