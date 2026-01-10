@@ -119,7 +119,6 @@ class AppRoutes {
   static const String providerForgotPass = '/ProviderForgotPasswordScreen';
   static const String providerOtp = '/providerVerificationCodeScreen';
   static const String userBottomNavScreen = '/bottom_nav/bottom_nav';
-  static const String providerRegister = '/provider-register';
   static const String providerHome = '/provider-home';
   static const String providerProfile = '/ProviderProfilePage';
   static const String providerCreateService = '/CreateServiceProvider';
@@ -182,7 +181,7 @@ class AppRoutes {
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),
     GetPage(name: userNewPasswordScreen, page: () => UserNewPasswordScreen()),
     GetPage(name: userHome, page: () => const HomePage()),
-    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
+    //GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
 
     GetPage(name: userProfile, page: () => ProfilePage()),
     GetPage(name: userEditProfile, page: () => const EditProfileScreen()),

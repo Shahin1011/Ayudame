@@ -1,23 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
-
-void main() {
-  // Initialize GetX dependencies
-  _initDependencies();
-
-  runApp(const MyApp());
-}
-
-/// Initialize all GetX controllers and dependencies
-void _initDependencies() {
-  // Auth Controller
-  // Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
-
-import 'core/routes/app_routes.dart';
 
 
 void main() async {
