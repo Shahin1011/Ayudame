@@ -1,12 +1,14 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:math';
+
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:middle_ware/views/event_manager/home/EventHomeScreen.dart';
-import 'package:middle_ware/widgets/bottom_nave.dart';
+import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+
+import '../../../core/routes/app_routes.dart';
 
 class EditEventPage extends StatefulWidget {
   const EditEventPage({super.key});
@@ -17,27 +19,40 @@ class EditEventPage extends StatefulWidget {
 
 class _EditEventPageState extends State<EditEventPage> {
   final _formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
-  File? _selectedImage;
 
+  // Controllers
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _eventTypeController = TextEditingController();
   final TextEditingController _eventManagerController = TextEditingController();
   final TextEditingController _eventLocationController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _ticketStartDateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _ticketEndDateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _eventStartDateController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _eventEndDateController = TextEditingController();
   final TextEditingController _ticketPriceController = TextEditingController();
   final TextEditingController _maxTicketsController = TextEditingController();
   final TextEditingController _confirmationCodeController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _eventDescriptionController =
-      TextEditingController();
+  TextEditingController();
+
+  String? _selectedImagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateConfirmationCode();
+  }
+
+  void _generateConfirmationCode() {
+    final random = Random();
+    final code = List.generate(10, (index) => random.nextInt(10)).join();
+    _confirmationCodeController.text = code;
+  }
 
   @override
   void dispose() {
@@ -56,180 +71,147 @@ class _EditEventPageState extends State<EditEventPage> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-      });
-    }
-  }
-
-  Future<void> _selectDateTime(
-    TextEditingController controller, {
-    bool onlyDate = false,
-  }) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2030),
-    );
-
-    if (pickedDate != null) {
-      if (onlyDate) {
-        setState(() {
-          controller.text = DateFormat('yyyy-MM-dd').format(pickedDate);
-        });
-      } else {
-        TimeOfDay? pickedTime = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.now(),
-        );
-        if (pickedTime != null) {
-          final DateTime fullDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-          setState(() {
-            controller.text = DateFormat(
-              'yyyy-MM-dd hh:mm a',
-            ).format(fullDateTime);
-          });
-        }
-      }
-    }
-  }
-
   void _handleNext() {
-    if (_formKey.currentState!.validate()) {}
+    if (_formKey.currentState!.validate()) {
+      // Navigate to preview page
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventPreviewPage(
+            eventName: _eventNameController.text,
+            location: _eventLocationController.text,
+            ticketPrice: _ticketPriceController.text,
+            confirmationCode: _confirmationCodeController.text,
+            imagePath: _selectedImagePath,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF9),
-      appBar: CustomAppBar(title: "Edit Event"),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: "Edit Event", showBackButton: false),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ১. Event Flier Card
               _buildSectionCard(
                 title: 'Event Flier',
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: _buildImageUploadBox(),
-                ),
+                child: _buildImageUploadBox(),
               ),
               const SizedBox(height: 16),
 
-              // ২. Event Information
+              // ২. Event Information Card
               _buildSectionCard(
                 title: 'Event Information',
                 child: Column(
                   children: [
-                    _buildFieldGroup(
-                      "Event Name",
-                      _buildTextField(_eventNameController, 'Enter Event Name'),
+                    _buildTextField(
+                      controller: _eventNameController,
+                      hintText: 'Event Name',
                     ),
                     const SizedBox(height: 12),
-                    _buildFieldGroup(
-                      "Event Type",
-                      _buildDropdownField(_eventTypeController, 'Select Type', [
+                    _buildDropdownField(
+                      controller: _eventTypeController,
+                      hintText: 'Event Type',
+                      items: [
                         'Concert / Music Show',
                         'Cultural Program',
                         'Seminar / Conference',
                         'Sports Event',
                         'Festival / Fair',
-                      ]),
+                      ],
                     ),
                     const SizedBox(height: 12),
-                    _buildFieldGroup(
-                      "Manager Name",
-                      _buildTextField(_eventManagerController, 'Manager Name'),
+                    _buildTextField(
+                      controller: _eventManagerController,
+                      hintText: 'Event Manager Name',
                     ),
                     const SizedBox(height: 12),
-                    _buildFieldGroup(
-                      "Location",
-                      _buildLocationField(
-                        _eventLocationController,
-                        'Event Location',
-                      ),
+                    _buildLocationField(
+                      controller: _eventLocationController,
+                      hintText: 'Event Location',
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
 
-              // ৩. Dates & Times
+              // ৩. Dates & Times Card
               _buildSectionCard(
                 title: 'Dates & Times',
                 child: Column(
                   children: [
-                    _buildFieldGroup(
-                      "Ticket Sales Start",
-                      _buildDateField(
-                        _ticketStartDateController,
-                        'Select Date',
-                        () => _selectDateTime(
-                          _ticketStartDateController,
-                          onlyDate: true,
-                        ),
-                      ),
+                    _buildDateField(
+                      controller: _ticketStartDateController,
+                      hintText: 'Ticket Sales Start Date',
                     ),
                     const SizedBox(height: 12),
-                    _buildFieldGroup(
-                      "Event Start Time",
-                      _buildDateTimeField(
-                        _eventStartDateController,
-                        'Select Date & Time',
-                        () => _selectDateTime(_eventStartDateController),
-                      ),
+                    _buildDateField(
+                      controller: _ticketEndDateController,
+                      hintText: 'Ticket Sales End Date',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDateTimeField(
+                      controller: _eventStartDateController,
+                      hintText: 'Event Start Date & Time',
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDateTimeField(
+                      controller: _eventEndDateController,
+                      hintText: 'Event End Date & Time',
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
 
-              // ৪. Ticket Information
+              // ৪. Ticket Information Card
               _buildSectionCard(
                 title: 'Ticket Information',
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildFieldGroup(
-                      "Price",
-                      _buildTextField(
-                        _ticketPriceController,
-                        'Ticket Price (\$)',
-                        keyboardType: TextInputType.number,
-                      ),
+                    _buildTextField(
+                      controller: _ticketPriceController,
+                      hintText: 'Ticket Price (\$)',
+                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 12),
-                    _buildFieldGroup(
-                      "Confirmation Prefix",
-                      _buildTextField(
-                        _confirmationCodeController,
-                        'Prefix',
-                        readOnly: true,
-                      ),
+                    _buildTextField(
+                      controller: _maxTicketsController,
+                      hintText: 'Maximum Number of Tickets',
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _confirmationCodeController,
+                      hintText: 'Confirmation Code Prefix',
+                      keyboardType: TextInputType.numberWithOptions(),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'This will be used to generate unique confirmation codes for attendees.',
+                      style: TextStyle(fontSize: 11, color: AppColors.dark),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
 
-              // ৫. Description
+              // ৫. Description Card
               _buildSectionCard(
-                title: 'Description',
+                title: 'Ticket Information',
                 child: _buildTextField(
-                  _eventDescriptionController,
-                  'Event Description',
+                  controller: _eventDescriptionController,
+                  hintText: 'Event Description',
                   maxLines: 4,
                 ),
               ),
@@ -239,7 +221,7 @@ class _EditEventPageState extends State<EditEventPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Get.to(() => BottomNavEScreen()),
+                  onPressed:Get.back,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -265,22 +247,492 @@ class _EditEventPageState extends State<EditEventPage> {
     );
   }
 
-  // --- হেল্পার উইজেটস ---
-
-  Widget _buildFieldGroup(String label, Widget field) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
+  Widget _buildImageUploadBox() {
+    return GestureDetector(
+      onTap: () {
+        // Handle image upload
+      },
+      child: Container(
+        height: 120,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: const Color(0xFFE0E0E0),
+            style: BorderStyle.solid,
           ),
         ),
-        const SizedBox(height: 6),
-        field,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              AppIcons.create,
+              width: 32,
+              height: 32,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Upload your event flier or promotional image',
+              style: TextStyle(fontSize: 12, color: AppColors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    bool readOnly = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        readOnly: readOnly,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownField({
+    required TextEditingController controller,
+    required String hintText,
+    required List<String> items,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: controller.text.isEmpty ? null : controller.text,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 4,
+          ),
+        ),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: AppColors.grey,
+        ), // Dropdown usually uses a built-in arrow but keeping consistency if possible
+        // Actually DropdownButtonFormField has its own icon property.
+        // We can use a custom widget if we really want SVG here, but let's keep it simple or use a rotated arrow.
+        // For now, let's just leave it or use a default if we don't have a clear small arrow svg.
+        // Actually, let's keep the Material arrow for dropdown for now or use a generic one if we have it.
+        // There is no small down arrow in assets/icons list except maybe "Clean" or others which don't fit.
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item, style: const TextStyle(fontSize: 14)),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            controller.text = newValue ?? "";
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildLocationField({
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.location,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
+            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateField({
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: TextFormField(
+        controller: controller,
+        readOnly: true,
+        onTap: () async {
+          final DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime(2030),
+          );
+          if (picked != null) {
+            controller.text = '${picked.day}/${picked.month}/${picked.year}';
+          }
+        },
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeField({
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: TextFormField(
+        controller: controller,
+        readOnly: true,
+        onTap: () async {
+          final DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime(2030),
+          );
+          if (pickedDate != null) {
+            final TimeOfDay? pickedTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (pickedTime != null) {
+              controller.text =
+              '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
+            }
+          }
+        },
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: SvgPicture.asset(
+              AppIcons.date,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Event Preview Page
+class EventPreviewPage extends StatelessWidget {
+  final String eventName;
+  final String location;
+  final String ticketPrice;
+  final String confirmationCode;
+  final String? imagePath;
+
+  const EventPreviewPage({
+    super.key,
+    required this.eventName,
+    required this.location,
+    required this.ticketPrice,
+    required this.confirmationCode,
+    this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
+      appBar: CustomAppBar(title: "Event Create"),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      imagePath ?? 'assets/images/event_detail.png',
+                      width: double.infinity,
+                      height: 180,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: double.infinity,
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: SvgPicture.asset(
+                            AppIcons.create,
+                            width: 50,
+                            height: 50,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.grey,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Text(
+                    eventName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildInfoRow(
+                    AppIcons.date,
+                    'Date & Time',
+                    'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(AppIcons.location, 'Location', location),
+                  const SizedBox(height: 16),
+                  _buildInfoRow(
+                    AppIcons.ticket,
+                    'Ticket Price',
+                    '\$${ticketPrice} per ticket',
+                  ),
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    'Description',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Join us for an unforgettable night of music under the stars! Featuring top artists and bands from around the world.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  const Divider(thickness: 0.8),
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    'Confirmation Code Prefix',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    confirmationCode,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 24),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF1C5941),
+                            side: const BorderSide(color: Color(0xFF1C5941)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: const Text('Edit Event'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.eventHome);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1C5941),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: const Text('Create Event'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String iconPath, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SvgPicture.asset(
+          iconPath,
+          width: 18,
+          height: 18,
+          colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.dark,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -299,7 +751,11 @@ class _EditEventPageState extends State<EditEventPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           const SizedBox(height: 16),
           child,
@@ -308,146 +764,141 @@ class _EditEventPageState extends State<EditEventPage> {
     );
   }
 
-  Widget _buildImageUploadBox() {
-    return Container(
-      height: 130.h,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: _selectedImage != null
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(_selectedImage!, fit: BoxFit.cover),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cloud_upload_outlined,
-                  size: 32,
-                  color: Colors.grey[400],
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4CAF50),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Choose file to upload',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                child: SvgPicture.asset(
+                  AppIcons.check,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                  width: 40,
+                  height: 40,
                 ),
-              ],
-            ),
-    );
-  }
-
-  Widget _buildTextField(
-    TextEditingController controller,
-    String hintText, {
-    int maxLines = 1,
-    TextInputType? keyboardType,
-    bool readOnly = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        keyboardType: keyboardType,
-        readOnly: readOnly,
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 12,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Success! Your Event Has Been Created!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Event Name',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Happy New Year Fest',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Location',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Central Park, New York',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ticket Price',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          '\$80',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C5941),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    'Go Home',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDropdownField(
-    TextEditingController controller,
-    String hintText,
-    List<String> items,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: controller.text.isEmpty ? null : controller.text,
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 4,
-          ),
-        ),
-        icon: const Icon(Icons.keyboard_arrow_down),
-        items: items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item, style: const TextStyle(fontSize: 14)),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            controller.text = newValue ?? "";
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildLocationField(
-    TextEditingController controller,
-    String hintText,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: hintText,
-          suffixIcon: const Icon(Icons.location_on_outlined, size: 20),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDateField(
-    TextEditingController controller,
-    String hintText,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AbsorbPointer(child: _buildTextField(controller, hintText)),
-    );
-  }
-
-  Widget _buildDateTimeField(
-    TextEditingController controller,
-    String hintText,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AbsorbPointer(child: _buildTextField(controller, hintText)),
     );
   }
 }

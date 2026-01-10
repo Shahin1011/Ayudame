@@ -78,7 +78,7 @@ class EventDetailPage extends StatelessWidget {
 
                   const SizedBox(height: 12),
                   const Text("Event Name", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  const Text("Happy New Year Fest", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text("Happy New Year Fest", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   const Text("Event Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 12),
@@ -86,7 +86,7 @@ class EventDetailPage extends StatelessWidget {
                   _buildIconDetail(Icons.location_on_outlined, "Location", "Central Park, New York"),
                   _buildIconDetail(Icons.confirmation_num_outlined, "Ticket Price", "\$50.00 per ticket"),
                   const SizedBox(height: 16),
-                  const Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text("Description", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), ),
                   const Text(
                     "Join us for an unforgettable night of music under the stars! Featuring top artists and bands.",
                     style: TextStyle(color: Colors.grey, height: 1.4),
@@ -141,7 +141,7 @@ class EventDetailPage extends StatelessWidget {
           children: [
             if (icon != null) Icon(icon, size: 20, color: const Color(0xFF1C5941)),
             if (icon != null) const SizedBox(width: 8),
-            Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
       ],

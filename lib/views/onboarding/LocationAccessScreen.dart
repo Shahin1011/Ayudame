@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/utils/location_helper.dart';
 import 'package:middle_ware/views/onboarding/UserProviderSelectionScreen.dart';
 class LocationAccessScreen extends StatelessWidget {
   const LocationAccessScreen({super.key});
@@ -65,14 +66,28 @@ class LocationAccessScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>  UserProviderSelectionScreen(),
-                      ),
-                    );
+                  onPressed: () async {
+                    final location = await getUserLocation();
+
+                    if (location != null) {
+                      print("Latitude: ${location.latitude}");
+                      print("Longitude: ${location.longitude}");
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProviderSelectionScreen(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please allow location access"),
+                        ),
+                      );
+                    }
                   },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),
                     foregroundColor: Colors.white,

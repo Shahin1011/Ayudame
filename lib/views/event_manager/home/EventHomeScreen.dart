@@ -355,8 +355,9 @@ class EventHomeScreen extends StatelessWidget {
                         child: Text(
                           location,
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.dark,
                           ),
                         ),
                       ),
@@ -369,10 +370,12 @@ class EventHomeScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
+                          
                           onPressed: () {
                             Get.toNamed(AppRoutes.eventEdit);
                           },
                           style: OutlinedButton.styleFrom(
+                            backgroundColor: Color(0xFFF3F8F4),
                             foregroundColor: const Color(0xFF1C5941),
                             side: const BorderSide(color: Color(0xFF1C5941)),
                             shape: RoundedRectangleBorder(
