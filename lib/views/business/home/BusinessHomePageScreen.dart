@@ -39,10 +39,17 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
             padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
             child: Row(
               children: [
-                const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Color(0xFFD4B896),
-                  backgroundImage: AssetImage('assets/images/men.png'),
+                Container(
+                  height: 51,
+                  width: 51,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFFD4B896),
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/men.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
@@ -82,6 +89,8 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                     );
                   },
                   child: Container(
+                    height: 38,
+                    width: 38,
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -93,8 +102,8 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                         Color(0xFF2D6A4F),
                         BlendMode.srcIn,
                       ),
-                      width: 20,
-                      height: 20,
+                      width: 24,
+                      height: 24,
                     ),
                   ),
                 ),
