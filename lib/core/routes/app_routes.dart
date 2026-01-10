@@ -23,6 +23,7 @@ import '../../views/onboarding/UserProviderSelectionScreen.dart';
 import '../../views/onboarding/WelcomeScreen.dart';
 import '../../views/onboarding/onboardinglanguage_screen.dart';
 import '../../views/onboarding/splash_screen.dart';
+import '../../views/onboarding/LocationAccessScreen.dart';
 
 // Business Feature Views
 
@@ -53,6 +54,7 @@ import '../../views/provider/settings/PaymentHistoryPage.dart';
 import '../../views/user/UserNotificationPage.dart';
 import '../../views/user/auth/ForgotPasswordScreen.dart';
 import '../../views/user/auth/LoginScreen.dart';
+import '../../views/user/auth/user_new_password_screen.dart';
 import '../../views/user/auth/SignUpScreen.dart';
 import '../../views/user/auth/VerificationCodeScreen.dart';
 import '../../views/user/home/CategoriesPage.dart';
@@ -69,6 +71,7 @@ import '../../views/user/orders/PaymentScreen.dart';
 import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
 import '../../views/user/profile/WishlistScreen.dart';
+import '../../views/user/profile/PrivacyPolicyScreen.dart';
 
 class AppRoutes {
   // ============================================
@@ -78,7 +81,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String welcome = '/welcome';
   static const String userTypeSelection = '/user-type-selection';
-  static const String location = '/location';
+  static const String location = '/LocationAccessScreen';
   static const String terms = '/terms';
   static const String privacy = '/privacy';
   static const String notifications = '/notifications';
@@ -93,6 +96,7 @@ class AppRoutes {
   static const String userNotification = "/user_notification";
 
   static const String userHome = '/user-home';
+  static const String userNewPasswordScreen = '//user_new_password_screen';
   static const String userProfile = '/user-profile';
   static const String userEditProfile = '/user-edit-profile';
   static const String userCategories = '/user-categories';
@@ -114,6 +118,8 @@ class AppRoutes {
   static const String providerRegister = '/SignUpProviderScreen';
   static const String providerForgotPass = '/ProviderForgotPasswordScreen';
   static const String providerOtp = '/providerVerificationCodeScreen';
+  static const String userBottomNavScreen = '/bottom_nav/bottom_nav';
+  static const String providerRegister = '/provider-register';
   static const String providerHome = '/provider-home';
   static const String providerProfile = '/ProviderProfilePage';
   static const String providerCreateService = '/CreateServiceProvider';
@@ -170,12 +176,15 @@ class AppRoutes {
     GetPage(name: notifications, page: () => const BusinessNotificationPage()),
 
     // User Auth & Features
-    GetPage(name: userlogin, page: () => const LoginScreen()),
+    GetPage(name: userlogin, page: () => const UserLoginScreen()),
     GetPage(name: userregister, page: () => const SignUpScreen()),
     GetPage(name: userforgotPassword, page: () => const ForgotPasswordScreen()),
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),
+    GetPage(name: userNewPasswordScreen, page: () => UserNewPasswordScreen()),
     GetPage(name: userHome, page: () => const HomePage()),
-    GetPage(name: userProfile, page: () => const ProfilePage()),
+    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
+
+    GetPage(name: userProfile, page: () => ProfilePage()),
     GetPage(name: userEditProfile, page: () => const EditProfileScreen()),
     GetPage(name: userCategories, page: () => const CategoriesPage()),
 

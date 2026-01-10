@@ -114,3 +114,4 @@ class LocationAccessScreen extends StatelessWidget {
     );
   }
 }
+}
