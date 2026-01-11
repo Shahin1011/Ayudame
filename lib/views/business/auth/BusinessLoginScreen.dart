@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/routes/app_routes.dart';
+import '../../../viewmodels/business_auth_viewmodel.dart';
+import '../../../core/routes/app_routes.dart';
 
 class BusinessLoginScreen extends StatefulWidget {
   const BusinessLoginScreen({super.key});
@@ -10,7 +11,7 @@ class BusinessLoginScreen extends StatefulWidget {
 }
 
 class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
-  bool _rememberMe = false;
+  final BusinessAuthViewModel _authViewModel = Get.put(BusinessAuthViewModel());
   bool _obscurePassword = true;
 
   @override
@@ -50,6 +51,8 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
 
                 // Email TextField
                 TextField(
+                  controller: _authViewModel.emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'E-mail address or phone number',
                     hintStyle: const TextStyle(
@@ -91,6 +94,7 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
                 const SizedBox(height: 8),
 
                 TextField(
+                  controller: _authViewModel.passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: '••••••••••',
@@ -145,19 +149,20 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
                   children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Checkbox(
-                            value: _rememberMe,
-                            onChanged: (value) {
-                              setState(() {
-                                _rememberMe = value ?? false;
-                              });
-                            },
-                            activeColor: const Color(0xFF1C5941),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        Obx(
+                          () => SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Checkbox(
+                              value: _authViewModel.rememberMe.value,
+                              onChanged: (value) {
+                                _authViewModel.rememberMe.value =
+                                    value ?? false;
+                              },
+                              activeColor: const Color(0xFF1C5941),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
                           ),
                         ),
@@ -187,27 +192,38 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
 
                 const SizedBox(height: 24),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.offNamed(AppRoutes.businessHome);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: _authViewModel.isLoading.value
+                          ? null
+                          : () => _authViewModel.login(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1C5941),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      child: _authViewModel.isLoading.value
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
                   ),
                 ),
