@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 /// App-wide constants
 class AppConstants {
+
+  // Base Url
+  static const String BASE_URL = "https://places-phrases-eventually-lawyer.trycloudflare.com";
+
   // App Info
   static const String appName = 'MiddleWare';
   static const String appVersion = '1.0.0';

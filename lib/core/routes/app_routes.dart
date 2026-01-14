@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 import 'package:middle_ware/views/provider/auth/ProviderForgotPasswordScreen.dart';
 import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.dart';
-
-// Common/Shared Views
 import '../../views/business/Activities/ActivitiesPage.dart';
 import '../../views/business/auth/BusinessForgotPasswordScreen.dart';
 import '../../views/business/auth/BusinessLoginScreen.dart';
@@ -23,21 +21,13 @@ import '../../views/onboarding/UserProviderSelectionScreen.dart';
 import '../../views/onboarding/WelcomeScreen.dart';
 import '../../views/onboarding/onboardinglanguage_screen.dart';
 import '../../views/onboarding/splash_screen.dart';
-import '../../views/onboarding/LocationAccessScreen.dart';
-
-// Business Feature Views
-
-import '../../views/business/employee/BusinessEmployeeScreen.dart'; // Import EmployeeDetailsScreen
-
-// Event Manager Feature Views
-
+import '../../views/business/employee/BusinessEmployeeScreen.dart';
 import '../../views/event_manager/home/EditEventPage.dart';
 import '../../views/provider/profile/ProviderPortfolioPage.dart';
+import '../../views/user/auth/otp_verification_for_sigup.dart';
+import '../../views/user/bottom_nav/bottom_nav.dart';
 import '../../widgets/bottom_navb.dart';
 import '../../widgets/bottom_nave.dart';
-// Event Manager Feature Views mappings removed as they are imported above directly
-
-// Provider Feature Views
 import '../../views/provider/auth/LoginProviderScreen.dart';
 import '../../views/provider/auth/SignUpProviderScreen.dart';
 import '../../views/provider/home/CreateServiceProvider.dart';
@@ -49,8 +39,6 @@ import '../../views/provider/profile/providerBankPayoutView.dart';
 import '../../views/provider/profile/provider_AddBankInfo.dart';
 import '../../views/provider/settings/PaymentHistoryDetailPage.dart';
 import '../../views/provider/settings/PaymentHistoryPage.dart';
-
-// User Feature Views
 import '../../views/user/UserNotificationPage.dart';
 import '../../views/user/auth/ForgotPasswordScreen.dart';
 import '../../views/user/auth/LoginScreen.dart';
@@ -65,13 +53,10 @@ import '../../views/user/home/ProvidersScreen.dart';
 import '../../views/user/orders/AppointmentScreen.dart';
 import '../../views/user/orders/BookingPaidScreen.dart';
 import '../../views/user/orders/BookingScreen.dart';
-import '../../views/user/orders/OrderDetailsScreen.dart';
-import '../../views/user/orders/OrderHistoryScreen.dart';
 import '../../views/user/orders/PaymentScreen.dart';
 import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
 import '../../views/user/profile/WishlistScreen.dart';
-import '../../views/user/profile/PrivacyPolicyScreen.dart';
 
 class AppRoutes {
   // ============================================
@@ -91,10 +76,12 @@ class AppRoutes {
   // ============================================
   static const String userlogin = '/user_login';
   static const String userregister = '/user_register';
+  static const String oTPVerificationForSignup = '/otp_verification_for_sigup';
+  static const String verificationCodeScreen = '/VerificationCodeScreen';
   static const String userforgotPassword = '/user_forgot-password';
   static const String userotp = '/user_otp';
   static const String userNotification = "/user_notification";
-
+  static const String userBottomNavScreen = '/bottom_nav';
   static const String userHome = '/user-home';
   static const String userNewPasswordScreen = '//user_new_password_screen';
   static const String userProfile = '/user-profile';
@@ -118,7 +105,6 @@ class AppRoutes {
   static const String providerRegister = '/SignUpProviderScreen';
   static const String providerForgotPass = '/ProviderForgotPasswordScreen';
   static const String providerOtp = '/providerVerificationCodeScreen';
-  static const String userBottomNavScreen = '/bottom_nav/bottom_nav';
   static const String providerHome = '/provider-home';
   static const String providerProfile = '/ProviderProfilePage';
   static const String providerCreateService = '/CreateServiceProvider';
@@ -176,12 +162,14 @@ class AppRoutes {
 
     // User Auth & Features
     GetPage(name: userlogin, page: () => const UserLoginScreen()),
+    GetPage(name: oTPVerificationForSignup, page: () => OTPVerificationForSignup()),
+    GetPage(name: verificationCodeScreen, page: () => VerificationCodeScreen()),
     GetPage(name: userregister, page: () => const SignUpScreen()),
     GetPage(name: userforgotPassword, page: () => const ForgotPasswordScreen()),
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),
     GetPage(name: userNewPasswordScreen, page: () => UserNewPasswordScreen()),
     GetPage(name: userHome, page: () => const HomePage()),
-    //GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
+    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
 
     GetPage(name: userProfile, page: () => ProfilePage()),
     GetPage(name: userEditProfile, page: () => const EditProfileScreen()),

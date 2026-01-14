@@ -1,26 +1,25 @@
 import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/theme/app_colors.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' as http;
-import 'package:middle_ware/widgets/custom_loading_button.dart';
-import '../../../core/routes/app_routes.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../utils/constants.dart' hide AppColors;
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:pin_code_fields/pin_code_fields.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../../utils/constants.dart' hide AppColors;
+import '../../../widgets/custom_loading_button.dart';
 
-
-class VerificationCodeScreen extends StatefulWidget {
-  const VerificationCodeScreen({super.key});
+class OTPVerificationForSignup extends StatefulWidget {
+  const OTPVerificationForSignup({super.key});
 
   @override
-  State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
+  State<OTPVerificationForSignup> createState() => _OTPVerificationForSignupState();
 }
 
-class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
-
+class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
   late String email;
   bool isLoading = false;
   final TextEditingController pinController = TextEditingController();
@@ -98,6 +97,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,6 +153,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 color: Colors.black,
               ),
             ),
+
             const SizedBox(height: 12),
 
             // Description
@@ -161,7 +162,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               style: TextStyle(fontSize: 14, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
 
             PinCodeEnter(context),
 
@@ -190,8 +191,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 ),
               ),
             ),
-
-
             const SizedBox(height: 24),
 
             CustomLoadingButton(
@@ -210,7 +209,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Didn\'t receive the code? ',
+                  "Didn't receive the code? ",
                   style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
                 TextButton(
@@ -302,5 +301,4 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       },
     );
   }
-
 }

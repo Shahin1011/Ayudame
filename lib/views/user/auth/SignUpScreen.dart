@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../../utils/constants.dart';
+import '../../../widgets/custom_loading_button.dart';
+import '../../../widgets/user_custom_text_field.dart';
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,8 +18,84 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _agreeToTerms = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  bool isLoading = false;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailOrPhoneController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  final String apiUrl = "${AppConstants.BASE_URL}/api/auth/register";
+
+  Future<void> _createUser() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!_agreeToTerms) {
+      Get.snackbar(
+        "Terms Required",
+        "Please accept the Terms & Conditions to continue",
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          "fullName": nameController.text.trim(),
+          "email": emailOrPhoneController.text.trim(),
+          "password": passController.text.trim(),
+          "termsAccepted": _agreeToTerms,
+        }),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "Account created successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.offNamed(
+          AppRoutes.oTPVerificationForSignup,
+          arguments: {
+            "email": emailOrPhoneController.text.trim(),
+          },
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          data["message"] ?? "Signup failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Network error: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,383 +105,307 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
 
-                // Create Account Title
-                const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                const Text(
-                  'It only takes a minute to create your\naccount',
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-
-                const SizedBox(height: 40),
-
-                // Full Name Label
-                const Text(
-                  'Full Name',
-                  style: TextStyle(fontSize: 13, color: Colors.black87),
-                ),
-                const SizedBox(height: 8),
-
-                // Full Name TextField
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your full name',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black38,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.person_outline,
-                      size: 20,
-                      color: Colors.black54,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Color(0xFF1C5941)),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
+                  // Create Account Title
+                  const Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Email or Number Label
-                const Text(
-                  'Enter your E-mail or Number',
-                  style: TextStyle(fontSize: 13, color: Colors.black87),
-                ),
-                const SizedBox(height: 8),
-
-                // Email TextField
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'E-mail address or phone number',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black38,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                      size: 20,
-                      color: Colors.black54,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Color(0xFF1C5941)),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
+                  const SizedBox(height: 3),
+                  const Text(
+                    'It only takes a minute to create your\naccount',
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 40),
 
-                // Password Label
-                const Text(
-                  'Password',
-                  style: TextStyle(fontSize: 13, color: Colors.black87),
-                ),
-                const SizedBox(height: 8),
-
-                // Password TextField
-                TextField(
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: '••••••••••',
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black38,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.lock_outline,
-                      size: 20,
-                      color: Colors.black54,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        size: 20,
-                        color: Colors.black54,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Color(0xFF1C5941)),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
+                  // Full Name Label
+                  const Text(
+                    'Full Name',
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
                   ),
-                ),
+                  const SizedBox(height: 8),
 
-                const SizedBox(height: 20),
+                  // Full Name Field
+                  CustomTextField1(
+                    textEditingController: nameController,
+                    hintText: 'Full Name',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                      color: AppColors.grey,
+                    ),
+                    fillColor: const Color(0xFFFFFFFF),
+                    fieldBorderColor: AppColors.grey,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your full name";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
 
-                // Terms and Conditions Checkbox
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: Checkbox(
-                        value: _agreeToTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            _agreeToTerms = value ?? false;
-                          });
-                        },
-                        activeColor: const Color(0xFF1C5941),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
+                  // Email or Number Label
+                  const Text(
+                    'Enter your E-mail or Phone Number',
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Email/Phone Field
+                  CustomTextField1(
+                    textEditingController: emailOrPhoneController,
+                    hintText: 'Enter your e-mail or phone number',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                      color: AppColors.grey,
+                    ),
+                    fillColor: const Color(0xFFFFFFFF),
+                    fieldBorderColor: AppColors.grey,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter an email or a phone number";
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Password Label
+                  const Text(
+                    'Password',
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Password Field
+                  CustomTextField1(
+                    textEditingController: passController,
+                    hintText: 'Password',
+                    hintStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                      color: AppColors.grey,
+                    ),
+                    isPassword: true,
+                    fillColor: const Color(0xFFFFFFFF),
+                    fieldBorderColor: AppColors.grey,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter a password";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+
+                  // Terms and Conditions Checkbox
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Checkbox(
+                          value: _agreeToTerms,
+                          onChanged: (value) {
+                            setState(() {
+                              _agreeToTerms = value ?? false;
+                            });
+                          },
+                          activeColor: const Color(0xFF1C5941),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Text(
-                            'I agree to the ',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              'Terms & Conditions',
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Text(
+                              'I agree to the ',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF1C5941),
-                                fontWeight: FontWeight.w600,
+                                color: Colors.black54,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                // Sign Up Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.offNamed(AppRoutes.userProfile);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Or Continue With
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Or Continue With',
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                // Social Login Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Google
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Image.network(
-                          'https://www.google.com/favicon.ico',
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Text(
-                              'G',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                            TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                            );
-                          },
+                              child: const Text(
+                                'Terms & Conditions',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF1C5941),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
+                    ],
+                  ),
 
-                    // Apple
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
+                  SizedBox(height: 24),
+
+                  CustomLoadingButton(
+                    title: "Sign Up",
+                    isLoading: isLoading,
+                    onTap: _createUser,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Or Continue With
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(color: Colors.grey[300], thickness: 1),
                       ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.apple,
-                          size: 28,
-                          color: Colors.black,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Or Continue With',
+                          style: TextStyle(fontSize: 13, color: Colors.black54),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Facebook
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
+                      Expanded(
+                        child: Divider(color: Colors.grey[300], thickness: 1),
                       ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.facebook,
-                          size: 28,
-                          color: Color(0xFF1877F2),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Login Text
-                Center(
-                  child: Row(
+                  // Social Login Buttons
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Already have an account? ",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.userlogin);
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      // Google
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(28),
                         ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 14,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Image.network(
+                            'https://www.google.com/favicon.ico',
+                            width: 24,
+                            height: 24,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Text(
+                                'G',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+
+                      // Apple
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.apple,
+                            size: 28,
                             color: Colors.black,
-                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+
+                      // Facebook
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.facebook,
+                            size: 28,
+                            color: Color(0xFF1877F2),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 24),
+
+                  // Login Text
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Already have an account? ",
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.userlogin);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
