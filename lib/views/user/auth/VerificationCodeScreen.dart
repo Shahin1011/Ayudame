@@ -1,7 +1,16 @@
+import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
+import 'package:middle_ware/widgets/custom_loading_button.dart';
 import '../../../core/routes/app_routes.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../utils/constants.dart' hide AppColors;
+import 'package:get/get.dart';
+
 
 class VerificationCodeScreen extends StatefulWidget {
   const VerificationCodeScreen({super.key});
@@ -11,20 +20,81 @@ class VerificationCodeScreen extends StatefulWidget {
 }
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+
+  late String email;
+  bool isLoading = false;
+  final TextEditingController pinController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    email = args["email"];
+  }
+
+
+
+  Future<bool> verifyUser(String email, String code) async {
+    final url = "${AppConstants.BASE_URL}/api/auth/verify-otp";
+
+    if (!await hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return false;
+    }
+
+    final body = {'email': email, 'otp': code};
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "OTP Verified successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.toNamed(AppRoutes.userNewPasswordScreen,);
+
+        return true;
+      } else {
+        String message = "Code wrong";
+        try {
+          final body = jsonDecode(response.body);
+          message = body['message'] ?? message;
+        } catch (_) {}
+        Get.snackbar("Failed", message);
+        return false;
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+      return false;
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+  }
+  Future<bool> hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
+    pinController.dispose();
     super.dispose();
   }
 
@@ -83,67 +153,18 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 color: Colors.black,
               ),
             ),
-
             const SizedBox(height: 12),
 
             // Description
-            const Text(
-              'We\'ve sent a 6-digit code to i***@gmail.com',
+            Text(
+              "We've sent a 6-digit code to $email",
               style: TextStyle(fontSize: 14, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 32),
 
-            // OTP Input Fields
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(6, (index) {
-                return SizedBox(
-                  width: 45,
-                  height: 46,
-                  child: TextField(
-                    controller: _controllers[index],
-                    focusNode: _focusNodes[index],
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    maxLength: 1,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                      counterText: '',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF1C5941)),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                    ),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (value) {
-                      if (value.isNotEmpty && index < 5) {
-                        _focusNodes[index + 1].requestFocus();
-                      }
-                      if (value.isEmpty && index > 0) {
-                        _focusNodes[index - 1].requestFocus();
-                      }
-                    },
-                  ),
-                );
-              }),
-            ),
+            PinCodeEnter(context),
+
 
             const SizedBox(height: 20),
 
@@ -153,8 +174,10 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 final data = await Clipboard.getData('text/plain');
                 if (data != null && data.text != null) {
                   final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
-                  for (int i = 0; i < code.length && i < 6; i++) {
-                    _controllers[i].text = code[i];
+                  if (code.length >= 6) {
+                    pinController.text = code.substring(0, 6);
+                  } else {
+                    pinController.text = code;
                   }
                 }
               },
@@ -168,29 +191,16 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               ),
             ),
 
+
             const SizedBox(height: 24),
 
-            // Verify Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  //Get.offNamed(AppRoutes.userNewPasswordScreen);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Verify',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
+            CustomLoadingButton(
+              title: "Verify",
+              isLoading: isLoading,
+              onTap: (){
+                final otp = pinController.text.trim();
+                verifyUser(email, otp);
+              },
             ),
 
             const SizedBox(height: 20),
@@ -248,4 +258,49 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       ),
     );
   }
+
+  PinCodeTextField PinCodeEnter(BuildContext context) {
+    return PinCodeTextField(
+      appContext: context,
+      length: 6,
+      enableActiveFill: true,
+      showCursor: true,
+      cursorColor: AppColors.mainAppColor,
+      obscureText: false,
+      textStyle: TextStyle(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.mainAppColor,
+        //fontFamily: "Satoshi",
+      ),
+      controller: pinController,
+      animationType: AnimationType.scale,
+      keyboardType: TextInputType.number,
+      pinTheme: PinTheme(
+        shape: PinCodeFieldShape.box,
+        borderRadius: BorderRadius.circular(8),
+        borderWidth: 0.5,
+        fieldHeight: 45.h,
+        fieldWidth: 45.w,
+        fieldOuterPadding: EdgeInsets.symmetric(horizontal: 4),
+        inactiveColor: Color(0xFF5E5E5E),
+        inactiveFillColor: AppColors.white,
+        selectedFillColor: Colors.white,
+        disabledColor: AppColors.white,
+        activeFillColor: Colors.white,
+        selectedColor: AppColors.mainAppColor,
+        activeColor: AppColors.mainAppColor,
+      ),
+      hintCharacter: '-',
+      animationDuration: const Duration(milliseconds: 100),
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      onChanged: (value) {
+        // _controller.otpCode.value = value;
+      },
+      onCompleted: (value) {
+        print("Entered Code: $value");
+      },
+    );
+  }
+
 }
