@@ -7,7 +7,6 @@ class TokenService {
   TokenService._internal();
 
   static const String _accessTokenKey = 'access_token';
-
   SharedPreferences? _prefs;
 
   /// Initialize SharedPreferences before using
@@ -18,6 +17,7 @@ class TokenService {
   /// Save Token
   Future<void> saveToken(String token) async {
     await _prefs?.setString(_accessTokenKey, token);
+    print("Token saved: $token");
   }
 
   /// Read Token

@@ -11,19 +11,22 @@ import 'package:middle_ware/views/user/profile/HelpSupportScreen.dart';
 import 'package:middle_ware/views/user/profile/NotificationPage.dart';
 import 'package:middle_ware/views/user/profile/WishlistScreen.dart';
 import 'package:middle_ware/views/user/profile/my_events.dart';
-import 'package:middle_ware/views/user/profile/user_bank_form_screen.dart';
 import 'package:middle_ware/views/user/profile/user_bank_information.dart';
+import 'package:shimmer/shimmer.dart';
+import '../../../controller/profile/profile_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-
 import 'PrivacyPolicyScreen.dart';
 import 'TermsConditionScreen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class ProfilePage extends StatelessWidget {
    ProfilePage({Key? key}) : super(key: key);
 
 
    final _controller = ValueNotifier<bool>(false);
+   final ProfileController profileController = Get.put(ProfileController());
 
    @override
   Widget build(BuildContext context) {
@@ -40,34 +43,94 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     const SizedBox(height: 24),
 
-                    // Profile Picture and Name
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(
-                        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                      ),
-                    ),
+                    Obx(() {
+                      if (profileController.isLoading.value) {
+                        return const CircularProgressIndicator();
+                      }
 
-                    const SizedBox(height: 16),
+                      if (profileController.errorMessage.isNotEmpty) {
+                        return Text(profileController.errorMessage.value);
+                      }
 
-                    const Text(
-                      'Seam Rahman',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
+                      final user = profileController.user.value;
+                      if (user == null) {
+                        return const Text("User data not found");
+                      }
 
-                    const SizedBox(height: 4),
+                      return Column(
+                        children: [
+                          // ----------- Profile Image ----------
+                          Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.mainAppColor,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 55,
+                                backgroundColor: Colors.grey[200],
+                                child: ClipOval(
+                                  child: user == null
+                                      ? Image.asset(
+                                    "assets/images/emptyUser.png",
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
+                                  )
+                                      : CachedNetworkImage(
+                                    imageUrl: user.profilePicture ?? "",
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        width: 110,
+                                        height: 110,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.grey,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Image.asset(
+                                      "assets/images/emptyUser.png",
+                                      width: 110,
+                                      height: 110,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                    const Text(
-                      'slamr7845@gmail.com',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
-                    ),
+                          Text(
+                            user.fullName,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 4),
+
+                          Text(
+                            user.email,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+
                     SizedBox(height: MediaQuery.of(context).size.height * 0.030),
 
                     /// Account Information Details
@@ -105,7 +168,12 @@ class ProfilePage extends StatelessWidget {
                             iconPath: "assets/icons/editProfile.svg",
                             title: "Edit Profile",
                             onTap: () {
-                              Get.to(() => EditProfileScreen());
+                              final user = profileController.user.value;
+                              if (user != null) {
+                                Get.to(() => EditProfileScreen(), arguments: user);
+                              } else {
+                                Get.snackbar("Error", "User data not found");
+                              }
                             },
                           ),
                           SizedBox(height: 16.h),

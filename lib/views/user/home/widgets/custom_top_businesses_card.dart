@@ -60,7 +60,7 @@ class CustomTopbusinessesCard extends StatelessWidget {
                               child: Text(
                                 title,
                                 style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black
                                 ),
@@ -71,11 +71,11 @@ class CustomTopbusinessesCard extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.star, size: 20, color: Colors.amber),
-                                SizedBox(width: 4.w),
+                                SizedBox(width: 2.w),
                                 Text(
                                   review,
                                   style: GoogleFonts.inter(
-                                      fontSize: 14.sp,
+                                      fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey[600]
                                   ),
@@ -89,11 +89,11 @@ class CustomTopbusinessesCard extends StatelessWidget {
                         Row(
                           children: [
                             Icon(Icons.location_on, size: 20, color: Colors.grey[600]),
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 2.w),
                             Text(
                               location,
                               style: GoogleFonts.inter(
-                                  fontSize: 14.sp,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey[600]
                               ),
@@ -108,11 +108,11 @@ class CustomTopbusinessesCard extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.people, size: 18, color: Colors.grey[600],),
-                                SizedBox(width: 5.w),
+                                SizedBox(width: 2.w),
                                 Text(
                                   '$numberEmployees Employees',
                                   style: GoogleFonts.inter(
-                                    fontSize: 14.sp,
+                                    fontSize: 12.sp,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -121,11 +121,11 @@ class CustomTopbusinessesCard extends StatelessWidget {
                             Row(
                               children: [
                                 SvgPicture.asset("assets/icons/service.svg"),
-                                SizedBox(width: 5.w),
+                                SizedBox(width: 2.w),
                                 Text(
                                   '$numberOfServices Services',
                                   style: GoogleFonts.inter(
-                                    fontSize: 14.sp,
+                                    fontSize: 12.sp,
                                     color: Colors.grey[600],
                                   ),
                                 ),

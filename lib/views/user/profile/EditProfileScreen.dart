@@ -1,5 +1,21 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart' show ImageSource;
+import 'package:middle_ware/models/user/profile/profile_model.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:middle_ware/views/user/profile/ProfilePage.dart';
+import 'package:shimmer/shimmer.dart';
+import '../../../controller/profile/profile_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../models/user/profile/edit_profile_controller.dart';
+import '../../../utils/token_service.dart';
+import '../../../widgets/user_custom_text_field.dart';
+import 'package:get/get.dart';
 
 
 class EditProfileScreen extends StatefulWidget {
@@ -10,20 +26,103 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  UserModel? profile;
+  bool isLoading = false;
+  final EditProfile _controller = Get.put(EditProfile());
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
-  bool _isNewPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+
+    profile = Get.arguments as UserModel?;
+    if (profile == null) {
+      // Handle null safely
+      Get.snackbar("Error", "User data not found");
+      return;
+    }
+
+    // Prefill controllers
+    nameController.text = profile?.fullName ?? "";
+    emailController.text = profile?.email ?? "";
+
+
+    // Set initial image if available
+    if (profile?.profilePicture != null && profile!.profilePicture!.isNotEmpty) {
+      _controller.setInitialImage(profile?.profilePicture ?? "");
+    }
+  }
+
+
+  Future<bool> hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<void> updateUser() async {
+    if (!await hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    final token = await TokenService().getToken();
+    if (token == null || token.isEmpty) {
+      Get.snackbar("Alert", "No authentication token");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    File? imageFile = _controller.selectedImage.value;
+    String newName = nameController.text.trim();
+    String newPhone = phoneController.text.trim();
+
+    try {
+      final response = await _controller.uploadProfile(
+        fullname: newName,
+        profilePicture: imageFile,
+        phoneNumber: newPhone,
+        token: token,
+      );
+
+      if (response["status"] == 200) {
+
+        // Update ProfileController instantly
+        final p = Get.find<ProfileController>();
+        p.fetchProfile();
+
+        Get.snackbar(
+          "Success",
+          response["body"]["message"] ?? "Updated successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.off(() => ProfilePage());
+      } else {
+        Get.snackbar(
+          "Error",
+          response["body"]["message"] ?? "Update failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -36,46 +135,74 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 8),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.055),
 
 
                     Center(
                       child: Stack(
                         children: [
-                          const CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
+                          Obx(() {
+                            final imageUrl = _controller.userProfileImageUrl.value;
+                            final file = _controller.selectedImage.value;
+
+                            return Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFF2D5F4C),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(color: AppColors.mainAppColor, width: 1.5),
                               ),
-                              child: const Icon(
-                                Icons.edit,
-                                size: 16,
-                                color: Colors.white,
+                              child: ClipOval(
+                                child: SizedBox(
+                                  width: 110,
+                                  height: 110,
+                                  child: file != null
+                                  // Picked image
+                                      ? Image.file(file, fit: BoxFit.cover)
+
+                                  // Server image with shimmer (same as profile page)
+                                      : CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        width: 110,
+                                        height: 110,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Image.asset(
+                                      "assets/images/emptyUser.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                               ),
+                            );
+                          }),
+                          Positioned(
+                            bottom: 5,
+                            right: 2,
+                            child: GestureDetector(
+                              onTap: (){
+                                _controller.pickImage(ImageSource.gallery);
+                              },
+                              child: SvgPicture.asset("assets/icons/inputImageIcon.svg", width: 28.w, height: 28.h),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 32),
-
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.030),
 
                     const Text(
                       'Full Name',
@@ -86,39 +213,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        hintText: 'Name',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 14,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D5F4C)),
-                        ),
+                    CustomTextField1(
+                      textEditingController: nameController,
+                      hintText: 'Full Name',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.sp,
+                        color: Colors.black38,
                       ),
+                      fillColor: const Color(0xFFFFFFFF),
+                      fieldBorderColor: AppColors.grey,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter your full name";
+                        }
+                        return null;
+                      },
                     ),
-
                     const SizedBox(height: 20),
 
                     const Text(
-                      'E-mail address or phone number',
+                      'E-mail address',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -126,40 +241,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        hintText: 'E-mail address or phone number',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 14,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D5F4C)),
-                        ),
+                    CustomTextField1(
+                      textEditingController: emailController,
+                      hintText: 'E-mail address',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.sp,
+                        color: Colors.black38,
                       ),
+                      fillColor: const Color(0xFFFFFFFF),
+                      fieldBorderColor: AppColors.grey,
+                      readOnly: true,
+                      keyboardType: TextInputType.emailAddress,
                     ),
-
                     const SizedBox(height: 20),
 
-
                     const Text(
-                      'New Password',
+                      'Phone Number',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -167,136 +265,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    TextField(
-                      controller: _newPasswordController,
-                      obscureText: !_isNewPasswordVisible,
-                      decoration: InputDecoration(
-                        hintText: '********',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 14,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isNewPasswordVisible = !_isNewPasswordVisible;
-                            });
-                          },
-                          icon: Icon(
-                            _isNewPasswordVisible
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: Colors.grey.shade400,
-                            size: 20,
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D5F4C)),
-                        ),
+                    CustomTextField1(
+                      textEditingController: phoneController,
+                      hintText: 'phone number',
+                      hintStyle: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.sp,
+                        color: Colors.black38,
                       ),
+                      fillColor: const Color(0xFFFFFFFF),
+                      fieldBorderColor: AppColors.grey,
+                      keyboardType: TextInputType.emailAddress,
                     ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.050,),
 
-                    const SizedBox(height: 20),
-
-
-                    const Text(
-                      'Confirm Password',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: !_isConfirmPasswordVisible,
-                      decoration: InputDecoration(
-                        hintText: '********',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 14,
+                    GestureDetector(
+                      onTap: isLoading ? null : updateUser,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.mainAppColor,
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                            });
-                          },
-                          icon: Icon(
-                            _isConfirmPasswordVisible
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: Colors.grey.shade400,
-                            size: 20,
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF2D5F4C)),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Profile updated successfully'),
-                              backgroundColor: Color(0xFF2D5F4C),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2D5F4C),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'Save Changes',
-                          style: TextStyle(
-                            fontSize: 16,
+                        child: Text(
+                          isLoading ? "Loading..." : "Save Changes",
+                          style: GoogleFonts.inter(
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: Color(0xFFE6E6E6),
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),

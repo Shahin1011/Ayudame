@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/utils/token_service.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
 
@@ -14,6 +15,8 @@ void main() async {
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
   ));
+
+  await TokenService().init();
 
   runApp(const MyApp());
 }
