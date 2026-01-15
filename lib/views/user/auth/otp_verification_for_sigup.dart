@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../core/theme/app_colors.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
 
 
   Future<bool> verifyUser(String email, String code) async {
-    final url = "${AppConstants.BASE_URL}/api/auth/verify-otp";
+    final url = "${AppConstants.BASE_URL}/api/auth/register/verify-otp";
 
     if (!await hasInternetConnection()) {
       Get.snackbar("No Internet", "Please check your internet connection.");
@@ -63,7 +62,7 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.toNamed(AppRoutes.userNewPasswordScreen,);
+        Get.toNamed(AppRoutes.userlogin);
 
         return true;
       } else {

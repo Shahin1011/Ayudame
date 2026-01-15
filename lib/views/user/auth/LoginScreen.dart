@@ -29,9 +29,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
 
   final _formKey = GlobalKey<FormState>();
+  final loginApiUrl = "${AppConstants.BASE_URL}/api/auth/login";
 
   Future<void> _loginUser(String email, String password) async {
-    final loginApiUrl = "${AppConstants.BASE_URL}/api/auth/login";
 
     if (!_formKey.currentState!.validate()) return;
 
