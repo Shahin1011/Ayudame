@@ -75,7 +75,7 @@ class CustomEventCard extends StatelessWidget {
                     eventName,
                     style: GoogleFonts.inter(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
                   ),
@@ -86,11 +86,12 @@ class CustomEventCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.calendar_month, size: 18),
-                          SizedBox(width: 5.w),
+                          SizedBox(width: 2.w),
                           Text(
                             date,
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -99,11 +100,12 @@ class CustomEventCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.access_time_rounded, size: 18),
-                          SizedBox(width: 5.w),
+                          SizedBox(width: 2.w),
                           Text(
                             timeRange,
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -118,11 +120,12 @@ class CustomEventCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.location_on, size: 18),
-                          SizedBox(width: 5.w),
+                          SizedBox(width: 2.w),
                           Text(
                             location,
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -131,11 +134,12 @@ class CustomEventCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.people, size: 18),
-                          SizedBox(width: 5.w),
+                          SizedBox(width: 2.w),
                           Text(
                             '$attendingCount attending',
                             style: GoogleFonts.inter(
                               fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey[600],
                             ),
                           ),

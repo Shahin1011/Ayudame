@@ -50,9 +50,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 title,
                 style: GoogleFonts.inter(
-                  fontSize: 20.sp,
+                  fontSize: 16.sp,
                   color: AppColors.white,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
 

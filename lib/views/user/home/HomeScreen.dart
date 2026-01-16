@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/views/user/categories/widgets/custom_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_bussiness_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_events_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
@@ -182,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index){
-                                return CustomRecentProviderCard(
+                                return CustomProviderCard(
                                   providerName: 'Shahin Alam',
                                   location: 'Dhanmondi, Dhaka 1209',
                                   activeStatus: '1 hour ago',
@@ -268,16 +269,16 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                             SizedBox(
-                              height: 300.h,
+                              height: 260.h,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
+                                padding: EdgeInsets.only(top: 10.h,),
                                 itemCount: 3,
                                 itemBuilder: (context, index) {
                                   return Padding(
-                                    padding: EdgeInsets.only(right: 16.w),
+                                    padding: EdgeInsets.only(right: 10.w),
                                     child: SizedBox(
-                                      width: 320.w,
+                                      width: 300.w,
                                       child: CustomEventCard(
                                         title: "Party",
                                         eventName: "Creazy musical event 2025",
@@ -330,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                                     padding: EdgeInsets.only(right: 16.w),
                                     child: SizedBox(
                                       width: 330.w,
-                                      child: CustomRecentProviderCard(
+                                      child: CustomRecentProviderCard.custom_provider_card(
                                         providerName: 'Shahin Alam',
                                         location: 'Dhanmondi, Dhaka 1209',
                                         activeStatus: '1 hour ago',

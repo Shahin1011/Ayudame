@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:middle_ware/views/user/categories/widgets/custom_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
+
 
 class ProvidersScreen extends StatelessWidget{
 
@@ -10,7 +12,7 @@ class ProvidersScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor1,
-      appBar: CustomAppBar(title: "Providers"),
+      appBar: CustomAppBar(title: "Provider"),
       body: Padding(
         padding: EdgeInsets.only(left: 20.w, right: 20.w),
         child: Column(
@@ -20,7 +22,7 @@ class ProvidersScreen extends StatelessWidget{
                 padding: EdgeInsets.only(top: 10),
                 itemCount: 10,
                 itemBuilder: (context, index){
-                  return CustomRecentProviderCard(
+                  return CustomProviderCard(
                     providerName: 'Shahin Alam',
                     location: 'Dhanmondi, Dhaka 1209',
                     activeStatus: '1 hour ago',
