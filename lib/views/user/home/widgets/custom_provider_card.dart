@@ -14,7 +14,7 @@ class CustomRecentProviderCard extends StatefulWidget {
   final double? appointmentPrice;
   final double? servicePrice;
 
-  const CustomRecentProviderCard({
+  const CustomRecentProviderCard.custom_provider_card({
     super.key,
     required this.providerName,
     required this.location,
@@ -134,7 +134,7 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                   Text(
                     widget.serviceTitle,
                     style: GoogleFonts.inter(
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -144,10 +144,10 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                   /// Description
                   Text(
                     widget.serviceDescription,
-                    style: TextStyle(
-                      fontSize: 14.sp,
+                    style: GoogleFonts.inter(
+                      fontSize: 12.sp,
                       color: Colors.grey[600],
-                      height: 1.4,
+                      height: 1.2,
                     ),
                   ),
 

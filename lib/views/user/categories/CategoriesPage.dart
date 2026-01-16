@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:middle_ware/views/user/categories/providers_screen.dart';
+import 'package:middle_ware/views/user/categories/widgets/custom_categories_card.dart';
+import '../../../controller/category_controller/category_conttroller.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +14,8 @@ class CategoriesPage extends StatefulWidget {
   State<CategoriesPage> createState() => _CategoriesPageState();
 }
   class _CategoriesPageState extends State<CategoriesPage> {
+
+    final CategoryController controller = Get.put(CategoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -91,54 +95,46 @@ class CategoriesPage extends StatefulWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.85,
-                  children: [
-                    _buildCategoryCard(
-                      'Home Services',
-                      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
+                child: Obx((){
+                  if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.errorMessage.isNotEmpty) {
+                  return Center(child: Text(controller.errorMessage.value));
+                  }
+
+                  if (controller.categories.isEmpty) {
+                  return const Center(child: Text("No categories found"));
+                  }
+
+                  return GridView.builder(
+                    itemCount: controller.categories.length,
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.85,
                     ),
-                    _buildCategoryCard(
-                      'Personal Services',
-                      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Event Services',
-                      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Moving Services',
-                      'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Personal Services',
-                      'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'IT Services',
-                      'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Vehicle Services',
-                      'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Improvement Services',
-                      'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Education Services',
-                      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400',
-                    ),
-                    _buildCategoryCard(
-                      'Pet Care Services',
-                      'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400',
-                    ),
-                  ],
-                ),
+                    itemBuilder: (context, index) {
+                      final category = controller.categories[index];
+
+                      return CategoryCard(
+                        title: category.name,
+                        imageUrl: category.icon.isNotEmpty
+                            ? category.icon
+                            : "https://via.placeholder.com/150",
+                        onTap: () {
+                          Get.to(() => ProvidersScreen(),
+                              arguments: category.id);
+                        },
+                      );
+                    },
+                  );
+
+                })
+
               ),
             ),
           ],
@@ -147,63 +143,5 @@ class CategoriesPage extends StatefulWidget {
 
   }
 
-  Widget _buildCategoryCard(String title, String imageUrl,{VoidCallback? onTap}) {
-    return Container(
-      padding: EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.green.withOpacity(0.1)
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              border: Border.all(color: Color(0xFF2D6A4F), width: 1)
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Get.to(() => ProvidersScreen());
-              },
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF2D6A4F),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
+
 }

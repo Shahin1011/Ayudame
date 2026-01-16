@@ -1,7 +1,7 @@
 class AppIcons{
 
   static String userHomeIcon = "assets/icons/home_nav.svg";
-  static String userHomeIconS = "assets/icons/homeS.svg";
+  static String userHomeIconS = "assets/icons/homes.svg";
   static String userCategoriesS = "assets/icons/categoryS.svg";
   static String userCategories = "assets/icons/categoriesIcon.svg";
   static String userOrderIcon = "assets/icons/orderHistory.svg";
