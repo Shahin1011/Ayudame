@@ -89,21 +89,21 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                     );
                   },
                   child: Container(
-                    height: 38,
-                    width: 38,
+                    height: 40,
+                    width: 40,
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(5),
                     child: SvgPicture.asset(
                       AppIcons.notification,
                       colorFilter: const ColorFilter.mode(
                         Color(0xFF2D6A4F),
                         BlendMode.srcIn,
                       ),
-                      width: 24,
-                      height: 24,
+                      width: 30,
+                      height: 30,
                     ),
                   ),
                 ),
@@ -128,7 +128,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               ),
               padding: EdgeInsets.fromLTRB(
                 16.w,
-                kToolbarHeight + 80.h,
+                kToolbarHeight + 75.h,
                 16.w,
                 24.h,
               ),
@@ -139,23 +139,23 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                     children: [
                       Expanded(
                         child: _buildStatCard(
-                          color: const Color(0xFFFFE5E5),
+                          iconBgColor: const Color(0xFFFF8A8A),
                           iconPath: 'assets/icons/booking.svg',
-                          iconColor: const Color(0xFFFF6B6B),
-                          value: '1,237',
+                          iconColor: AppColors.white,
+                          value: '1,247',
                           label: 'Total Booking',
-                          percentage: '+8%',
+                          percentage: '+12%',
                         ),
                       ),
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _buildStatCard(
-                          color: const Color(0xFFFFE8D6),
+                          iconBgColor: const Color(0xFFF07914),
                           iconPath: 'assets/icons/income.svg',
-                          iconColor: const Color(0xFFFF9F43),
-                          value: '\$50,500',
+                          iconColor: AppColors.white,
+                          value: '\$50.50K',
                           label: 'Total Income',
-                          percentage: '+8%',
+                          percentage: '+12%',
                         ),
                       ),
                     ],
@@ -165,23 +165,24 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                     children: [
                       Expanded(
                         child: _buildStatCard(
-                          color: const Color(0xFFE8F5E9),
+                          iconBgColor: const Color(0xFF22C55E),
+                          // Green
                           iconPath: 'assets/icons/user.svg',
-                          iconColor: const Color(0xFF4CAF50),
-                          value: '786',
-                          label: 'Active Users',
-                          percentage: '+8%',
+                          iconColor: AppColors.white,
+                          value: '56',
+                          label: 'Total Employee',
+                          percentage: '+12%',
                         ),
                       ),
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _buildStatCard(
-                          color: AppColors.eventBackground,
+                          iconBgColor: const Color(0xFFA855F7),
                           iconPath: 'assets/icons/order.svg',
-                          iconColor: const Color(0xFF9C27B0),
+                          iconColor: AppColors.white,
                           value: '850',
                           label: 'Active Orders',
-                          percentage: '+2%',
+                          percentage: '+12%',
                         ),
                       ),
                     ],
@@ -198,7 +199,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
                 child: TextField(
                   decoration: InputDecoration(
@@ -215,15 +216,15 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                       ),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(30.r),
                       borderSide: BorderSide(color: Colors.grey, width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(30.r),
                       borderSide: BorderSide(color: Colors.grey, width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(30.r),
                       borderSide: BorderSide(color: Colors.grey, width: 1.5),
                     ),
                     contentPadding: EdgeInsets.symmetric(
@@ -234,78 +235,15 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                 ),
               ),
             ),
-
             SizedBox(height: 16.h),
-
-            // All Providers Section
+            // All Employee Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'All Providers',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Get.to(() => BusinessProvidersScreen());
-                    },
-                    child: Text(
-                      'View All',
-                      style: TextStyle(
-                        color: const Color(0xFF1C5941),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Provider Card 1
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: GestureDetector(
-                onTap: () {
-                  Get.to(() => BusinessProvidersScreen());
-                },
-                child: ProviderUICard(
-                  imageUrl:
-                      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-                  profileUrl:
-                      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
-                  name: 'Jackson Builder',
-                  location: 'Dhanmondi Dhaka 1209',
-                  postedTime: '1 day ago',
-                  serviceTitle: 'Expert House Cleaning Service',
-                  description:
-                      'I take care of every corner, deep cleaning every room with care...',
-                  rating: 4.0,
-                  reviewCount: 120,
-                  price: 'Appointment Price: \$100',
-                  showOnlineIndicator: true,
-                  onViewDetails: () {
-                    Get.to(() => BusinessProvidersScreen());
-                  },
-                ),
-              ),
-            ),
-
-            SizedBox(height: 16.h),
-                                           // All Employee Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'All Employee',
+                    'My Employee',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -332,25 +270,23 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: GestureDetector(
                 onTap: () {
-                  Get.toNamed(AppRoutes.businessEmployee);
+                  Get.to(() => BusinessEmployeeListScreen());
                 },
                 child: ProviderUICard(
-                  imageUrl:
-                      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-                  profileUrl:
-                      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+                  imageUrl: 'assets/images/men_cleaning.jpg',
+                  profileUrl: 'assets/images/profile.png',
                   name: 'Jackson Builder',
-                  location: 'Dhanmondi Dhaka 1209',
+                  location: 'Dhanmondi, Dhaka 1209',
                   postedTime: '1 day ago',
-                  serviceTitle: 'House Cleaning',
+                  serviceTitle: 'Expert House Cleaning Service',
                   description:
-                      'I take care of every corner, deep cleaning every room with care.',
+                      'I take care of every corner, deep cleaning every room with care, leaving your home fresh and perfectly tidy for you.',
                   rating: 4.0,
                   reviewCount: 120,
-                  price: 'Appointment Price: \$100',
+                  price: '\$50',
                   showOnlineIndicator: true,
                   onViewDetails: () {
-                    Get.to(() => const BusinessEmployeeListScreen());
+                    Get.to(() => BusinessEmployeeListScreen());
                   },
                 ),
               ),
@@ -361,84 +297,81 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
       ),
     );
   }
+}
 
-  Widget _buildStatCard({
-    required Color color,
-    required String iconPath,
-    required Color iconColor,
-    required String value,
-    required String label,
-    required String percentage,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: iconColor.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: SvgPicture.asset(
-                  iconPath,
-                  color: iconColor,
-                  width: 20.w,
-                  height: 20.h,
+Widget _buildStatCard({
+  required Color iconBgColor,
+
+  required String iconPath,
+  required Color iconColor,
+  required String value,
+  required String label,
+  required String percentage,
+}) {
+  return Container(
+    padding: EdgeInsets.all(16.w),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(25.r),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: SvgPicture.asset(
+                iconPath,
+                color: iconColor,
+                width: 20.w,
+                height: 20.h,
+              ),
+            ),
+
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                percentage,
+                style: TextStyle(
+                  color: const Color(0xFF2E7D32),
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Text(
-                  percentage,
-                  style: TextStyle(
-                    color: iconColor,
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 19.sp,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
             ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        // ভ্যালু টেক্সট
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 22.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.black,
           ),
-          SizedBox(height: 4.h),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
+        ),
+        SizedBox(height: 4.h),
+        // লেবেল টেক্সট
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[600],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

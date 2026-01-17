@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/views/business/employee/create_employee.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../models/business_employee_model.dart';
+import '../../../viewmodels/business_employee_viewmodel.dart';
 
 class EmployeeDetailsScreen extends StatefulWidget {
   const EmployeeDetailsScreen({super.key});
@@ -13,17 +17,35 @@ class EmployeeDetailsScreen extends StatefulWidget {
 
 class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   int selectedTab = 0; // 0: Overview, 1: Activities, 2: Orders
+  late BusinessEmployeeModel employee;
+  final BusinessEmployeeViewModel _viewModel =
+      Get.find<BusinessEmployeeViewModel>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Expect employee object passed via arguments
+    if (Get.arguments is BusinessEmployeeModel) {
+      employee = Get.arguments as BusinessEmployeeModel;
+    } else {
+      // Fallback
+      employee = BusinessEmployeeModel(name: "Unknown");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Employee",  actions: [
-        IconButton(
-          icon: const Icon(Icons.more_vert, color: Colors.white),
-          onPressed: () => _showActionSheet(context),
-        )
-      ],),
+      appBar: CustomAppBar(
+        title: "Employee",
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () => _showActionSheet(context),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           _buildProfileHeader(),
@@ -44,11 +66,15 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
         children: [
           Stack(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage(
-                  'assets/images/provider_avatar.png',
-                ), // Make sure path is correct
+                backgroundImage:
+                    employee.profileImage != null &&
+                        employee.profileImage!.isNotEmpty
+                    ? (employee.profileImage!.startsWith('http')
+                          ? NetworkImage(employee.profileImage!)
+                          : AssetImage(employee.profileImage!) as ImageProvider)
+                    : const AssetImage('assets/images/provider_avatar.png'),
               ),
               Positioned(
                 bottom: 5,
@@ -69,30 +95,61 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Seam Rahman',
-            style: TextStyle(
+          Text(
+            employee.name ?? 'No Name',
+            style: const TextStyle(
               color: AppColors.dark,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Text(
-            'Provider',
-            style: TextStyle(color: AppColors.grey, fontSize: 14,fontWeight: FontWeight.w500),
-          ),
-          const Text(
-            'Exper House Cleaning Service',
-            style: TextStyle(color: AppColors.grey, fontSize: 14, fontWeight: FontWeight.w500),
+          const SizedBox(height: 10),
+          Text(
+            employee.headline ?? employee.serviceCategory ?? 'No Category',
+            style: const TextStyle(
+              color: AppColors.grey,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontFamily: "Inter",
+            ),
           ),
           const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _circleIcon('assets/icons/call.svg'),
-              const SizedBox(width: 20),
-              _circleIcon('assets/icons/message-02.svg'),
-            ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              // Outer border matching the dark green theme
+              border: Border.all(color: const Color(0xFF1B5E44), width: 1.5),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min, // Shrinks to fit content
+              children: [
+                const Text(
+                  'Call now',
+                  style: TextStyle(
+                    color: Color(0xFF1B5E44),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Icon container with solid background
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1B5E44),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons
+                        .phone_outlined, // Use SvgPicture.asset if using your svg file
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -106,7 +163,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
         shape: BoxShape.rectangle,
         color: AppColors.mainAppColor,
         border: Border.all(color: Colors.white24),
-        borderRadius: BorderRadius.circular(12)
+        borderRadius: BorderRadius.circular(12),
       ),
       child: SvgPicture.asset(
         iconPath,
@@ -139,17 +196,20 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
         width: MediaQuery.of(context).size.width * 0.28,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF1C5941) : Colors.white,
+          color: isSelected ? AppColors.mainAppColor : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFF1C5941) : Colors.grey.shade300,
+            color: isSelected
+                ? const Color(0xFF1C5941)
+                : AppColors.mainAppColor,
           ),
         ),
         child: Center(
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey.shade600,
+              fontFamily: "Inter",
+              color: isSelected ? AppColors.white : AppColors.mainAppColor,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
@@ -219,7 +279,6 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-
           ),
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -239,39 +298,44 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               _scheduleCard("Home Cleaning", "Arif hasan", "Tomorrow, 2:00 pm"),
               Divider(height: 1),
               _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
-
-              ]
+            ],
           ),
         ),
 
-         SizedBox(height: 25),
+        SizedBox(height: 25),
 
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-
           ),
           padding: const EdgeInsets.all(12),
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Contract Information",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Contract Information",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.black87,
                 ),
-                const SizedBox(height: 15),
-                _contractItem('assets/icons/phone.svg', "Phone", "+1 235455 5255 44"),
-                _contractItem('assets/icons/email.svg', "Email", "Siamrrr85@gmail.com"),
-
-              ]
+              ),
+              const SizedBox(height: 15),
+              _contractItem(
+                'assets/icons/phone.svg',
+                "Phone",
+                employee.phone ?? "N/A",
+              ),
+              _contractItem(
+                'assets/icons/email.svg',
+                "Email",
+                employee.email ?? "N/A",
+              ),
+            ],
           ),
         ),
-SizedBox(height: 30,),
+        SizedBox(height: 30),
       ],
     );
   }
@@ -313,7 +377,11 @@ SizedBox(height: 30,),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(fontSize: 12, color: AppColors.grey, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -415,7 +483,7 @@ SizedBox(height: 30,),
       ),
     );
   }
-                            // <----------- Activities Section --------->
+  // <----------- Activities Section --------->
 
   Widget _buildActivities() {
     return ListView.builder(
@@ -473,8 +541,7 @@ SizedBox(height: 30,),
     );
   }
 
-                // <----------- order Section --------->
-
+  // <----------- order Section --------->
 
   Widget _buildOrders() {
     return ListView.builder(
@@ -541,7 +608,7 @@ SizedBox(height: 30,),
       ),
     );
   }
-                                     // <----------- showActionSheet --------->
+  // <----------- showActionSheet --------->
 
   void _showActionSheet(BuildContext context) {
     showModalBottomSheet(
@@ -574,6 +641,26 @@ SizedBox(height: 30,),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: ListTile(
+                leading: SvgPicture.asset('assets/icons/eddit.svg'),
+                title: const Text(
+                  "Edit Employee",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                onTap: () {
+                  Get.to(() => CreateEmployee(employee: employee));
+                },
+              ),
+            ),
+
+            const SizedBox(height: 20),
+            Container(
+              width: 300,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ListTile(
                 leading: SvgPicture.asset(
                   'assets/icons/block.svg',
                   color: Colors.black87,
@@ -585,7 +672,7 @@ SizedBox(height: 30,),
                 onTap: () => Navigator.pop(context),
               ),
             ),
-SizedBox(height: 20,),
+            SizedBox(height: 20),
             Container(
               width: 300,
               height: 54,
@@ -605,7 +692,12 @@ SizedBox(height: 20,),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (employee.id != null) {
+                    _viewModel.deleteEmployee(employee.id!);
+                  }
+                },
               ),
             ),
             const SizedBox(height: 10),

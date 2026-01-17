@@ -52,8 +52,8 @@ class BusinessAuthService {
   Future<BusinessAuthResponse> signUp({
     required String businessName,
     required String ownerName,
-    required String email,
-    required String phone,
+    String? email,
+    String? phone,
     required String password,
     String? address,
     String? businessType,
@@ -62,27 +62,60 @@ class BusinessAuthService {
     String? idCardBack,
     String? occupation,
     String? referenceId,
+    String? dob,
   }) async {
     try {
-      debugPrint("📝 Business Sign Up (Multipart) - Email: $email");
+      debugPrint(
+        "📝 Business Sign Up - Email: $email, Phone: $phone, DOB: $dob",
+      );
 
-      final fields = {
-        'business_name': businessName,
-        'owner_name': ownerName,
-        'email': email,
-        'phone': phone,
+      final fields = <String, String>{
+        'businessName': businessName,
+        'fullName': ownerName,
         'password': password,
+        'confirmPassword': password,
+        'password_confirmation': password,
       };
 
-      if (address != null) fields['address'] = address;
-      if (businessType != null) fields['business_type'] = businessType;
+      if (email != null && email.isNotEmpty) {
+        fields['email'] = email;
+      } else if (phone != null && phone.isNotEmpty) {
+        fields['email'] = "${phone}@tempmail.com";
+      }
+
+      if (phone != null && phone.isNotEmpty) {
+        fields['phoneNumber'] = phone;
+      } else if (email != null && email.isNotEmpty) {
+        String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+        fields['phoneNumber'] =
+            "01" + timestamp.substring(timestamp.length - 9);
+      }
+
+      if (address != null) fields['businessAddress'] = address;
+      if (businessType != null) fields['businessCategory'] = businessType;
       if (occupation != null) fields['occupation'] = occupation;
-      if (referenceId != null) fields['reference_id'] = referenceId;
+      if (referenceId != null) fields['referenceId'] = referenceId;
+
+      if (dob != null && dob.contains('/')) {
+        try {
+          final parts = dob.split('/');
+          if (parts.length == 3) {
+            fields['dateOfBirth'] =
+                "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
+          } else {
+            fields['dateOfBirth'] = dob;
+          }
+        } catch (_) {
+          fields['dateOfBirth'] = dob;
+        }
+      } else {
+        fields['dateOfBirth'] = dob ?? '';
+      }
 
       final files = <String, dynamic>{};
-      if (businessPhoto != null) files['businessPhoto'] = businessPhoto;
       if (idCardFront != null) files['idCardFront'] = idCardFront;
-      if (idCardBack != null) files['IdCardBack'] = idCardBack;
+      if (idCardBack != null) files['idCardBack'] = idCardBack;
+      if (businessPhoto != null) files['logo'] = businessPhoto;
 
       final streamedResponse = await ApiService.postMultipart(
         endpoint: '/api/business-owners/register',
@@ -93,33 +126,26 @@ class BusinessAuthService {
 
       final responseBody = await streamedResponse.stream.bytesToString();
       final statusCode = streamedResponse.statusCode;
+      debugPrint("📥 Sign Up Response ($statusCode): $responseBody");
 
       if (statusCode == 200 || statusCode == 201) {
-        try {
-          final jsonResponse = jsonDecode(responseBody) as Map<String, dynamic>;
-          return BusinessAuthResponse.fromJson(jsonResponse);
-        } catch (e) {
-          debugPrint("❌ Invalid response format: $e");
-          throw Exception('Invalid response format from server');
-        }
+        final jsonResponse = jsonDecode(responseBody) as Map<String, dynamic>;
+        return BusinessAuthResponse.fromJson(jsonResponse);
       } else {
+        String errorMessage = 'Sign up failed';
         try {
           final errorResponse =
               jsonDecode(responseBody) as Map<String, dynamic>;
-          throw Exception(errorResponse['message'] ?? 'Sign up failed');
-        } catch (e) {
-          if (e.toString().contains('Exception:')) {
-            rethrow;
-          }
-          throw Exception('Sign up failed with status $statusCode');
-        }
+          errorMessage =
+              errorResponse['message'] ??
+              errorResponse['error'] ??
+              errorMessage;
+        } catch (_) {}
+        throw Exception(errorMessage);
       }
     } catch (e) {
       debugPrint("❌ Sign Up Error: $e");
-      if (e is Exception) {
-        rethrow;
-      }
-      throw Exception('An error occurred during sign up: $e');
+      rethrow;
     }
   }
 
@@ -165,14 +191,21 @@ class BusinessAuthService {
   }
 
   /// Send OTP
-  Future<Map<String, dynamic>> sendOtp({required String email}) async {
+  Future<Map<String, dynamic>> sendOtp({String? email, String? phone}) async {
     try {
-      final response = await ApiService.get(
-        endpoint: '/api/business-owners/send-otp?email=$email',
+      final body = <String, String>{};
+      if (email != null && email.isNotEmpty) body['email'] = email;
+      // Reverting to phoneNumber to match registration schema
+      if (phone != null && phone.isNotEmpty) body['phoneNumber'] = phone;
+
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/forgot-password',
+        body: body,
         requireAuth: false,
+        baseUrl: ApiService.baseURL,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         return jsonResponse;
       } else {
@@ -180,13 +213,16 @@ class BusinessAuthService {
           final errorResponse =
               jsonDecode(response.body) as Map<String, dynamic>;
           throw Exception(
-            errorResponse['message'] ?? 'Failed to send reset email',
+            errorResponse['message'] ??
+                'Failed: ${response.statusCode} - ${response.body}',
           );
         } catch (e) {
           if (e.toString().contains('Exception:')) {
             rethrow;
           }
-          throw Exception('Failed with status ${response.statusCode}');
+          throw Exception(
+            'Failed with status ${response.statusCode}: ${response.body}',
+          );
         }
       }
     } catch (e) {
@@ -199,16 +235,23 @@ class BusinessAuthService {
 
   /// Verify OTP
   Future<Map<String, dynamic>> verifyOtp({
-    required String email,
+    String? email,
+    String? phone,
     required String otp,
   }) async {
     try {
-      final response = await ApiService.get(
-        endpoint: '/api/business-owners/verify-otp?email=$email&otp=$otp',
+      final body = <String, String>{'otp': otp};
+      if (email != null && email.isNotEmpty) body['email'] = email;
+      if (phone != null && phone.isNotEmpty) body['phoneNumber'] = phone;
+
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/verify-otp',
+        body: body,
         requireAuth: false,
+        baseUrl: ApiService.baseURL,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         return jsonResponse;
       } else {
@@ -235,18 +278,29 @@ class BusinessAuthService {
 
   /// Reset Password with OTP
   Future<Map<String, dynamic>> resetPassword({
-    required String email,
+    String? email,
+    String? phone,
     required String otp,
     required String newPassword,
+    required String confirmPassword,
   }) async {
     try {
-      final response = await ApiService.get(
-        endpoint:
-            '/api/business-owners/reset-password?email=$email&otp=$otp&newPassword=$newPassword',
+      final body = <String, String>{
+        'otp': otp,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      };
+      if (email != null && email.isNotEmpty) body['email'] = email;
+      if (phone != null && phone.isNotEmpty) body['phoneNumber'] = phone;
+
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/reset-password',
+        body: body,
         requireAuth: false,
+        baseUrl: ApiService.baseURL,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
         return jsonResponse;
       } else {

@@ -6,7 +6,8 @@ import 'storage_service.dart';
 
 class ApiService {
   // Lavellh Backend API
-  static const String baseURL = 'https://lavellh-backend.onrender.com';
+  static const String baseURL =
+      'https://figures-sherman-required-temporarily.trycloudflare.com';
 
   /// Get default headers with authentication token
   static Future<Map<String, String>> _getDefaultHeaders({
@@ -33,7 +34,7 @@ class ApiService {
 
     if (token != null) {
       debugPrint(
-        "   Authorization: Bearer ${token.substring(0, token.length > 30 ? 30 : token.length)}...",
+        " Authorization: Bearer ${token.substring(0, token.length > 30 ? 30 : token.length)}...",
       );
     }
 
@@ -45,8 +46,9 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
     bool requireAuth = true,
+    String baseUrl = baseURL,
   }) async {
-    final url = Uri.parse('$baseURL$endpoint');
+    final url = Uri.parse('$baseUrl$endpoint');
 
     final defaultHeaders = requireAuth
         ? await _getDefaultHeaders(additionalHeaders: headers)
@@ -201,10 +203,11 @@ class ApiService {
     required Map<String, dynamic>
     files, // Map<String, File> or Map<String, List<File>>
     bool requireAuth = true,
+    String method = 'POST',
   }) async {
     final url = Uri.parse('$baseURL$endpoint');
 
-    final request = http.MultipartRequest('POST', url);
+    final request = http.MultipartRequest(method, url);
 
     // Headers
     final token = await StorageService.getToken();

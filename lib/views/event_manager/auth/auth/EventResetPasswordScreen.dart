@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import '../../../../core/routes/app_routes.dart';
-import '../../../../viewmodels/business_auth_viewmodel.dart';
+import 'package:middle_ware/viewmodels/event_manager_viewmodel.dart';
 
-class BusinessForgotPasswordScreen extends StatelessWidget {
-  BusinessForgotPasswordScreen({super.key});
+class EventResetPasswordScreen extends StatefulWidget {
+  const EventResetPasswordScreen({super.key});
 
-  final BusinessAuthViewModel _authViewModel = Get.put(BusinessAuthViewModel());
+  @override
+  State<EventResetPasswordScreen> createState() =>
+      _EventResetPasswordScreenState();
+}
+
+class _EventResetPasswordScreenState extends State<EventResetPasswordScreen> {
+  final _viewModel = Get.find<EventManagerViewModel>();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: const Color(
+          0xFFF5F5F5,
+        ), // Matched BusinessResetPasswordScreen
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -23,7 +39,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Forgot Password',
+          'Reset Password',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -41,7 +57,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             // Title
             const Text(
-              'Forgot Password?',
+              'Reset Password',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -53,7 +69,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             // Description
             const Text(
-              'Don\'t worry! Enter your registered email\nto receive a reset code.',
+              'Enter your new password to reset your account access.',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
@@ -63,21 +79,64 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Email Label
+            // New Password Label
             const Text(
-              'Enter your email',
+              'New Password',
               style: TextStyle(fontSize: 13, color: Colors.black87),
             ),
 
             const SizedBox(height: 8),
 
             TextField(
-              controller: _authViewModel.forgotEmailController,
+              controller: _newPasswordController,
+              obscureText: true,
               decoration: InputDecoration(
-                hintText: 'Enter your email',
+                hintText: 'Enter new password',
                 hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
                 prefixIcon: const Icon(
-                  Icons.email_outlined,
+                  Icons.lock_outline,
+                  size: 20,
+                  color: Colors.black54,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Color(0xFF1C5941)),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Confirm Password Label
+            const Text(
+              'Confirm Password',
+              style: TextStyle(fontSize: 13, color: Colors.black87),
+            ),
+
+            const SizedBox(height: 8),
+
+            TextField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'Re-enter new password',
+                hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
                   size: 20,
                   color: Colors.black54,
                 ),
@@ -109,10 +168,13 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _authViewModel.isLoading.value
+                  onPressed: _viewModel.isLoading.value
                       ? null
                       : () {
-                          _authViewModel.sendOtp();
+                          _viewModel.resetPassword(
+                            _newPasswordController.text,
+                            _confirmPasswordController.text,
+                          );
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),
@@ -122,7 +184,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: _authViewModel.isLoading.value
+                  child: _viewModel.isLoading.value
                       ? const SizedBox(
                           width: 24,
                           height: 24,
@@ -132,62 +194,13 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
                           ),
                         )
                       : const Text(
-                          'Send Reset Code',
+                          'Reset Password',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                 ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Center(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Remembered your password? ',
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.businessLogin);
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Need Help?',
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],

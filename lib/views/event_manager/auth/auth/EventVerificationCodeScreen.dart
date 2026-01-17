@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
+import 'package:middle_ware/viewmodels/event_manager_viewmodel.dart';
 
 class EventVerificationCodeScreen extends StatefulWidget {
   const EventVerificationCodeScreen({super.key});
 
   @override
-  State<EventVerificationCodeScreen> createState() => _EventVerificationCodeScreenState();
+  State<EventVerificationCodeScreen> createState() =>
+      _EventVerificationCodeScreenState();
 }
 
-class _EventVerificationCodeScreenState extends State<EventVerificationCodeScreen> {
+class _EventVerificationCodeScreenState
+    extends State<EventVerificationCodeScreen> {
+  final _viewModel = Get.find<EventManagerViewModel>();
   final List<TextEditingController> _controllers = List.generate(
     6,
     (_) => TextEditingController(),
@@ -31,9 +36,9 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -87,10 +92,12 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
             const SizedBox(height: 12),
 
             // Description
-            const Text(
-              'We\'ve sent a 6-digit code to i***@gmail.com',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-              textAlign: TextAlign.center,
+            Obx(
+              () => Text(
+                'We\'ve sent a 6-digit code to ${_viewModel.forgotPasswordEmail.value.isEmpty ? "your email" : _viewModel.forgotPasswordEmail.value}',
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
             ),
 
             const SizedBox(height: 32),
@@ -171,24 +178,34 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
             const SizedBox(height: 24),
 
             // Verify Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.eventLogin);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _viewModel.isLoading.value
+                      ? null
+                      : () {
+                          String otp = _controllers.map((c) => c.text).join();
+                          _viewModel.verifyOtp(otp);
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C5941),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Verify',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: _viewModel.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Verify',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -204,7 +221,9 @@ class _EventVerificationCodeScreenState extends State<EventVerificationCodeScree
                   style: TextStyle(fontSize: 14, color: Colors.black54),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _viewModel.sendOtp(_viewModel.forgotPasswordEmail.value);
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(0, 0),

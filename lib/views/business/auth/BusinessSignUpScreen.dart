@@ -35,6 +35,21 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailPhoneController.dispose();
+    _dobController.dispose();
+    _businessNameController.dispose();
+    _businessCategoryController.dispose();
+    _businessAddressController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _occupationController.dispose();
+    _referenceIdController.dispose();
+    super.dispose();
+  }
+
   // Image Picking Logic
   Future<void> _pickImage(String type) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -43,6 +58,33 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
         if (type == 'business') _businessPhoto = File(image.path);
         if (type == 'front') _idCardFront = File(image.path);
         if (type == 'back') _idCardBack = File(image.path);
+      });
+    }
+  }
+
+  // Date Picking Logic
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF1C5941),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _dobController.text = "${picked.day}/${picked.month}/${picked.year}";
       });
     }
   }
@@ -79,13 +121,27 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 const SizedBox(height: 25),
 
                 // Full Name
-                _buildTextField(_fullNameController, 'Full name'),
+                _buildTextField(
+                  _fullNameController,
+                  'Full name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter full name';
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 12),
 
                 // Email/Phone
                 _buildTextField(
                   _emailPhoneController,
                   'E-mail address or phone number',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter email or phone';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
 
@@ -95,10 +151,20 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
-                _buildTextField(
-                  _dobController,
-                  'dd/mm/yy',
-                  suffixIcon: Icons.calendar_month_outlined,
+                GestureDetector(
+                  onTap: () => _selectDate(context),
+                  child: AbsorbPointer(
+                    child: _buildTextField(
+                      _dobController,
+                      'dd/mm/yy',
+                      suffixIcon: Icons.calendar_month_outlined,
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Please select date of birth';
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -107,16 +173,31 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   'Business name',
                   _businessNameController,
                   'Enter your business name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter business name';
+                    return null;
+                  },
                 ),
                 _buildLabelledField(
                   'Business category',
                   _businessCategoryController,
-                  'Enter your business name',
+                  'Enter business category',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter business category';
+                    return null;
+                  },
                 ),
                 _buildLabelledField(
                   'Business address',
                   _businessAddressController,
-                  'Enter your business name',
+                  'Enter business address',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter business address';
+                    return null;
+                  },
                 ),
 
                 // Business Photo
@@ -172,6 +253,13 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   () {
                     setState(() => _obscurePassword = !_obscurePassword);
                   },
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please enter password';
+                    if (value.length < 6)
+                      return 'Password must be at least 6 characters';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 12),
                 _buildPasswordField(
@@ -182,6 +270,13 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                     setState(
                       () => _obscureConfirmPassword = !_obscureConfirmPassword,
                     );
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Please confirm password';
+                    if (value != _passwordController.text)
+                      return 'Passwords do not match';
+                    return null;
                   },
                 ),
                 const SizedBox(height: 20),
@@ -197,6 +292,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   _referenceIdController,
                   'Fill the number',
                   isNumber: true,
+                  keyboardType: TextInputType.number,
                 ),
 
                 const SizedBox(height: 30),
@@ -210,28 +306,29 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                       onPressed: _authViewModel.isLoading.value
                           ? null
                           : () {
-                              if (_businessPhoto == null) {
-                                Get.snackbar(
-                                  "Required",
-                                  "Please upload a business photo",
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                                return;
-                              }
-                              if (_idCardFront == null || _idCardBack == null) {
-                                Get.snackbar(
-                                  "Required",
-                                  "Please upload both sides of your ID Card",
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                                return;
-                              }
-
                               if (_formKey.currentState!.validate()) {
+                                if (_businessPhoto == null) {
+                                  Get.snackbar(
+                                    "Required",
+                                    "Please upload a business photo",
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                  return;
+                                }
+                                if (_idCardFront == null ||
+                                    _idCardBack == null) {
+                                  Get.snackbar(
+                                    "Required",
+                                    "Please upload both sides of your ID Card",
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                  return;
+                                }
+
                                 _authViewModel.registerFromUI(
                                   fullName: _fullNameController.text.trim(),
                                   contact: _emailPhoneController.text.trim(),
@@ -293,6 +390,8 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
     TextEditingController controller,
     String hint, {
     IconData? suffixIcon,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -302,10 +401,13 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
       ),
       child: TextFormField(
         controller: controller,
+        keyboardType: keyboardType,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
           border: InputBorder.none,
+          errorStyle: const TextStyle(height: 0.1, fontSize: 10),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 14,
@@ -323,6 +425,8 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
     TextEditingController controller,
     String hint, {
     bool isNumber = false,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +436,12 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
-        _buildTextField(controller, hint),
+        _buildTextField(
+          controller,
+          hint,
+          keyboardType: isNumber ? TextInputType.number : keyboardType,
+          validator: validator,
+        ),
         const SizedBox(height: 16),
       ],
     );
@@ -342,8 +451,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
     TextEditingController controller,
     String hint,
     bool obscure,
-    VoidCallback toggle,
-  ) {
+    VoidCallback toggle, {
+    String? Function(String?)? validator,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8F9FA),
@@ -353,9 +463,11 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
       child: TextFormField(
         controller: controller,
         obscureText: obscure,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hint,
           border: InputBorder.none,
+          errorStyle: const TextStyle(height: 0.1, fontSize: 10),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 14,

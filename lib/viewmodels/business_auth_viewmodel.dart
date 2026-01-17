@@ -21,6 +21,7 @@ class BusinessAuthViewModel extends GetxController {
   final forgotEmailController = TextEditingController();
   final verificationCodeController = TextEditingController();
   final newPasswordController = TextEditingController();
+  final confirmNewPasswordController = TextEditingController();
 
   final BusinessAuthService _authService = BusinessAuthService();
 
@@ -165,22 +166,14 @@ class BusinessAuthViewModel extends GetxController {
 
     try {
       // Determine if contact is email or phone
-      String email = "";
-      String phone = "";
+      String? email;
+      String? phone;
 
       if (contact.contains('@')) {
         email = contact;
-        // If phone is required by API but not provided in UI, we might need to handle it.
-        // For now sending empty or maybe the same value if acceptable, strictly speaking API needs separate.
-        phone = "0000000000"; // Placeholder or ask user to provide both
       } else {
         phone = contact;
-        email = "$contact@placeholder.com"; // Placeholder if email required
       }
-
-      // If the input contact looks like a phone and we have an email field requirement,
-      // the current UI design is limited. We will try our best.
-      // Ideally update UI to have both fields if API requires both.
 
       final response = await _authService.signUp(
         businessName: businessName,
@@ -195,6 +188,7 @@ class BusinessAuthViewModel extends GetxController {
         idCardBack: idCardBackPath,
         occupation: occupation,
         referenceId: referenceId,
+        dob: dob,
       );
 
       if (response.success && response.data != null) {
@@ -325,7 +319,7 @@ class BusinessAuthViewModel extends GetxController {
     if (forgotEmailController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please enter your email",
+        "Please enter your email or phone",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -336,9 +330,17 @@ class BusinessAuthViewModel extends GetxController {
     isLoading.value = true;
 
     try {
-      final response = await _authService.sendOtp(
-        email: forgotEmailController.text.trim(),
-      );
+      String input = forgotEmailController.text.trim();
+      String? email;
+      String? phone;
+
+      if (input.contains('@')) {
+        email = input;
+      } else {
+        phone = input;
+      }
+
+      final response = await _authService.sendOtp(email: email, phone: phone);
 
       Get.snackbar(
         "Success",
@@ -379,8 +381,19 @@ class BusinessAuthViewModel extends GetxController {
     isLoading.value = true;
 
     try {
+      String input = forgotEmailController.text.trim();
+      String? email;
+      String? phone;
+
+      if (input.contains('@')) {
+        email = input;
+      } else {
+        phone = input;
+      }
+
       final response = await _authService.verifyOtp(
-        email: forgotEmailController.text.trim(),
+        email: email,
+        phone: phone,
         otp: verificationCodeController.text.trim(),
       );
 
@@ -392,7 +405,7 @@ class BusinessAuthViewModel extends GetxController {
         colorText: Colors.white,
       );
 
-      // You can navigate to reset password screen here if needed
+      Get.toNamed(AppRoutes.businessResetPassword);
     } catch (e) {
       Get.snackbar(
         "Error",
@@ -408,10 +421,22 @@ class BusinessAuthViewModel extends GetxController {
 
   /// Reset Password
   Future<void> resetPassword() async {
-    if (newPasswordController.text.isEmpty) {
+    if (newPasswordController.text.isEmpty ||
+        confirmNewPasswordController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Please enter new password",
+        "Please fill in all fields",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (newPasswordController.text != confirmNewPasswordController.text) {
+      Get.snackbar(
+        "Error",
+        "Passwords do not match",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -422,10 +447,22 @@ class BusinessAuthViewModel extends GetxController {
     isLoading.value = true;
 
     try {
+      String input = forgotEmailController.text.trim();
+      String? email;
+      String? phone;
+
+      if (input.contains('@')) {
+        email = input;
+      } else {
+        phone = input;
+      }
+
       final response = await _authService.resetPassword(
-        email: forgotEmailController.text.trim(),
+        email: email,
+        phone: phone,
         otp: verificationCodeController.text.trim(),
         newPassword: newPasswordController.text,
+        confirmPassword: confirmNewPasswordController.text,
       );
 
       Get.snackbar(
@@ -497,6 +534,7 @@ class BusinessAuthViewModel extends GetxController {
     forgotEmailController.dispose();
     verificationCodeController.dispose();
     newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
     super.onClose();
   }
 }

@@ -1,13 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
+import 'services/storage_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // Initialize GetX dependencies
   _initDependencies();
+
+  if (kDebugMode) {
+    final token = await StorageService.getToken();
+    debugPrint('FULL TOKEN: $token');
+  }
 
   runApp(const MyApp());
 }

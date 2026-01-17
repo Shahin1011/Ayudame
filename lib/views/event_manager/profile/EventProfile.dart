@@ -10,6 +10,7 @@ import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
 import '../../../widgets/custom_appbar.dart';
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
+import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventProfilePage extends StatefulWidget {
   const EventProfilePage({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class EventProfilePage extends StatefulWidget {
 }
 
 class _EventProfilePageState extends State<EventProfilePage> {
+  final _viewModel = Get.put(EventManagerViewModel());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -298,13 +300,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // Add your logout logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Logged out successfully'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          _viewModel.logout();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
