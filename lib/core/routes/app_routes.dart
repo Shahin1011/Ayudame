@@ -281,7 +281,10 @@ class AppRoutes {
     ),
     GetPage(name: eventHome, page: () => const BottomNavEScreen()),
     GetPage(name: eventCreate, page: () => const CreateEventPage()),
-    GetPage(name: eventEdit, page: () => const EditEventPage()),
+    GetPage(
+      name: eventEdit,
+      page: () => EditEventPage(event: Get.arguments),
+    ),
     GetPage(name: eventProfile, page: () => const EventProfilePage()),
   ];
 }

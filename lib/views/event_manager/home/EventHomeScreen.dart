@@ -5,156 +5,171 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/home/EventNotificationPage.dart';
-import '../../../core/routes/app_routes.dart';
+import 'package:middle_ware/viewmodels/event_viewmodel.dart';
+import 'package:middle_ware/viewmodels/event_manager_viewmodel.dart';
+import 'EditEventPage.dart';
 import 'EventDetailPage.dart';
 import 'cancel.dart';
 
-class EventHomeScreen extends StatelessWidget {
+class EventHomeScreen extends StatefulWidget {
   const EventHomeScreen({super.key});
+
+  @override
+  State<EventHomeScreen> createState() => _EventHomeScreenState();
+}
+
+class _EventHomeScreenState extends State<EventHomeScreen> {
+  final EventViewModel _eventViewModel = Get.put(EventViewModel());
+  final EventManagerViewModel _managerViewModel = Get.put(
+    EventManagerViewModel(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _eventViewModel.fetchEvents(refresh: true);
+    _managerViewModel.fetchProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          backgroundColor: AppColors.mainAppColor,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
+        preferredSize: const Size.fromHeight(100),
+        child: Obx(
+          () => AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            backgroundColor: AppColors.mainAppColor,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
             ),
-          ),
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Color(0xFFD4B896),
-                  backgroundImage: AssetImage('assets/images/men.png'),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Welcome Back',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Seam Rahman',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+            flexibleSpace: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: const Color(0xFFD4B896),
+                    backgroundImage:
+                        _managerViewModel
+                                    .currentManager
+                                    .value
+                                    ?.profilePicture !=
+                                null &&
+                            _managerViewModel
+                                .currentManager
+                                .value!
+                                .profilePicture!
+                                .isNotEmpty
+                        ? NetworkImage(
+                                _managerViewModel
+                                    .currentManager
+                                    .value!
+                                    .profilePicture!,
+                              )
+                              as ImageProvider
+                        : const AssetImage('assets/images/men.png'),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>  EventNotificationPage(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      AppIcons.notification,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF2D6A4F),
-                        BlendMode.srcIn,
-                      ),
-                      width: 20,
-                      height: 20,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Welcome Back',
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _managerViewModel.currentManager.value?.fullName ??
+                              'Seam Rahman',
+                          style: const TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-
-              ],
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventNotificationPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(
+                        AppIcons.notification,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF2D6A4F),
+                          BlendMode.srcIn,
+                        ),
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildEventCard(
-            context,
-            imageUrl: 'assets/images/event_detail.png',
-            event: "Event Name",
-            title: 'Happy New Year Fest',
-            date: '30/12/2025',
-            time: '11:00 PM',
-            guests: '200',
-            price: '\$50.00',
-            location:
-                'St Stadium Jouers Prein, San Francisco Florida, United States',
-          ),
-          const SizedBox(height: 16),
-          _buildEventCard(
-            context,
-            imageUrl: 'assets/images/event_detail.png',
-            event: "Event Name",
-            title: 'Happy New Year Fest',
-            date: '30/12/2025',
-            time: '11:00 PM',
-            guests: '200',
-            price: '\$50.00',
-            location:
-                'St Stadium Jouers Prein, San Francisco Florida, United States',
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () => _eventViewModel.fetchEvents(refresh: true),
+        child: Obx(() {
+          if (_eventViewModel.isLoading.value &&
+              _eventViewModel.events.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (_eventViewModel.events.isEmpty) {
+            return const Center(
+              child: Text("No events found. Start by creating one!"),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _eventViewModel.events.length,
+            itemBuilder: (context, index) {
+              final event = _eventViewModel.events[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildEventCard(context, event: event),
+              );
+            },
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildEventCard(
-    BuildContext context, {
-    required String imageUrl,
-    required String event,
-    required String title,
-    required String date,
-    required String time,
-    required String guests,
-    required String price,
-    required String location,
-  }) {
+  Widget _buildEventCard(BuildContext context, {required dynamic event}) {
     return GestureDetector(
       onTap: () {
-        Get.to(
-          () => EventDetailPage(
-            imageUrl: imageUrl,
-            event: event,
-            title: title,
-            date: date,
-            time: time,
-            guests: guests,
-            price: price,
-            location: location,
-          ),
-        );
+        Get.to(() => EventDetailPage(event: event));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -170,27 +185,43 @@ class EventHomeScreen extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
-              child: Image.asset(
-                imageUrl,
-                width: double.infinity,
-                height: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 120,
-                    color: Colors.grey[300],
-                    child: SvgPicture.asset(
-                      AppIcons.create,
-                      width: 50,
-                      height: 50,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.grey,
-                        BlendMode.srcIn,
+              child: Stack(
+                children: [
+                  if (event.eventImage != null &&
+                      event.eventImage.startsWith('http'))
+                    Image.network(
+                      event.eventImage,
+                      width: double.infinity,
+                      height: 160,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildPlaceholderImage(),
+                    )
+                  else
+                    _buildPlaceholderImage(),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        (event.status ?? 'draft').toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
 
@@ -199,32 +230,28 @@ class EventHomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5E9),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'Event name',
-                          style: TextStyle(
-                            color: const Color(0xFF1C5941),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F5E9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      event.eventType ?? 'Event Category',
+                      style: const TextStyle(
+                        color: Color(0xFF1C5941),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    title,
-                    style: TextStyle(
+                    event.eventName ?? 'Untitled Event',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -232,106 +259,33 @@ class EventHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Date, Time, Guests, Price
+                  // Date & Time
                   Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Date',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              date,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildInfoCol(
+                        'Date',
+                        event.eventStartDateTime?.split(' ')[0] ?? 'N/A',
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Time',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              time,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildInfoCol(
+                        'Time',
+                        event.eventStartDateTime?.contains(' ') == true
+                            ? event.eventStartDateTime.split(' ')[1]
+                            : 'N/A',
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
 
+                  // Guests & Price
                   Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Guest Limit',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              guests,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildInfoCol(
+                        'Guest Limit',
+                        event.maximumNumberOfTickets?.toString() ?? 'No Limit',
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Ticket price',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              price,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildInfoCol(
+                        'Ticket price',
+                        '\$${event.ticketPrice?.toStringAsFixed(2) ?? '0.00'}',
                       ),
                     ],
                   ),
@@ -353,9 +307,11 @@ class EventHomeScreen extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          location,
-                          style: TextStyle(
-                            fontSize: 16,
+                          event.eventLocation ?? 'No location provided',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.dark,
                           ),
@@ -370,12 +326,11 @@ class EventHomeScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          
                           onPressed: () {
-                            Get.toNamed(AppRoutes.eventEdit);
+                            Get.to(() => EditEventPage(event: event));
                           },
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: Color(0xFFF3F8F4),
+                            backgroundColor: const Color(0xFFF3F8F4),
                             foregroundColor: const Color(0xFF1C5941),
                             side: const BorderSide(color: Color(0xFF1C5941)),
                             shape: RoundedRectangleBorder(
@@ -393,12 +348,13 @@ class EventHomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            showCancelEventDialog(context);
-                          },
+                          onPressed: () => showCancelEventDialog(
+                            context: context,
+                            event: event,
+                            eventViewModel: _eventViewModel,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF1C5941),
                             foregroundColor: Colors.white,
@@ -423,6 +379,42 @@ class EventHomeScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCol(String label, String value) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      width: double.infinity,
+      height: 160,
+      color: Colors.grey[200],
+      child: Center(
+        child: SvgPicture.asset(
+          AppIcons.create,
+          width: 50,
+          height: 50,
+          colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
         ),
       ),
     );

@@ -322,8 +322,14 @@ class EventManagerViewModel extends GetxController {
     isLoading.value = true;
     try {
       final response = await _authService.getProfile();
-      // Inspect response structure - assuming standard API response
-      final data = response['data'];
+      print("🔍 Profile API Response: $response");
+
+      var data = response['data'];
+      // Handle double nested data structure if possibly exists
+      if (data != null && data is Map && data['data'] != null) {
+        data = data['data'];
+      }
+      print("🔍 Profile Data Object: $data");
 
       if (data != null) {
         // If 'eventManager' key exists use it (nested), otherwise try data directly
@@ -364,6 +370,19 @@ class EventManagerViewModel extends GetxController {
     String? category,
     String? address,
   }) async {
+    // Validation
+    if (newPassword != null &&
+        newPassword.isNotEmpty &&
+        newPassword != confirmPassword) {
+      Get.snackbar(
+        "Error",
+        "New passwords do not match",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     isLoading.value = true;
     try {
       final response = await _authService.updateProfile(
@@ -411,6 +430,36 @@ class EventManagerViewModel extends GetxController {
           colorText: Colors.white,
         );
       }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Delete Account
+  Future<void> deleteAccount() async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.deleteAccount();
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Account deleted successfully",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      // Clear local data and redirect
+      await StorageService.clearAll();
+      currentManager.value = null;
+      isLoggedIn.value = false;
+      Get.offAllNamed(AppRoutes.eventLogin);
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }

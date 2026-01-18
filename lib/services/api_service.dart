@@ -271,7 +271,24 @@ class ApiService {
       debugPrint("📂 Files keys: ${files.keys}");
 
       final streamedResponse = await request.send();
-      return streamedResponse;
+      final response = await http.Response.fromStream(streamedResponse);
+
+      debugPrint("✅ Response Status: ${response.statusCode}");
+      debugPrint("📥 Response Body: ${response.body}");
+
+      // We need to return a StreamedResponse because the service expects it,
+      // or we can change the service to expect a Response.
+      // Re-creating the streamed response from the consumed one.
+      return http.StreamedResponse(
+        Stream.value(response.bodyBytes),
+        response.statusCode,
+        contentLength: response.contentLength,
+        request: response.request,
+        headers: response.headers,
+        isRedirect: response.isRedirect,
+        persistentConnection: response.persistentConnection,
+        reasonPhrase: response.reasonPhrase,
+      );
     } catch (e) {
       debugPrint("❌ Network Error: $e");
       throw Exception('Network error: $e');

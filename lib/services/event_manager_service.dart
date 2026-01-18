@@ -206,6 +206,11 @@ class EventManagerService {
         endpoint: _meEndpoint,
         requireAuth: true,
       );
+
+      if (response.body.contains('<!DOCTYPE html>')) {
+        throw Exception('Server returned HTML. Possible tunnel issue or 404.');
+      }
+
       final decodedResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
         return decodedResponse;
@@ -273,17 +278,304 @@ class EventManagerService {
         );
       }
 
+      if (response.body.contains('<!DOCTYPE html>')) {
+        throw Exception('Server returned HTML. Possible tunnel issue or 404.');
+      }
+
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        String errorMsg =
+            decodedResponse['message'] ?? 'Failed to update profile';
+        if (decodedResponse['errors'] != null) {
+          final errors = decodedResponse['errors'];
+          if (errors is Map) {
+            errorMsg = errors.values.join(', ');
+          } else if (errors is List) {
+            errorMsg = errors.join(', ');
+          }
+        }
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      debugPrint('Error in EventManagerService.updateProfile: $e');
+      rethrow;
+    }
+  }
+
+  // Event Endpoints
+  static const String _eventsEndpoint = '/api/event-managers/events';
+
+  /// Create Event (Draft)
+  Future<Map<String, dynamic>> createEvent(
+    Map<String, dynamic> fields,
+    String? imagePath,
+  ) async {
+    try {
+      http.Response response;
+      if (imagePath != null && imagePath.isNotEmpty) {
+        // Sanitize fields for multipart (trim strings, format numbers)
+        final Map<String, String> sanitizedFields = fields.map((key, value) {
+          String valStr = value.toString().trim();
+          if (value is double && value == value.toInt().toDouble()) {
+            valStr = value.toInt().toString();
+          }
+          return MapEntry(key, valStr);
+        });
+
+        final streamedResponse = await ApiService.postMultipart(
+          endpoint: _eventsEndpoint,
+          fields: sanitizedFields,
+          files: {'eventImage': imagePath},
+          requireAuth: true,
+        );
+        response = await http.Response.fromStream(streamedResponse);
+      } else {
+        // Trim strings in JSON as well
+        final Map<String, dynamic> sanitizedFields = fields.map((key, value) {
+          return MapEntry(key, value is String ? value.trim() : value);
+        });
+
+        response = await ApiService.post(
+          endpoint: _eventsEndpoint,
+          body: sanitizedFields,
+          requireAuth: true,
+        );
+      }
+
+      final decodedResponse = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decodedResponse;
+      } else {
+        // Handle detailed validation errors if present
+        String errorMsg =
+            decodedResponse['message'] ?? 'Failed to create event';
+        if (decodedResponse['errors'] != null) {
+          final errors = decodedResponse['errors'];
+          if (errors is Map) {
+            errorMsg = errors.values.join(', ');
+          } else if (errors is List) {
+            errorMsg = errors.join(', ');
+          }
+        }
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      debugPrint('Error creating event: $e');
+      rethrow;
+    }
+  }
+
+  /// Get All Events with Pagination and Status
+  Future<Map<String, dynamic>> getEvents({
+    int page = 1,
+    int limit = 10,
+    String status = 'draft',
+  }) async {
+    try {
+      final endpoint =
+          '$_eventsEndpoint?page=$page&limit=$limit&status=$status';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(decodedResponse['message'] ?? 'Failed to fetch events');
+      }
+    } catch (e) {
+      debugPrint('Error fetching events: $e');
+      rethrow;
+    }
+  }
+
+  /// Get Event by ID
+  Future<Map<String, dynamic>> getEventById(String eventId) async {
+    try {
+      final endpoint = '$_eventsEndpoint/$eventId';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
+      );
       final decodedResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         return decodedResponse;
       } else {
         throw Exception(
-          decodedResponse['message'] ?? 'Failed to update profile',
+          decodedResponse['message'] ?? 'Failed to fetch event details',
         );
       }
     } catch (e) {
-      debugPrint('Error in EventManagerService.updateProfile: $e');
+      debugPrint('Error fetching event details: $e');
+      rethrow;
+    }
+  }
+
+  /// Update Event
+  Future<Map<String, dynamic>> updateEvent(
+    String eventId,
+    Map<String, dynamic> fields,
+    String? imagePath,
+  ) async {
+    try {
+      final endpoint = '$_eventsEndpoint/$eventId';
+      http.Response response;
+
+      if (imagePath != null && imagePath.isNotEmpty) {
+        final Map<String, String> sanitizedFields = fields.map((key, value) {
+          String valStr = value.toString().trim();
+          if (value is double && value == value.toInt().toDouble()) {
+            valStr = value.toInt().toString();
+          }
+          return MapEntry(key, valStr);
+        });
+
+        final streamedResponse = await ApiService.postMultipart(
+          endpoint: endpoint,
+          fields: sanitizedFields,
+          files: {'eventImage': imagePath},
+          requireAuth: true,
+          method: 'PUT',
+        );
+        response = await http.Response.fromStream(streamedResponse);
+      } else {
+        final Map<String, dynamic> sanitizedFields = fields.map((key, value) {
+          return MapEntry(key, value is String ? value.trim() : value);
+        });
+
+        response = await ApiService.put(
+          endpoint: endpoint,
+          body: sanitizedFields,
+          requireAuth: true,
+        );
+      }
+
+      final decodedResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        String errorMsg =
+            decodedResponse['message'] ?? 'Failed to update event';
+        if (decodedResponse['errors'] != null) {
+          final errors = decodedResponse['errors'];
+          if (errors is Map) {
+            errorMsg = errors.values.join(', ');
+          } else if (errors is List) {
+            errorMsg = errors.join(', ');
+          }
+        }
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      debugPrint('Error updating event: $e');
+      rethrow;
+    }
+  }
+
+  /// Publish Event
+  Future<Map<String, dynamic>> publishEvent(String eventId) async {
+    try {
+      final endpoint = '$_eventsEndpoint/$eventId/publish';
+      final response = await ApiService.put(
+        endpoint: endpoint,
+        body: {},
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Failed to publish event',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error publishing event: $e');
+      rethrow;
+    }
+  }
+
+  /// Cancel Event
+  Future<Map<String, dynamic>> cancelEvent(
+    String eventId,
+    String reason,
+  ) async {
+    try {
+      final endpoint = '$_eventsEndpoint/$eventId/cancel';
+      final response = await ApiService.put(
+        endpoint: endpoint,
+        body: {'cancellationReason': reason},
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        String errorMsg =
+            decodedResponse['message'] ?? 'Failed to cancel event';
+        if (decodedResponse['errors'] != null) {
+          final errors = decodedResponse['errors'];
+          if (errors is Map) {
+            errorMsg = errors.values.join(', ');
+          } else if (errors is List) {
+            errorMsg = errors.join(', ');
+          }
+        }
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      debugPrint('Error canceling event: $e');
+      rethrow;
+    }
+  }
+
+  /// Get Stats
+  Future<Map<String, dynamic>> getStats() async {
+    try {
+      final endpoint = '$_eventsEndpoint/stats';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(decodedResponse['message'] ?? 'Failed to fetch stats');
+      }
+    } catch (e) {
+      debugPrint('Error fetching stats: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete Account
+  Future<Map<String, dynamic>> deleteAccount() async {
+    try {
+      final response = await ApiService.delete(
+        endpoint: _meEndpoint,
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Failed to delete account',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error deleting account: $e');
       rethrow;
     }
   }

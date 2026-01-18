@@ -1,17 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math';
-
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/models/event_model.dart';
+import 'package:middle_ware/viewmodels/event_viewmodel.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-import '../../../core/routes/app_routes.dart';
-
 class EditEventPage extends StatefulWidget {
-  const EditEventPage({super.key});
+  final EventModel event;
+  const EditEventPage({super.key, required this.event});
 
   @override
   State<EditEventPage> createState() => _EditEventPageState();
@@ -19,39 +19,59 @@ class EditEventPage extends StatefulWidget {
 
 class _EditEventPageState extends State<EditEventPage> {
   final _formKey = GlobalKey<FormState>();
+  final EventViewModel _eventViewModel = Get.find<EventViewModel>();
 
   // Controllers
-  final TextEditingController _eventNameController = TextEditingController();
-  final TextEditingController _eventTypeController = TextEditingController();
-  final TextEditingController _eventManagerController = TextEditingController();
-  final TextEditingController _eventLocationController =
-  TextEditingController();
-  final TextEditingController _ticketStartDateController =
-  TextEditingController();
-  final TextEditingController _ticketEndDateController =
-  TextEditingController();
-  final TextEditingController _eventStartDateController =
-  TextEditingController();
-  final TextEditingController _eventEndDateController = TextEditingController();
-  final TextEditingController _ticketPriceController = TextEditingController();
-  final TextEditingController _maxTicketsController = TextEditingController();
-  final TextEditingController _confirmationCodeController =
-  TextEditingController();
-  final TextEditingController _eventDescriptionController =
-  TextEditingController();
+  late TextEditingController _eventNameController;
+  late TextEditingController _eventTypeController;
+  late TextEditingController _eventManagerController;
+  late TextEditingController _eventLocationController;
+  late TextEditingController _ticketStartDateController;
+  late TextEditingController _ticketEndDateController;
+  late TextEditingController _eventStartDateController;
+  late TextEditingController _eventEndDateController;
+  late TextEditingController _ticketPriceController;
+  late TextEditingController _maxTicketsController;
+  late TextEditingController _confirmationCodeController;
+  late TextEditingController _eventDescriptionController;
 
   String? _selectedImagePath;
 
   @override
   void initState() {
     super.initState();
-    _generateConfirmationCode();
-  }
-
-  void _generateConfirmationCode() {
-    final random = Random();
-    final code = List.generate(10, (index) => random.nextInt(10)).join();
-    _confirmationCodeController.text = code;
+    _eventNameController = TextEditingController(text: widget.event.eventName);
+    _eventTypeController = TextEditingController(text: widget.event.eventType);
+    _eventManagerController = TextEditingController(
+      text: widget.event.eventManagerName,
+    );
+    _eventLocationController = TextEditingController(
+      text: widget.event.eventLocation,
+    );
+    _ticketStartDateController = TextEditingController(
+      text: widget.event.ticketSalesStartDate,
+    );
+    _ticketEndDateController = TextEditingController(
+      text: widget.event.ticketSalesEndDate,
+    );
+    _eventStartDateController = TextEditingController(
+      text: widget.event.eventStartDateTime,
+    );
+    _eventEndDateController = TextEditingController(
+      text: widget.event.eventEndDateTime,
+    );
+    _ticketPriceController = TextEditingController(
+      text: widget.event.ticketPrice?.toString(),
+    );
+    _maxTicketsController = TextEditingController(
+      text: widget.event.maximumNumberOfTickets?.toString(),
+    );
+    _confirmationCodeController = TextEditingController(
+      text: widget.event.confirmationCodePrefix,
+    );
+    _eventDescriptionController = TextEditingController(
+      text: widget.event.eventDescription,
+    );
   }
 
   @override
@@ -71,20 +91,40 @@ class _EditEventPageState extends State<EditEventPage> {
     super.dispose();
   }
 
-  void _handleNext() {
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImagePath = image.path;
+      });
+    }
+  }
+
+  void _handleSave() {
     if (_formKey.currentState!.validate()) {
-      // Navigate to preview page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EventPreviewPage(
-            eventName: _eventNameController.text,
-            location: _eventLocationController.text,
-            ticketPrice: _ticketPriceController.text,
-            confirmationCode: _confirmationCodeController.text,
-            imagePath: _selectedImagePath,
-          ),
-        ),
+      _eventViewModel.updateEvent(
+        widget.event.id!,
+        {
+          'eventName': _eventNameController.text,
+          'eventType': _eventTypeController.text,
+          'eventManagerName': _eventManagerController.text,
+          'eventLocation': _eventLocationController.text,
+          'ticketSalesStartDate': _ticketStartDateController.text,
+          'ticketSalesEndDate': _ticketEndDateController.text,
+          'eventStartDateTime': _eventStartDateController.text,
+          'eventEndDateTime': _eventEndDateController.text,
+          'ticketPrice': double.tryParse(_ticketPriceController.text) ?? 0,
+          'maximumNumberOfTickets':
+              int.tryParse(_maxTicketsController.text) ?? 0,
+          'confirmationCodePrefix': _confirmationCodeController.text,
+          'eventDescription': _eventDescriptionController.text,
+        },
+        _selectedImagePath,
+        onSuccess: () {
+          _eventViewModel.fetchEvents(); // Refresh home list
+          Navigator.pop(context);
+        },
       );
     }
   }
@@ -93,7 +133,7 @@ class _EditEventPageState extends State<EditEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Edit Event", showBackButton: false),
+      appBar: CustomAppBar(title: "Edit Event", showBackButton: true),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -101,14 +141,12 @@ class _EditEventPageState extends State<EditEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ১. Event Flier Card
               _buildSectionCard(
                 title: 'Event Flier',
                 child: _buildImageUploadBox(),
               ),
               const SizedBox(height: 16),
 
-              // ২. Event Information Card
               _buildSectionCard(
                 title: 'Event Information',
                 child: Column(
@@ -144,7 +182,6 @@ class _EditEventPageState extends State<EditEventPage> {
               ),
               const SizedBox(height: 16),
 
-              // ৩. Dates & Times Card
               _buildSectionCard(
                 title: 'Dates & Times',
                 child: Column(
@@ -172,8 +209,6 @@ class _EditEventPageState extends State<EditEventPage> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // ৪. Ticket Information Card
               _buildSectionCard(
                 title: 'Ticket Information',
                 child: Column(
@@ -183,22 +218,31 @@ class _EditEventPageState extends State<EditEventPage> {
                       controller: _ticketPriceController,
                       hintText: 'Ticket Price (\$)',
                       keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        if (double.tryParse(value) == null) return 'Invalid';
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildTextField(
                       controller: _maxTicketsController,
                       hintText: 'Maximum Number of Tickets',
                       keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        if (int.tryParse(value) == null) return 'Invalid';
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildTextField(
                       controller: _confirmationCodeController,
                       hintText: 'Confirmation Code Prefix',
-                      keyboardType: TextInputType.numberWithOptions(),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'This will be used to generate unique confirmation codes for attendees.',
+                      'Used to generate unique confirmation codes.',
                       style: TextStyle(fontSize: 11, color: AppColors.dark),
                     ),
                   ],
@@ -206,36 +250,47 @@ class _EditEventPageState extends State<EditEventPage> {
               ),
               const SizedBox(height: 16),
 
-              // ৫. Description Card
               _buildSectionCard(
-                title: 'Ticket Information',
+                title: 'Event Description',
                 child: _buildTextField(
                   controller: _eventDescriptionController,
-                  hintText: 'Event Description',
+                  hintText: 'Description',
                   maxLines: 4,
                 ),
               ),
               const SizedBox(height: 32),
 
-              // Next Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed:Get.back,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C5941),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _eventViewModel.isLoading.value
+                        ? null
+                        : _handleSave,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1C5941),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    child: _eventViewModel.isLoading.value
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'Save Changes',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -249,36 +304,48 @@ class _EditEventPageState extends State<EditEventPage> {
 
   Widget _buildImageUploadBox() {
     return GestureDetector(
-      onTap: () {
-        // Handle image upload
-      },
+      onTap: _pickImage,
       child: Container(
-        height: 120,
+        height: 140,
         width: double.infinity,
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color(0xFFE0E0E0),
-            style: BorderStyle.solid,
-          ),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              AppIcons.create,
-              width: 32,
-              height: 32,
-              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Upload your event flier or promotional image',
-              style: TextStyle(fontSize: 12, color: AppColors.grey),
-            ),
-          ],
-        ),
+        child: _selectedImagePath != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(File(_selectedImagePath!), fit: BoxFit.cover),
+              )
+            : widget.event.eventImage != null &&
+                  widget.event.eventImage!.startsWith('http')
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  widget.event.eventImage!,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    AppIcons.create,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.grey,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Change Event Image',
+                    style: TextStyle(fontSize: 12, color: AppColors.grey),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -288,23 +355,36 @@ class _EditEventPageState extends State<EditEventPage> {
     required String hintText,
     int maxLines = 1,
     TextInputType? keyboardType,
-    bool readOnly = false,
+    String? Function(String?)? validator,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
-        readOnly: readOnly,
+        validator:
+            validator ??
+            (value) => (value == null || value.trim().isEmpty)
+                ? '$hintText is required'
+                : null,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -320,42 +400,42 @@ class _EditEventPageState extends State<EditEventPage> {
     required List<String> items,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: controller.text.isEmpty ? null : controller.text,
+        value: items.contains(controller.text) ? controller.text : null,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? '$hintText is required' : null,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 4,
           ),
         ),
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: AppColors.grey,
-        ), // Dropdown usually uses a built-in arrow but keeping consistency if possible
-        // Actually DropdownButtonFormField has its own icon property.
-        // We can use a custom widget if we really want SVG here, but let's keep it simple or use a rotated arrow.
-        // For now, let's just leave it or use a default if we don't have a clear small arrow svg.
-        // Actually, let's keep the Material arrow for dropdown for now or use a generic one if we have it.
-        // There is no small down arrow in assets/icons list except maybe "Clean" or others which don't fit.
-        items: items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item, style: const TextStyle(fontSize: 14)),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            controller.text = newValue ?? "";
-          });
-        },
+        items: items
+            .map(
+              (item) => DropdownMenuItem(
+                value: item,
+                child: Text(item, style: const TextStyle(fontSize: 14)),
+              ),
+            )
+            .toList(),
+        onChanged: (val) => setState(() => controller.text = val ?? ""),
       ),
     );
   }
@@ -365,18 +445,17 @@ class _EditEventPageState extends State<EditEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
+        validator: (value) => (value == null || value.trim().isEmpty)
+            ? '$hintText is required'
+            : null,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
           prefixIcon: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
               AppIcons.location,
               width: 20,
@@ -384,7 +463,20 @@ class _EditEventPageState extends State<EditEventPage> {
               colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -399,30 +491,45 @@ class _EditEventPageState extends State<EditEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? '$hintText is required' : null,
         onTap: () async {
-          final DateTime? picked = await showDatePicker(
+          final picked = await showDatePicker(
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime.now(),
             lastDate: DateTime(2030),
           );
           if (picked != null) {
-            controller.text = '${picked.day}/${picked.month}/${picked.year}';
+            setState(() {
+              controller.text =
+                  '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+            });
           }
         },
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           suffixIcon: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
               AppIcons.date,
               width: 20,
@@ -430,39 +537,11 @@ class _EditEventPageState extends State<EditEventPage> {
               colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionCard({required String title, required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 16),
-          child,
-        ],
       ),
     );
   }
@@ -472,37 +551,53 @@ class _EditEventPageState extends State<EditEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? '$hintText is required' : null,
         onTap: () async {
-          final DateTime? pickedDate = await showDatePicker(
+          final pickedDate = await showDatePicker(
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime.now(),
             lastDate: DateTime(2030),
           );
           if (pickedDate != null) {
-            final TimeOfDay? pickedTime = await showTimePicker(
+            final pickedTime = await showTimePicker(
               context: context,
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              controller.text =
-              '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
+              final String formattedTime =
+                  '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+              setState(() {
+                controller.text =
+                    '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')} $formattedTime:00';
+              });
             }
           }
         },
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           suffixIcon: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
               AppIcons.date,
               width: 20,
@@ -510,230 +605,12 @@ class _EditEventPageState extends State<EditEventPage> {
               colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
           ),
         ),
       ),
-    );
-  }
-}
-
-// Event Preview Page
-class EventPreviewPage extends StatelessWidget {
-  final String eventName;
-  final String location;
-  final String ticketPrice;
-  final String confirmationCode;
-  final String? imagePath;
-
-  const EventPreviewPage({
-    super.key,
-    required this.eventName,
-    required this.location,
-    required this.ticketPrice,
-    required this.confirmationCode,
-    this.imagePath,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
-      appBar: CustomAppBar(title: "Event Create"),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      imagePath ?? 'assets/images/event_detail.png',
-                      width: double.infinity,
-                      height: 180,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          height: 180,
-                          color: Colors.grey[300],
-                          child: SvgPicture.asset(
-                            AppIcons.create,
-                            width: 50,
-                            height: 50,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Text(
-                    eventName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  _buildInfoRow(
-                    AppIcons.date,
-                    'Date & Time',
-                    'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildInfoRow(AppIcons.location, 'Location', location),
-                  const SizedBox(height: 16),
-                  _buildInfoRow(
-                    AppIcons.ticket,
-                    'Ticket Price',
-                    '\$${ticketPrice} per ticket',
-                  ),
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    'Description',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Join us for an unforgettable night of music under the stars! Featuring top artists and bands from around the world.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  const Divider(thickness: 0.8),
-                  const SizedBox(height: 16),
-
-                  const Text(
-                    'Confirmation Code Prefix',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    confirmationCode,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 24),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF1C5941),
-                            side: const BorderSide(color: Color(0xFF1C5941)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: const Text('Edit Event'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.eventHome);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1C5941),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: const Text('Create Event'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String iconPath, String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SvgPicture.asset(
-          iconPath,
-          width: 18,
-          height: 18,
-          colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.dark,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -760,144 +637,6 @@ class EventPreviewPage extends StatelessWidget {
           const SizedBox(height: 16),
           child,
         ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4CAF50),
-                  shape: BoxShape.circle,
-                ),
-                child: SvgPicture.asset(
-                  AppIcons.check,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                  width: 40,
-                  height: 40,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Success! Your Event Has Been Created!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Event Name',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Happy New Year Fest',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Location',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Central Park, New York',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ticket Price',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          '\$80',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1C5941),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: const Text(
-                    'Go Home',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

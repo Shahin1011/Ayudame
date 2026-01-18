@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/core/app_icons.dart';
@@ -21,11 +20,20 @@ class EventProfilePage extends StatefulWidget {
 
 class _EventProfilePageState extends State<EventProfilePage> {
   final _viewModel = Get.put(EventManagerViewModel());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel.fetchProfile();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Profile"),
+      appBar: CustomAppBar(title: "Profile", showBackButton: false),
       body: Column(
         children: [
           Expanded(
@@ -34,48 +42,52 @@ class _EventProfilePageState extends State<EventProfilePage> {
                 children: [
                   const SizedBox(height: 24),
 
-                  Column(
-                    children: [
-                      Stack(
-                        children: [
-                          const CircleAvatar(
-                            radius: 48,
-                            backgroundImage: AssetImage(
-                              'assets/images/profile.png', // replace image
+                  Obx(() {
+                    final manager = _viewModel.currentManager.value;
+                    return Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 48,
+                          backgroundImage:
+                              manager?.profilePicture != null &&
+                                  manager!.profilePicture!.startsWith('http')
+                              ? NetworkImage(manager.profilePicture!)
+                              : const AssetImage('assets/images/profile.png')
+                                    as ImageProvider,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          manager?.fullName ?? 'Manager Name',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1C5941),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'Event Manager',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Seam Rahman',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1C5941),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          'Event Manager',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
+                      ],
+                    );
+                  }),
+                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 16),
 
                   // Account Information Section
                   Container(
@@ -403,12 +415,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account deleted successfully'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          _viewModel.deleteAccount();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

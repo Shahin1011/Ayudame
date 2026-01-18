@@ -27,13 +27,28 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
   final _dobController = TextEditingController();
   final _addressController = TextEditingController();
   final _categoryController = TextEditingController();
-  final _currentPassController = TextEditingController(); // Added
+  final _currentPassController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool _isObscurePass = true;
   bool _isObscureConfirm = true;
   bool _isObscureCurrent = true;
 
   File? _selectedImage;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passController.dispose();
+    _confirmPassController.dispose();
+    _phoneController.dispose();
+    _dobController.dispose();
+    _addressController.dispose();
+    _categoryController.dispose();
+    _currentPassController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -86,173 +101,200 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: const CustomAppBar(title: "Edit Profile", showBackButton: true),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
-        child: Column(
-          children: [
-            // Profile Picture Picker
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50.r,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: _selectedImage != null
-                          ? FileImage(_selectedImage!)
-                          : (_viewModel.currentManager.value?.profilePicture !=
-                                        null &&
-                                    _viewModel
-                                        .currentManager
-                                        .value!
-                                        .profilePicture!
-                                        .isNotEmpty
-                                ? NetworkImage(
-                                        _viewModel
-                                            .currentManager
-                                            .value!
-                                            .profilePicture!,
-                                      )
-                                      as ImageProvider
-                                : const AssetImage(
-                                    'assets/images/profile.png',
-                                  )),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 30.h,
-                        width: 30.w,
-                        decoration: const BoxDecoration(
-                          color: AppColors.mainAppColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 18.sp,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+          child: Column(
+            children: [
+              // Profile Picture Picker
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.r,
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : (_viewModel
+                                              .currentManager
+                                              .value
+                                              ?.profilePicture !=
+                                          null &&
+                                      _viewModel
+                                          .currentManager
+                                          .value!
+                                          .profilePicture!
+                                          .isNotEmpty
+                                  ? NetworkImage(
+                                          _viewModel
+                                              .currentManager
+                                              .value!
+                                              .profilePicture!,
+                                        )
+                                        as ImageProvider
+                                  : const AssetImage(
+                                      'assets/images/profile.png',
+                                    )),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          height: 30.h,
+                          width: 30.w,
+                          decoration: const BoxDecoration(
+                            color: AppColors.mainAppColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 18.sp,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 30.h),
-
-            // ১. Full Name Field
-            CustomTextField(controller: _nameController, hintText: 'Full name'),
-            SizedBox(height: 16.h),
-
-            // ২. E-mail address Field
-            CustomTextField(
-              controller: _emailController,
-              hintText: 'E-mail address',
-            ),
-            SizedBox(height: 16.h),
-
-            // Current Password (Required for password changes)
-            CustomTextField(
-              controller: _currentPassController,
-              hintText: 'Current Password',
-              isPassword: _isObscureCurrent,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isObscureCurrent
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: Colors.grey.shade400,
-                  size: 20.sp,
-                ),
-                onPressed: () =>
-                    setState(() => _isObscureCurrent = !_isObscureCurrent),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // ৩. New Password Field
-            CustomTextField(
-              controller: _passController,
-              hintText: 'New Password',
-              isPassword: _isObscurePass,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isObscurePass
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: Colors.grey.shade400,
-                  size: 20.sp,
-                ),
-                onPressed: () =>
-                    setState(() => _isObscurePass = !_isObscurePass),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // ৪. Confirm Password Field
-            CustomTextField(
-              controller: _confirmPassController,
-              hintText: 'Confirm Password',
-              isPassword: _isObscureConfirm,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isObscureConfirm
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: Colors.grey.shade400,
-                  size: 20.sp,
-                ),
-                onPressed: () =>
-                    setState(() => _isObscureConfirm = !_isObscureConfirm),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // ৫. Phone Number Field
-            CustomTextField(
-              controller: _phoneController,
-              hintText: 'Phone number',
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 16.h),
-
-            // ৬. Date of Birth Field (With Calendar Icon)
-            GestureDetector(
-              onTap: () => _selectDate(context),
-              child: AbsorbPointer(
-                child: CustomTextField(
-                  controller: _dobController,
-                  hintText: 'mm/dd/yyyy',
-                  readOnly: true,
-                  suffixIcon: Icon(
-                    Icons.calendar_month_outlined,
-                    color: Colors.grey.shade400,
-                    size: 22.sp,
+                    ],
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 16.h),
+              SizedBox(height: 30.h),
 
-            // ৭. Category Field
-            CustomTextField(
-              controller: _categoryController,
-              hintText: 'Category',
-            ),
-            SizedBox(height: 16.h),
+              // ১. Full Name Field
+              CustomTextField(
+                controller: _nameController,
+                hintText: 'Full name',
+                validator: (value) =>
+                    (value == null || value.trim().isEmpty) ? 'Required' : null,
+              ),
+              SizedBox(height: 16.h),
 
-            // ৮. Business Address Field
-            CustomTextField(
-              controller: _addressController,
-              hintText: 'Business Address',
-            ),
-            SizedBox(height: 40.h),
+              // ২. E-mail address Field
+              CustomTextField(
+                controller: _emailController,
+                hintText: 'E-mail address',
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) return 'Required';
+                  if (!GetUtils.isEmail(value)) return 'Invalid email';
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
 
-            // ৯. Save Button
-            _buildSaveButton(),
-          ],
+              // Current Password (Required for password changes)
+              CustomTextField(
+                controller: _currentPassController,
+                hintText: 'Current Password',
+                isPassword: _isObscureCurrent,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isObscureCurrent
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: Colors.grey.shade400,
+                    size: 20.sp,
+                  ),
+                  onPressed: () =>
+                      setState(() => _isObscureCurrent = !_isObscureCurrent),
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              // ৩. New Password Field
+              CustomTextField(
+                controller: _passController,
+                hintText: 'New Password',
+                isPassword: _isObscurePass,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isObscurePass
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: Colors.grey.shade400,
+                    size: 20.sp,
+                  ),
+                  onPressed: () =>
+                      setState(() => _isObscurePass = !_isObscurePass),
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              // ৪. Confirm Password Field
+              CustomTextField(
+                controller: _confirmPassController,
+                hintText: 'Confirm Password',
+                isPassword: _isObscureConfirm,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isObscureConfirm
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: Colors.grey.shade400,
+                    size: 20.sp,
+                  ),
+                  onPressed: () =>
+                      setState(() => _isObscureConfirm = !_isObscureConfirm),
+                ),
+                validator: (value) {
+                  if (_passController.text.isNotEmpty &&
+                      value != _passController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+
+              // ৫. Phone Number Field
+              CustomTextField(
+                controller: _phoneController,
+                hintText: 'Phone number',
+                keyboardType: TextInputType.phone,
+                validator: (value) =>
+                    (value == null || value.trim().isEmpty) ? 'Required' : null,
+              ),
+              SizedBox(height: 16.h),
+
+              // ৬. Date of Birth Field (With Calendar Icon)
+              GestureDetector(
+                onTap: () => _selectDate(context),
+                child: AbsorbPointer(
+                  child: CustomTextField(
+                    controller: _dobController,
+                    hintText: 'mm/dd/yyyy',
+                    readOnly: true,
+                    suffixIcon: Icon(
+                      Icons.calendar_month_outlined,
+                      color: Colors.grey.shade400,
+                      size: 22.sp,
+                    ),
+                    validator: (value) =>
+                        (value == null || value.isEmpty) ? 'Required' : null,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              // ৭. Category Field
+              CustomTextField(
+                controller: _categoryController,
+                hintText: 'Category',
+              ),
+              SizedBox(height: 16.h),
+
+              // ৮. Business Address Field
+              CustomTextField(
+                controller: _addressController,
+                hintText: 'Business Address',
+              ),
+              SizedBox(height: 40.h),
+
+              // ৯. Save Button
+              _buildSaveButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -264,32 +306,7 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
       height: 52.h,
       child: Obx(
         () => ElevatedButton(
-          onPressed: _viewModel.isLoading.value
-              ? null
-              : () {
-                  _viewModel.updateProfile(
-                    fullName: _nameController.text,
-                    email: _emailController.text,
-                    phoneNumber: _phoneController.text,
-                    dateOfBirth: _dobController.text,
-                    currentPassword: _currentPassController.text.isNotEmpty
-                        ? _currentPassController.text
-                        : null,
-                    newPassword: _passController.text.isNotEmpty
-                        ? _passController.text
-                        : null,
-                    confirmPassword: _confirmPassController.text.isNotEmpty
-                        ? _confirmPassController.text
-                        : null,
-                    category: _categoryController.text.isNotEmpty
-                        ? _categoryController.text
-                        : null,
-                    address: _addressController.text.isNotEmpty
-                        ? _addressController.text
-                        : null,
-                    profilePicturePath: _selectedImage?.path,
-                  );
-                },
+          onPressed: _viewModel.isLoading.value ? null : _handleSave,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1B4D3E),
             shape: RoundedRectangleBorder(
@@ -298,17 +315,65 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
             elevation: 0,
           ),
           child: _viewModel.isLoading.value
-              ? const CircularProgressIndicator(color: Colors.white)
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
               : Text(
-                  'Save',
+                  'Save Changes',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18.sp,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
         ),
       ),
     );
+  }
+
+  void _handleSave() {
+    if (_formKey.currentState!.validate()) {
+      // If new password is provided, current password must be provided
+      if (_passController.text.isNotEmpty &&
+          _currentPassController.text.isEmpty) {
+        Get.snackbar(
+          "Error",
+          "Current password is required to set a new password",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      _viewModel.updateProfile(
+        fullName: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        dateOfBirth: _dobController.text,
+        currentPassword: _currentPassController.text.isNotEmpty
+            ? _currentPassController.text
+            : null,
+        newPassword: _passController.text.isNotEmpty
+            ? _passController.text
+            : null,
+        confirmPassword: _confirmPassController.text.isNotEmpty
+            ? _confirmPassController.text
+            : null,
+        category: _categoryController.text.isNotEmpty
+            ? _categoryController.text
+            : null,
+        address: _addressController.text.isNotEmpty
+            ? _addressController.text
+            : null,
+        profilePicturePath: _selectedImage?.path,
+      );
+
+      // Note: ViewModel handles navigation back on success
+    }
   }
 }

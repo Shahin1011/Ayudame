@@ -44,8 +44,8 @@ class EventManagerModel extends BaseModel {
       idCardBack: json['idCardBack']?.toString(),
       userType: json['userType']?.toString(),
       profilePicture: json['profilePicture']?.toString(),
-      category: json['category']?.toString(),
-      address: json['address']?.toString(),
+      category: json['category']?.toString() ?? json['Category']?.toString(),
+      address: json['address']?.toString() ?? json['Address']?.toString(),
     );
   }
 
