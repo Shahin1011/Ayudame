@@ -13,6 +13,8 @@ class CustomRecentProviderCard extends StatefulWidget {
   final String reviews;
   final double? appointmentPrice;
   final double? servicePrice;
+  final String providerImage;
+  final String serviceImage;
 
   const CustomRecentProviderCard({
     super.key,
@@ -22,12 +24,15 @@ class CustomRecentProviderCard extends StatefulWidget {
     required this.serviceTitle,
     required this.serviceDescription,
     required this.reviews,
+    required this.providerImage,
+    required this.serviceImage,
     this.appointmentPrice,
     this.servicePrice,
   });
 
   @override
-  State<CustomRecentProviderCard> createState() => _CustomRecentProviderCardState();
+  State<CustomRecentProviderCard> createState() =>
+      _CustomRecentProviderCardState();
 }
 
 class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
@@ -55,16 +60,26 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Image
+            /// Service Image
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Image.network(
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
+                    widget.serviceImage,
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200,
+                        color: Colors.grey.shade200,
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported, size: 60),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -92,13 +107,13 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// Provider Info
                   Row(
                     children: [
                       CircleAvatar(
                         radius: 25.r,
-                        backgroundImage: const NetworkImage(
-                          'https://randomuser.me/api/portraits/men/32.jpg',
-                        ),
+                        backgroundImage: NetworkImage(widget.providerImage),
+                        onBackgroundImageError: (_, __) {},
                       ),
                       SizedBox(width: 10.w),
                       Column(
@@ -111,6 +126,16 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          Text(
+                            widget.activeStatus,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: widget.activeStatus == "Available"
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
                           Row(
                             children: [
                               const Icon(Icons.location_on,
@@ -119,7 +144,9 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                               Text(
                                 widget.location,
                                 style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ],
                           ),
@@ -128,7 +155,7 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                     ],
                   ),
 
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 10.h),
 
                   /// Service Title
                   Text(
@@ -141,9 +168,11 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
 
                   SizedBox(height: 6.h),
 
-                  /// Description
+                  /// Service Description
                   Text(
                     widget.serviceDescription,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: Colors.grey[600],
@@ -157,17 +186,22 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                   Row(
                     children: [
                       ...List.generate(
-                        4,
-                            (_) => const Icon(Icons.star,
-                            size: 18, color: Colors.amber),
+                        5,
+                            (index) => Icon(
+                          index < double.parse(widget.reviews.split(" ").first)
+                              ? Icons.star
+                              : Icons.star_border,
+                          size: 18,
+                          color: Colors.amber,
+                        ),
                       ),
-                      const Icon(Icons.star_half,
-                          size: 18, color: Colors.amber),
                       const SizedBox(width: 6),
                       Text(
                         widget.reviews,
                         style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -201,7 +235,9 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D6A4F),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -222,13 +258,14 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
 
 class AppText extends StatelessWidget {
   final String text;
+
   const AppText({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      "View Details",
-      style: TextStyle(
+    return Text(
+      text,
+      style: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: Colors.white,

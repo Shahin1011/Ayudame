@@ -12,7 +12,7 @@ import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../controller/profile/profile_controller.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../models/user/profile/edit_profile_controller.dart';
+import '../../../controller/profile/edit_profile_controller.dart';
 import '../../../utils/token_service.dart';
 import '../../../widgets/user_custom_text_field.dart';
 import 'package:get/get.dart';

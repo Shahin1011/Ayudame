@@ -8,8 +8,13 @@ import 'package:middle_ware/views/user/home/widgets/custom_bussiness_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_events_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_top_businesses_card.dart';
+import 'package:middle_ware/views/user/profile/my_events.dart';
+import '../../../controller/home/event_controller.dart';
+import '../../../controller/home/recent_providers_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,6 +24,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  final EventController eventController = Get.put(EventController());
+  final RecentProviderController recentController = Get.put(RecentProviderController());
 
 
 
@@ -244,6 +252,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(height: 20.h),
 
+
+                            /// ------------------------ Events Section --------------------------------------
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -256,7 +266,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 InkWell(
-                                  onTap: (){},
+                                  onTap: (){
+                                    Get.to(() => MyEvents());
+                                  },
                                   child: Text(
                                     "View all",
                                     style: GoogleFonts.inter(
@@ -270,30 +282,57 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(
                               height: 260.h,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.only(top: 10.h,),
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 10.w),
-                                    child: SizedBox(
-                                      width: 300.w,
-                                      child: CustomEventCard(
-                                        title: "Party",
-                                        eventName: "Creazy musical event 2025",
-                                        date: "December 10, 2025",
-                                        timeRange: "2:00 PM - 8:00 PM",
-                                        location: "Convention Center Hall A",
-                                        attendingCount: 555,
-                                      ),
+                              child: Obx(() {
+                                if(eventController.isLoading.value){
+                                  return Center(child: CircularProgressIndicator());
+                                }
+
+                                if(eventController.errorMessage.isNotEmpty){
+                                  return Center(
+                                    child: Text(
+                                      eventController.errorMessage.value,
+                                      style: TextStyle(color: Colors.red),
                                     ),
+
                                   );
-                                },
-                              ),
+                                }
+
+                                if (eventController.eventList.isEmpty) {
+                                 return  Center(child: Text("No events available"));
+                                }
+
+                                return ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.only(top: 10.h,),
+                                  itemCount: eventController.eventList.length,
+                                  itemBuilder: (context, index) {
+                                    final event = eventController.eventList[index];
+
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 10.w),
+                                      child: SizedBox(
+                                        width: 300.w,
+                                        child: CustomEventCard(
+                                          title: event.eventType,
+                                          eventName: event.eventName,
+                                          eventImage: event.eventImage,
+                                          date: event.formattedDate,
+                                          timeRange: event.formattedTime,
+                                          location: event.eventLocation,
+                                          attendingCount: event.ticketsSold,
+                                          eventId: event.eventId,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              })
+
                             ),
                             SizedBox(height: 18.h),
 
+
+                            /// ---------------------------- Recent provider section ------------------------------
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -321,31 +360,47 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(height: 10.h),
 
                             SizedBox(
-                              height: 500.h,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.zero,
-                                itemCount: 4,
-                                itemBuilder: (context, index){
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 16.w),
-                                    child: SizedBox(
-                                      width: 330.w,
-                                      child: CustomRecentProviderCard.custom_provider_card(
-                                        providerName: 'Shahin Alam',
-                                        location: 'Dhanmondi, Dhaka 1209',
-                                        activeStatus: '1 hour ago',
-                                        serviceTitle: 'Expert House Cleaning Service',
-                                        serviceDescription: 'I take care of every corner, deep cleaning every room without leaving your home fresh and perfectly tidy for you.',
-                                        reviews: '4.00 (120)',
-                                        appointmentPrice: 50,
-                                        servicePrice: 100,
+                              height: 400.h,
+                              child: Obx(() {
+                                if (recentController.isLoading.value) {
+                                  return const Center(child: CircularProgressIndicator());
+                                }
+
+                                if (recentController.providerList.isEmpty) {
+                                  return const Center(child: Text("No recent providers found"));
+                                }
+
+                                return ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.zero,
+                                  itemCount: recentController.providerList.length,
+                                  itemBuilder: (context, index) {
+                                    final provider = recentController.providerList[index];
+
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 8.w),
+                                      child: SizedBox(
+                                        width: 320.w,
+                                        child: CustomProviderCard(
+                                          providerName: provider.fullName,
+                                          location: provider.location.address,
+                                          activeStatus: provider.isAvailable ? "Available" : "Unavailable",
+                                          serviceTitle: provider.lastService.service.name,
+                                          serviceDescription:
+                                          provider.lastService.service.description,
+                                          reviews:
+                                          "${provider.rating} (${provider.totalReviews})",
+                                          servicePrice:
+                                          provider.lastService.service.basePrice.toDouble(),
+                                          appointmentPrice: null,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                    );
+                                  },
+                                );
+                              }),
                             ),
+
                             SizedBox(height: 18.h),
 
                             Row(

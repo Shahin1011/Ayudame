@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import 'package:middle_ware/views/user/profile/event_details.dart';
 
 
 class CustomEventCard extends StatelessWidget {
   final String title;
   final String eventName;
+  final String eventImage;
   final String date;
   final String timeRange;
   final String location;
   final int attendingCount;
+  final String eventId;
 
   const CustomEventCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.eventName,
     required this.date,
     required this.timeRange,
     required this.location,
     required this.attendingCount,
-  }) : super(key: key);
+    required this.eventImage,
+    required this.eventId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +35,18 @@ class CustomEventCard extends StatelessWidget {
         color: Colors.white,
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Get.to(() => EventDetails(eventId: eventId,));
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Image.network(
-                    'https://images.xceed.me/blog/wp-content/uploads/2025/05/07155748/UVCWZhxEQf-1920x1024.jpeg',
+                    eventImage,
                     height: 155.h,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -52,7 +59,7 @@ class CustomEventCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.grey[700],
                     ),
                     child: Text(
                       title,
