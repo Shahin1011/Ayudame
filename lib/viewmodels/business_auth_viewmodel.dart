@@ -28,13 +28,19 @@ class BusinessAuthViewModel extends GetxController {
   // Observable states
   var isLoading = false.obs;
   var currentBusiness = Rxn<BusinessModel>();
+  var businessProfile = Rxn<BusinessModel>();
   var isLoggedIn = false.obs;
   var rememberMe = false.obs;
+  var faqs = <dynamic>[].obs;
+  var privacyPolicy = Rxn<Map<String, dynamic>>();
+  var termsConditions = Rxn<Map<String, dynamic>>();
 
   @override
   void onInit() {
     super.onInit();
     checkAuthStatus();
+    getBusinessInfo();
+    getBusinessProfile();
   }
 
   /// Check if business user is logged in
@@ -49,13 +55,13 @@ class BusinessAuthViewModel extends GetxController {
         // Load business data from storage
         final businessId = await StorageService.getBusinessId();
         final email = await StorageService.getUserEmail();
-        final businessName = await StorageService.getUserName();
+        final ownerName = await StorageService.getUserName();
 
         if (businessId != null) {
           currentBusiness.value = BusinessModel(
             id: businessId,
             email: email,
-            businessName: businessName,
+            ownerName: ownerName,
           );
         }
       } else {
@@ -519,6 +525,238 @@ class BusinessAuthViewModel extends GetxController {
       );
     } catch (e) {
       debugPrint("❌ Sign Out Error: $e");
+    }
+  }
+
+  /// Update Business Profile
+  Future<void> updateProfile({
+    required String fullName,
+    required String email,
+    String? phoneNumber,
+    String? occupation,
+    String? dateOfBirth,
+    String? profilePicturePath,
+    String? currentPassword,
+    String? newPassword,
+    String? confirmPassword,
+  }) async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.updateProfile(
+        fullName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        occupation: occupation,
+        dateOfBirth: dateOfBirth,
+        profilePicturePath: profilePicturePath,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+
+      // Refresh business info
+      await getBusinessInfo();
+
+      // Update Local Storage with new data
+      final business = currentBusiness.value;
+      if (business != null) {
+        if (business.email != null) {
+          await StorageService.saveUserEmail(business.email!);
+        }
+        if (business.ownerName != null) {
+          await StorageService.saveUserName(business.ownerName!);
+        }
+      }
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Profile updated successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      Get.back(); // Go back from edit screen
+    } catch (e) {
+      debugPrint("❌ Profile Update Viewmodel Error: $e");
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Get Business Profile (Entity specifics)
+  Future<void> getBusinessProfile() async {
+    isLoading.value = true;
+    try {
+      final profileData = await _authService.getBusinessProfile();
+      businessProfile.value = BusinessModel.fromJson(profileData);
+      debugPrint(
+        "✅ Loaded business profile: ${businessProfile.value?.businessName}",
+      );
+    } catch (e) {
+      debugPrint("❌ Error loading business profile: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Update Business Profile (Entity specifics)
+  Future<void> updateBusinessProfile({
+    required String businessName,
+    required String businessCategory,
+    required String businessAddress,
+    required String description,
+    String? businessLogoPath,
+    String? businessCoverPath,
+  }) async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.updateBusinessProfile(
+        businessName: businessName,
+        businessCategory: businessCategory,
+        businessAddress: businessAddress,
+        description: description,
+        businessLogoPath: businessLogoPath,
+        businessCoverPath: businessCoverPath,
+      );
+
+      // Refresh both
+      await getBusinessProfile();
+      await getBusinessInfo();
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Business profile updated successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      Get.back(); // Go back from edit screen
+    } catch (e) {
+      debugPrint("❌ Business Profile Update ViewModel Error: $e");
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Get FAQs
+  Future<void> getFaqs() async {
+    isLoading.value = true;
+    try {
+      final data = await _authService.getFaqs();
+      faqs.assignAll(data);
+      debugPrint("✅ Loaded ${faqs.length} FAQs");
+    } catch (e) {
+      debugPrint("❌ Error loading FAQs: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Get Privacy Policy
+  Future<void> getPrivacyPolicy() async {
+    isLoading.value = true;
+    try {
+      final data = await _authService.getPrivacyPolicy();
+      privacyPolicy.value = data;
+      debugPrint("✅ Loaded privacy policy");
+    } catch (e) {
+      debugPrint("❌ Error loading privacy policy: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Get Terms and Conditions
+  Future<void> getTermsConditions() async {
+    isLoading.value = true;
+    try {
+      final data = await _authService.getTermsConditions();
+      termsConditions.value = data;
+      debugPrint("✅ Loaded terms and conditions");
+    } catch (e) {
+      debugPrint("❌ Error loading terms and conditions: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  var stats = Rxn<Map<String, dynamic>>();
+
+  /// Get Stats
+  Future<void> getStats() async {
+    // Don't set full page loading for stats as it's part of dashboard
+    try {
+      final data = await _authService.getStats();
+      stats.value = data;
+      debugPrint("✅ Loaded stats: $data");
+    } catch (e) {
+      debugPrint("❌ Error loading stats: $e");
+    }
+  }
+
+  var activities = Rxn<List<dynamic>>();
+
+  /// Get Activities
+  Future<void> getActivities() async {
+    try {
+      final data = await _authService.getActivities();
+      activities.value = data;
+      debugPrint("✅ Loaded activities: ${data.length} items");
+    } catch (e) {
+      debugPrint("❌ Error loading activities: $e");
+    }
+  }
+
+  /// Change Password
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Password changed successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Clear password fields logic could be here but controllers are local to edit screen usually
+    } catch (e) {
+      debugPrint("❌ Change Password ViewModel Error: $e");
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 

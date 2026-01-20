@@ -28,6 +28,8 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
   final _addressController = TextEditingController();
   final _categoryController = TextEditingController();
   final _currentPassController = TextEditingController();
+  final _idNumberController = TextEditingController();
+  String? _selectedIdType;
   final _formKey = GlobalKey<FormState>();
 
   bool _isObscurePass = true;
@@ -47,6 +49,7 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
     _addressController.dispose();
     _categoryController.dispose();
     _currentPassController.dispose();
+    _idNumberController.dispose();
     super.dispose();
   }
 
@@ -65,6 +68,8 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
       _dobController.text = manager.dateOfBirth ?? '';
       _categoryController.text = manager.category ?? '';
       _addressController.text = manager.address ?? '';
+      _idNumberController.text = manager.identificationNumber ?? '';
+      _selectedIdType = manager.idType?.toLowerCase();
     }
   }
 
@@ -247,11 +252,26 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
               ),
               SizedBox(height: 16.h),
 
-              // ৫. Phone Number Field
               CustomTextField(
                 controller: _phoneController,
                 hintText: 'Phone number',
                 keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) return 'Required';
+                  if (value.trim().length < 10) return 'Invalid phone number';
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.h),
+
+              // ID Type Field
+              _buildDropdownField(),
+              SizedBox(height: 16.h),
+
+              // Identification Number Field
+              CustomTextField(
+                controller: _idNumberController,
+                hintText: 'Identification Number',
                 validator: (value) =>
                     (value == null || value.trim().isEmpty) ? 'Required' : null,
               ),
@@ -355,6 +375,7 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
         email: _emailController.text.trim(),
         phoneNumber: _phoneController.text.trim(),
         dateOfBirth: _dobController.text,
+        birthdate: _dobController.text,
         currentPassword: _currentPassController.text.isNotEmpty
             ? _currentPassController.text
             : null,
@@ -364,16 +385,63 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
         confirmPassword: _confirmPassController.text.isNotEmpty
             ? _confirmPassController.text
             : null,
+        newConfirmPassword: _confirmPassController.text.isNotEmpty
+            ? _confirmPassController.text
+            : null,
         category: _categoryController.text.isNotEmpty
             ? _categoryController.text
             : null,
         address: _addressController.text.isNotEmpty
             ? _addressController.text
             : null,
+        businessAddress: _addressController.text.isNotEmpty
+            ? _addressController.text
+            : null,
+        idType: _selectedIdType,
+        identificationNumber: _idNumberController.text.trim(),
         profilePicturePath: _selectedImage?.path,
       );
 
       // Note: ViewModel handles navigation back on success
     }
+  }
+
+  Widget _buildDropdownField() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: const Color(0xFFD8D8D8)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          value: _selectedIdType,
+          hint: Text(
+            "Select ID Type",
+            style: TextStyle(
+              color: const Color(0xFF737373),
+              fontFamily: "Inter",
+              fontSize: 14.sp,
+            ),
+          ),
+          decoration: const InputDecoration(border: InputBorder.none),
+          validator: (value) =>
+              (value == null || value.isEmpty) ? "Required" : null,
+          items: const [
+            DropdownMenuItem<String>(value: "nid", child: Text("NID")),
+            DropdownMenuItem<String>(
+              value: "passport",
+              child: Text("Passport"),
+            ),
+            DropdownMenuItem<String>(
+              value: "driving license",
+              child: Text("Driving License"),
+            ),
+          ],
+          onChanged: (newValue) => setState(() => _selectedIdType = newValue),
+        ),
+      ),
+    );
   }
 }

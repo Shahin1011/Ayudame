@@ -239,6 +239,31 @@ class BusinessEmployeeService {
       }
     } catch (e) {
       debugPrint("❌ Delete Employee Error: $e");
+    }
+  }
+
+  /// Get Employee Stats Overview
+  Future<Map<String, dynamic>> getEmployeeStats(String id) async {
+    try {
+      final response = await ApiService.get(
+        endpoint: '/api/business-owners/employees/$id/overview',
+        requireAuth: true,
+      );
+
+      debugPrint("📥 Get Employee Stats Status: ${response.statusCode}");
+      debugPrint("📥 Get Employee Stats Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data'] as Map<String, dynamic>;
+        }
+        throw Exception(jsonResponse['message'] ?? 'Failed to get stats');
+      } else {
+        throw Exception('Failed to load employee stats');
+      }
+    } catch (e) {
+      debugPrint("❌ Get Employee Stats Error: $e");
       rethrow;
     }
   }

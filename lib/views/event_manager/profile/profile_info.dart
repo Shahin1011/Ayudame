@@ -86,19 +86,27 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                         Positioned(
                           bottom: 0,
                           right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF1C5941),
-                              shape: BoxShape.circle,
-                            ),
-                            child: SvgPicture.asset(
-                              AppIcons.camera,
-                              width: 16,
-                              height: 16,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
+                          child: GestureDetector(
+                            onTap: () async {
+                              await Get.to(
+                                () => const EventEditProfileScreen(),
+                              );
+                              _viewModel.fetchProfile();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF1C5941),
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(
+                                AppIcons.camera,
+                                width: 16,
+                                height: 16,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
                               ),
                             ),
                           ),

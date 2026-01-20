@@ -32,20 +32,41 @@ class EventManagerModel extends BaseModel {
   });
 
   factory EventManagerModel.fromJson(Map<String, dynamic> json) {
+    // Check if user details are nested inside 'userId' object (common in populated responses)
+    final userMap = json['userId'] is Map<String, dynamic>
+        ? json['userId']
+        : json;
+
     return EventManagerModel(
       id: json['id']?.toString() ?? json['_id']?.toString(),
-      fullName: json['fullName']?.toString() ?? json['name']?.toString(),
-      email: json['email']?.toString(),
-      phoneNumber: json['phoneNumber']?.toString() ?? json['phone']?.toString(),
-      dateOfBirth: json['dateOfBirth']?.toString(),
+      fullName:
+          userMap['fullName']?.toString() ??
+          json['name']?.toString() ??
+          userMap['name']?.toString(),
+      email: userMap['email']?.toString(),
+      phoneNumber:
+          userMap['phoneNumber']?.toString() ??
+          json['phone']?.toString() ??
+          userMap['phone']?.toString(),
+      dateOfBirth:
+          json['dateOfBirth']?.toString() ?? json['birthdate']?.toString(),
       idType: json['idType']?.toString() ?? json['IdType']?.toString(),
       identificationNumber: json['identificationNumber']?.toString(),
-      idCardFront: json['idCardFront']?.toString(),
-      idCardBack: json['idCardBack']?.toString(),
-      userType: json['userType']?.toString(),
-      profilePicture: json['profilePicture']?.toString(),
+      idCardFront:
+          json['idCard']?['frontImage']?.toString() ??
+          json['idCardFront']?.toString(),
+      idCardBack:
+          json['idCard']?['backImage']?.toString() ??
+          json['idCardBack']?.toString(),
+      userType: userMap['userType']?.toString() ?? json['userType']?.toString(),
+      profilePicture:
+          userMap['profilePicture']?.toString() ??
+          json['profilePicture']?.toString(),
       category: json['category']?.toString() ?? json['Category']?.toString(),
-      address: json['address']?.toString() ?? json['Address']?.toString(),
+      address:
+          json['address']?.toString() ??
+          json['Address']?.toString() ??
+          json['businessAddress']?.toString(),
     );
   }
 

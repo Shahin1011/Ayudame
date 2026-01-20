@@ -144,8 +144,20 @@ class BusinessEmployeeViewModel extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
       isLoading.value = false;
+    }
+  }
+
+  var employeeStats = Rxn<Map<String, dynamic>>();
+
+  /// Fetch Employee Stats
+  Future<void> fetchEmployeeStats(String id) async {
+    // Don't set full page loading for stats
+    try {
+      final data = await _service.getEmployeeStats(id);
+      employeeStats.value = data;
+    } catch (e) {
+      debugPrint("❌ Error fetching employee stats: $e");
     }
   }
 }

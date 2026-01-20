@@ -12,6 +12,7 @@ import 'edit_profile_screen.dart';
 import 'BusinessHelpSupportScreen.dart';
 import 'BusinessTermsConditionScreen.dart';
 import 'PrivacyPolicyScreen.dart';
+import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class Businessprofile extends StatefulWidget {
   const Businessprofile({Key? key}) : super(key: key);
@@ -21,6 +22,16 @@ class Businessprofile extends StatefulWidget {
 }
 
 class _BusinessprofileState extends State<Businessprofile> {
+  final BusinessAuthViewModel _viewModel = Get.put(BusinessAuthViewModel());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel.getBusinessInfo();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,54 +45,68 @@ class _BusinessprofileState extends State<Businessprofile> {
                 children: [
                   const SizedBox(height: 24),
 
-                  // Profile Picture and Name
-                  Stack(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              spreadRadius: 2,
+                  Obx(() {
+                    final business = _viewModel.currentBusiness.value;
+                    return Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundImage:
+                                    business?.logo != null &&
+                                        business!.logo!.startsWith('http')
+                                    ? NetworkImage(business.logo!)
+                                          as ImageProvider
+                                    : const AssetImage(
+                                        'assets/images/profile.png',
+                                      ),
+                              ),
                             ),
                           ],
                         ),
-                        child: const CircleAvatar(
-                          radius: 50,
-                          backgroundImage: AssetImage(
-                            'assets/images/profile.png',
+
+                        const SizedBox(height: 16),
+
+                        Text(
+                          business?.ownerName ?? 'Business Owner',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 16),
+                        const SizedBox(height: 4),
 
-                  const Text(
-                    'Seam Rahman',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  const Text(
-                    'seamr7845@gmail.com',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
-                      fontFamily: 'Inter',
-                    ),
-                  ),
+                        Text(
+                          business?.email ?? 'email@example.com',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
                   const SizedBox(height: 20),
 
                   // Account Information Section
@@ -114,9 +139,10 @@ class _BusinessprofileState extends State<Businessprofile> {
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.profileIcon,
-                          title: 'Profile info',
-                          onTap: () {
-                            Get.to(() => const EditProfileScreen());
+                          title: 'Edit Profile',
+                          onTap: () async {
+                            await Get.to(() => const EditProfileScreen());
+                            _viewModel.getBusinessInfo();
                           },
                         ),
                         _buildMenuItem(
@@ -335,13 +361,7 @@ class _BusinessprofileState extends State<Businessprofile> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // Add your logout logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Logged out successfully'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          _viewModel.signOut();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,

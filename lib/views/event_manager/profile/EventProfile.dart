@@ -9,6 +9,7 @@ import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
 import '../../../widgets/custom_appbar.dart';
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
+import 'EventNotificationPage.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventProfilePage extends StatefulWidget {
@@ -73,9 +74,9 @@ class _EventProfilePageState extends State<EventProfilePage> {
                             color: const Color(0xFF1C5941),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
-                            'Event Manager',
-                            style: TextStyle(
+                          child: Text(
+                            manager?.userType ?? 'Event Manager',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -123,6 +124,13 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           onTap: () {
                             Get.to(() => const ProfileInfoScreen());
                           },
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.notification,
+                          title: 'Notifications',
+                          onTap: () =>
+                              Get.to(() => const EventNotificationPage()),
+                          showDivider: false,
                         ),
                       ],
                     ),
@@ -494,6 +502,11 @@ class _EventProfilePageState extends State<EventProfilePage> {
             ),
           ),
         ),
+        if (showDivider)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(height: 1, color: Color(0xFFF0F0F0)),
+          ),
       ],
     );
   }

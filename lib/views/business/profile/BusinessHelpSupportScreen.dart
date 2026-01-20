@@ -4,6 +4,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import 'BusinessContactUsScreen.dart';
+import 'BusinessFaqScreen.dart';
 
 class BusinessHelpSupportScreen extends StatelessWidget {
   const BusinessHelpSupportScreen({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class BusinessHelpSupportScreen extends StatelessWidget {
       appBar: CustomAppBar(title: "Help & Support"),
       body: Column(
         children: [
-
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -24,6 +24,11 @@ class BusinessHelpSupportScreen extends StatelessWidget {
                 _buildMenuItem(
                   title: 'Contact Us',
                   onTap: () => Get.to(() => BusinessContactUsScreen()),
+                ),
+                const SizedBox(height: 12),
+                _buildMenuItem(
+                  title: 'FAQ',
+                  onTap: () => Get.to(() => const BusinessFaqScreen()),
                 ),
               ],
             ),

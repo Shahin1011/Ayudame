@@ -235,8 +235,13 @@ class EventManagerService {
     String? currentPassword,
     String? newPassword,
     String? confirmPassword,
+    String? newConfirmPassword,
     String? category,
     String? address,
+    String? businessAddress,
+    String? birthdate,
+    String? idType,
+    String? identificationNumber,
   }) async {
     try {
       Map<String, String> fields = {
@@ -248,32 +253,47 @@ class EventManagerService {
       if (category != null && category.isNotEmpty)
         fields['category'] = category;
       if (address != null && address.isNotEmpty) fields['address'] = address;
+      if (businessAddress != null && businessAddress.isNotEmpty)
+        fields['businessAddress'] = businessAddress;
+      if (idType != null && idType.isNotEmpty) fields['idType'] = idType;
+      if (identificationNumber != null && identificationNumber.isNotEmpty)
+        fields['identificationNumber'] = identificationNumber;
       if (dateOfBirth != null) fields['dateOfBirth'] = dateOfBirth;
+      if (birthdate != null) fields['birthdate'] = birthdate;
       if (currentPassword != null && currentPassword.isNotEmpty)
         fields['currentPassword'] = currentPassword;
       if (newPassword != null && newPassword.isNotEmpty)
         fields['newPassword'] = newPassword;
       if (confirmPassword != null && confirmPassword.isNotEmpty)
         fields['confirmPassword'] = confirmPassword;
+      if (newConfirmPassword != null && newConfirmPassword.isNotEmpty)
+        fields['newConfirmPassword'] = newConfirmPassword;
 
       http.Response response;
       if (profilePicturePath != null && profilePicturePath.isNotEmpty) {
         // Use Multipart if uploading image
+        // IMPORTANT: Use POST method with _method: PUT field for Laravel/PHP backends
+        fields['_method'] = 'PUT';
+
         final streamedResponse = await ApiService.postMultipart(
-          endpoint: _meEndpoint,
+          endpoint: _meEndpoint, // endpoint is /api/event-managers/me
           fields: fields,
           files: {'profilePicture': profilePicturePath},
           requireAuth: true,
-          method: 'PUT',
+          method: 'POST', // Actually sending POST
         );
         response = await http.Response.fromStream(streamedResponse);
       } else {
         // Use standard JSON PUT if no image
         // Need to add dynamic map support to fields or convert manually
         // Since ApiService.put expects Map<String, dynamic> body
+
+        // Convert Map<String, String> to Map<String, dynamic>
+        final Map<String, dynamic> jsonBody = Map<String, dynamic>.from(fields);
+
         response = await ApiService.put(
           endpoint: _meEndpoint,
-          body: fields,
+          body: jsonBody,
           requireAuth: true,
         );
       }

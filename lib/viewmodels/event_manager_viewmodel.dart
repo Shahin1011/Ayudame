@@ -322,36 +322,31 @@ class EventManagerViewModel extends GetxController {
     isLoading.value = true;
     try {
       final response = await _authService.getProfile();
-      print("🔍 Profile API Response: $response");
+      debugPrint("🔍 Profile API Response: $response");
 
       var data = response['data'];
       // Handle double nested data structure if possibly exists
       if (data != null && data is Map && data['data'] != null) {
         data = data['data'];
       }
-      print("🔍 Profile Data Object: $data");
 
       if (data != null) {
-        // If 'eventManager' key exists use it (nested), otherwise try data directly
+        // Based on new response structure: data.eventManager contains nested userId object
+        // So we can just parse the eventManager object directly
         var managerData = data['eventManager'] ?? data;
 
-        // Ideally merge with user data if separate, like in login
-        if (data['user'] != null) {
-          var userData = data['user'];
-          managerData = {
-            ...userData,
-            ...managerData, // Event manager data overwrites if conflict
-            'id': userData['id'], // Ensure ID logic
-          };
-        }
-
         currentManager.value = EventManagerModel.fromJson(managerData);
+        currentManager.refresh(); // Force Obx update
 
+        // Update local storage too
         await StorageService.saveUserName(currentManager.value?.fullName ?? '');
         await StorageService.saveUserEmail(currentManager.value?.email ?? '');
+        debugPrint(
+          "✅ Profile state updated for: ${currentManager.value?.fullName}",
+        );
       }
     } catch (e) {
-      debugPrint("Error fetching profile: $e");
+      debugPrint("❌ Error fetching profile: $e");
     } finally {
       isLoading.value = false;
     }
@@ -367,8 +362,13 @@ class EventManagerViewModel extends GetxController {
     String? currentPassword,
     String? newPassword,
     String? confirmPassword,
+    String? newConfirmPassword,
     String? category,
     String? address,
+    String? businessAddress,
+    String? birthdate,
+    String? idType,
+    String? identificationNumber,
   }) async {
     // Validation
     if (newPassword != null &&
@@ -394,8 +394,13 @@ class EventManagerViewModel extends GetxController {
         currentPassword: currentPassword,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
+        newConfirmPassword: newConfirmPassword,
         category: category,
         address: address,
+        businessAddress: businessAddress,
+        birthdate: birthdate,
+        idType: idType,
+        identificationNumber: identificationNumber,
       );
 
       Get.snackbar(

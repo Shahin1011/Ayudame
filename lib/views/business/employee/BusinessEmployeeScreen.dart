@@ -27,6 +27,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
     // Expect employee object passed via arguments
     if (Get.arguments is BusinessEmployeeModel) {
       employee = Get.arguments as BusinessEmployeeModel;
+      if (employee.id != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _viewModel.fetchEmployeeStats(employee.id!);
+        });
+      }
     } else {
       // Fallback
       employee = BusinessEmployeeModel(name: "Unknown");
@@ -233,111 +238,139 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   }
 
   Widget _buildOverview() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          childAspectRatio: 2.0,
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 15,
-          children: [
-            _statTile(
-              'assets/icons/job.svg',
-              "Total Jobs",
-              "1,247",
-              const Color(0xFFCC75D4),
-              Colors.white,
-            ),
-            _statTile(
-              'assets/icons/rating.svg',
-              "Rating",
-              "4.9",
-              const Color(0xFFFF9F19),
-              Colors.white,
-            ),
-            _statTile(
-              'assets/icons/income.svg',
-              "Earnings",
-              "\$ 12,222",
-              const Color(0xFF70CA88),
-              Colors.white,
-            ),
-            _statTile(
-              'assets/icons/join.svg',
-              "Joined",
-              "Jan 15, 2024",
-              const Color(0xFF3C94DB),
-              Colors.white,
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Upcoming Schedules",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 15),
-              _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
-              Divider(height: 1),
-              _scheduleCard("Home Cleaning", "Arif hasan", "Tomorrow, 2:00 pm"),
-              Divider(height: 1),
-              _scheduleCard("Home Cleaning", "Arif hasan", "Today, 2:00 pm"),
-            ],
-          ),
-        ),
+    return Obx(() {
+      final stats = _viewModel.employeeStats.value;
+      final overview = stats?['overview'];
+      final upcomingSchedules = overview?['upcomingSchedules'] as List? ?? [];
+      final contractInfo = overview?['contractInformation'];
 
-        SizedBox(height: 25),
+      // Format Joined Date
+      String joinedDate = "N/A";
+      if (overview?['joinedDate'] != null) {
+        try {
+          DateTime date = DateTime.parse(overview['joinedDate']);
+          joinedDate = "${date.day}/${date.month}/${date.year}";
+        } catch (e) {
+          joinedDate = overview['joinedDate'].toString();
+        }
+      }
 
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            childAspectRatio: 2.0,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
             children: [
-              const Text(
-                "Contract Information",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
+              _statTile(
+                'assets/icons/job.svg',
+                "Total Jobs",
+                overview?['totalJobsCompleted']?.toString() ?? "0",
+                const Color(0xFFCC75D4),
+                Colors.white,
               ),
-              const SizedBox(height: 15),
-              _contractItem(
-                'assets/icons/phone.svg',
-                "Phone",
-                employee.phone ?? "N/A",
+              _statTile(
+                'assets/icons/rating.svg',
+                "Rating",
+                overview?['rating']?.toString() ?? "0.0",
+                const Color(0xFFFF9F19),
+                Colors.white,
               ),
-              _contractItem(
-                'assets/icons/email.svg',
-                "Email",
-                employee.email ?? "N/A",
+              _statTile(
+                'assets/icons/income.svg',
+                "Earnings",
+                "\$ ${overview?['totalEarnings']?.toString() ?? '0'}",
+                const Color(0xFF70CA88),
+                Colors.white,
+              ),
+              _statTile(
+                'assets/icons/join.svg',
+                "Joined",
+                joinedDate,
+                const Color(0xFF3C94DB),
+                Colors.white,
               ),
             ],
           ),
-        ),
-        SizedBox(height: 30),
-      ],
-    );
+          const SizedBox(height: 5),
+          if (upcomingSchedules.isNotEmpty)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Upcoming Schedules",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  ...upcomingSchedules.map((schedule) {
+                    // Adjust parsing according to your schedule object structure
+                    // Assuming simple strings or map for now, defaulting to placeholder
+                    return Column(
+                      children: [
+                        _scheduleCard(
+                          schedule['title'] ?? "Service",
+                          schedule['clientName'] ?? "Client",
+                          schedule['date'] ?? "Time",
+                        ),
+                        const Divider(height: 1),
+                      ],
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+
+          SizedBox(height: 25),
+
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Contract Information",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                _contractItem(
+                  'assets/icons/phone.svg',
+                  "Phone",
+                  contractInfo?['phoneNumber'] ?? employee.phone ?? "N/A",
+                ),
+                _contractItem(
+                  'assets/icons/email.svg',
+                  "Email",
+                  contractInfo?['emailAddress'] ?? employee.email ?? "N/A",
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 30),
+        ],
+      );
+    });
   }
 
   Widget _statTile(
@@ -486,127 +519,198 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   // <----------- Activities Section --------->
 
   Widget _buildActivities() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) => Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: index == 3
-                  ? Colors.red.shade50
-                  : Colors.green.shade50,
-              child: SvgPicture.asset(
-                index == 3
-                    ? 'assets/icons/cancel.svg'
-                    : 'assets/icons/check.svg',
-                width: 18,
-                height: 18,
-                color: index == 3 ? Colors.red : Colors.green,
-              ),
+    return Obx(() {
+      final activities =
+          _viewModel.employeeStats.value?['activities'] as List? ?? [];
+      if (activities.isEmpty) {
+        return const Center(child: Text("No activities found"));
+      }
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: activities.length,
+        itemBuilder: (context, index) {
+          final activity = activities[index];
+          final String status =
+              activity['status']?.toString().toLowerCase() ?? "";
+          final bool isCompleted = status == 'completed';
+          final bool isCancelled =
+              status == 'cancelled' || status == 'canceled';
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    index == 3 ? "Job #1247 Canceled" : "Completed Job #1247",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: isCancelled
+                      ? Colors.red.shade50
+                      : Colors.green.shade50,
+                  child: SvgPicture.asset(
+                    isCancelled
+                        ? 'assets/icons/cancel.svg'
+                        : 'assets/icons/check.svg',
+                    width: 18,
+                    height: 18,
+                    color: isCancelled ? Colors.red : Colors.green,
                   ),
-                  const Text(
-                    "2 hours ago",
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isCancelled
+                            ? "Job Canceled" // You might want to use title or ID here
+                            : "Completed Job",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        activity['title']?.toString() ?? "Service",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        _formatDate(activity['date']?.toString()),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                // Text(
+                //   "#${activity['id'] ?? ''}", // ID might not be in activity object based on sample
+                //   style: TextStyle(color: Colors.grey, fontSize: 12),
+                // ),
+              ],
             ),
-            const Text(
-              "#1247",
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        },
+      );
+    });
   }
 
   // <----------- order Section --------->
 
   Widget _buildOrders() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) => Container(
-        margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Obx(() {
+      final orders = _viewModel.employeeStats.value?['orders'] as List? ?? [];
+      if (orders.isEmpty) {
+        return const Center(child: Text("No orders found"));
+      }
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: orders.length,
+        itemBuilder: (context, index) {
+          final order = orders[index];
+          final String status = order['status']?.toString().toLowerCase() ?? "";
+
+          Color statusColor;
+          if (status == 'completed') {
+            statusColor = Colors.green;
+          } else if (status == 'cancelled' || status == 'canceled') {
+            statusColor = Colors.red;
+          } else {
+            statusColor = Colors.blue;
+          }
+
+          final String orderId =
+              order['orderId']?.toString().substring(0, 8) ??
+              "N/A"; // Shortening ID
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
               children: [
-                const Text(
-                  "#1248",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "#$orderId...",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      status.capitalizeFirst ?? status,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  index == 0
-                      ? "In Progress"
-                      : index == 3
-                      ? "Canceled"
-                      : "Completed",
-                  style: TextStyle(
-                    color: index == 0
-                        ? Colors.blue
-                        : index == 3
-                        ? Colors.red
-                        : Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                const SizedBox(height: 5),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    order['userName'] ?? "Unknown User",
+                    style: const TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        order['title'] ?? "Service",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "\$${order['price']?.toString() ?? '0'}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 5),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Seam Rahman",
-                style: TextStyle(color: Colors.grey, fontSize: 13),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Expert Home Cleaning Service",
-                  style: TextStyle(color: Colors.black54, fontSize: 14),
-                ),
-                const Text(
-                  "\$120",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        },
+      );
+    });
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return "";
+    try {
+      final date = DateTime.parse(dateStr);
+      // Simple relative or absolute format
+      // For now just returning simple date
+      return "${date.day}/${date.month}/${date.year}";
+    } catch (e) {
+      return dateStr;
+    }
   }
   // <----------- showActionSheet --------->
 

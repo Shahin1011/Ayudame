@@ -9,6 +9,7 @@ import '../../../core/app_icons.dart';
 import '../../../core/routes/app_routes.dart';
 import 'BusinessNotificationPage.dart';
 import '../../../widgets/provider_ui_card.dart';
+import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class BusinessHomePageScreen extends StatefulWidget {
   const BusinessHomePageScreen({super.key});
@@ -18,6 +19,16 @@ class BusinessHomePageScreen extends StatefulWidget {
 }
 
 class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
+  final BusinessAuthViewModel _viewModel = Get.put(BusinessAuthViewModel());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel.getStats();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,78 +48,85 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
           ),
           flexibleSpace: Padding(
             padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
-            child: Row(
-              children: [
-                Container(
-                  height: 51,
-                  width: 51,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFFD4B896),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/men.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Welcome Back',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Seam Rahman',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BusinessNotificationPage(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+            child: Obx(() {
+              final business = _viewModel.currentBusiness.value;
+              return Row(
+                children: [
+                  Container(
+                    height: 51,
+                    width: 51,
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(5),
-                    child: SvgPicture.asset(
-                      AppIcons.notification,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF2D6A4F),
-                        BlendMode.srcIn,
+                      color: const Color(0xFFD4B896),
+                      image: DecorationImage(
+                        image:
+                            business?.logo != null && business!.logo!.isNotEmpty
+                            ? NetworkImage(business.logo!)
+                            : const AssetImage('assets/images/men.png')
+                                  as ImageProvider,
+                        fit: BoxFit.cover,
                       ),
-                      width: 30,
-                      height: 30,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Welcome Back',
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          business?.ownerName ?? 'Owner',
+                          style: const TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BusinessNotificationPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: SvgPicture.asset(
+                        AppIcons.notification,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF2D6A4F),
+                          BlendMode.srcIn,
+                        ),
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
           ),
         ),
       ),
@@ -132,63 +150,74 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                 16.w,
                 24.h,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          iconBgColor: const Color(0xFFFF8A8A),
-                          iconPath: 'assets/icons/booking.svg',
-                          iconColor: AppColors.white,
-                          value: '1,247',
-                          label: 'Total Booking',
-                          percentage: '+12%',
+              child: Obx(() {
+                final stats = _viewModel.stats.value;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            iconBgColor: const Color(0xFFFF8A8A),
+                            iconPath: 'assets/icons/booking.svg',
+                            iconColor: AppColors.white,
+                            value: stats?['totalBookings']?.toString() ?? '0',
+                            label: 'Total Booking',
+                            percentage:
+                                '+${stats?['growth']?['totalBookings']?.toString() ?? '0'}%',
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildStatCard(
-                          iconBgColor: const Color(0xFFF07914),
-                          iconPath: 'assets/icons/income.svg',
-                          iconColor: AppColors.white,
-                          value: '\$50.50K',
-                          label: 'Total Income',
-                          percentage: '+12%',
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: _buildStatCard(
+                            iconBgColor: const Color(0xFFF07914),
+                            iconPath: 'assets/icons/income.svg',
+                            iconColor: AppColors.white,
+                            value:
+                                '\$${stats?['totalIncome']?.toString() ?? '0'}',
+                            label: 'Total Income',
+                            percentage:
+                                '+${stats?['growth']?['totalIncome']?.toString() ?? '0'}%',
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          iconBgColor: const Color(0xFF22C55E),
-                          // Green
-                          iconPath: 'assets/icons/user.svg',
-                          iconColor: AppColors.white,
-                          value: '56',
-                          label: 'Total Employee',
-                          percentage: '+12%',
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            iconBgColor: const Color(0xFF22C55E),
+                            // Green
+                            iconPath: 'assets/icons/user.svg',
+                            iconColor: AppColors.white,
+                            value:
+                                stats?['totalEmployeesActive']?.toString() ??
+                                '0',
+                            label: 'Total Employee',
+                            percentage:
+                                '+${stats?['growth']?['totalEmployeesActive']?.toString() ?? '0'}%',
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildStatCard(
-                          iconBgColor: const Color(0xFFA855F7),
-                          iconPath: 'assets/icons/order.svg',
-                          iconColor: AppColors.white,
-                          value: '850',
-                          label: 'Active Orders',
-                          percentage: '+12%',
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: _buildStatCard(
+                            iconBgColor: const Color(0xFFA855F7),
+                            iconPath: 'assets/icons/order.svg',
+                            iconColor: AppColors.white,
+                            value:
+                                stats?['totalActiveOrders']?.toString() ?? '0',
+                            label: 'Active Orders',
+                            percentage:
+                                '+${stats?['growth']?['totalActiveOrders']?.toString() ?? '0'}%',
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                );
+              }),
             ),
 
             SizedBox(height: 16.h),
