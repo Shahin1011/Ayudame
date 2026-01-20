@@ -152,8 +152,7 @@ class AppRoutes {
     GetPage(name: onboarding, page: () => const OnboardingScreen()),
     GetPage(name: welcome, page: () => const WelcomeScreen()),
     GetPage(
-      name: userTypeSelection,
-      page: () => const UserProviderSelectionScreen(),
+      name: userTypeSelection, page: () => const UserProviderSelectionScreen(),
     ),
     GetPage(name: location, page: () => const LocationAccessScreen()),
     GetPage(name: terms, page: () => const BusinessTermsConditionScreen()),
