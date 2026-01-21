@@ -10,9 +10,9 @@ import 'package:middle_ware/models/user/profile/profile_model.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../controller/profile/profile_controller.dart';
+import '../../../controller/user/profile/edit_profile_controller.dart';
+import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../controller/profile/edit_profile_controller.dart';
 import '../../../utils/token_service.dart';
 import '../../../widgets/user_custom_text_field.dart';
 import 'package:get/get.dart';
@@ -47,6 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Prefill controllers
     nameController.text = profile?.fullName ?? "";
     emailController.text = profile?.email ?? "";
+    phoneController.text = profile?.phoneNumber ?? "";
 
 
     // Set initial image if available

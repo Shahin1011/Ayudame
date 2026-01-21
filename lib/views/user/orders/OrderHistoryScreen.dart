@@ -3,6 +3,8 @@ import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/views/user/orders/OrderDetailsScreen.dart';
+import '../../../controller/user/orders/order_controller.dart';
+import '../../../models/user/orders/order_model.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key}) : super(key: key);
@@ -12,153 +14,7 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  String _selectedTab = 'Appointment';
-
-  final List<Map<String, dynamic>> _appointmentOrders = [
-    {
-      'name': 'Tamim',
-      'rating': '3.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'On going',
-      'statusType': 'ongoing',
-      'statusColor': Color(0xFF2D5F4C),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-    {
-      'name': 'Robil Rahaman',
-      'rating': '4.2(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'Pending',
-      'statusType': 'pending',
-      'statusColor': Color(0xFFFF9800),
-      'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-    },
-    {
-      'name': 'Tamim',
-      'rating': '3.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'Cancelled',
-      'statusType': 'cancelled',
-      'statusColor': Color(0xFFE53935),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-    {
-      'name': 'Sarah Johnson',
-      'rating': '4.5(800)',
-      'service': 'Home Deep Cleaning',
-      'price': '\$150',
-      'date': '02/09/2025',
-      'status': 'Reschedule',
-      'statusType': 'reschedule',
-      'statusColor': Color(0xFF2196F3),
-      'image': 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200',
-    },
-  ];
-
-  final List<Map<String, dynamic>> _ongoingOrders = [
-    {
-      'name': 'Tamim',
-      'rating': '3.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'On going',
-      'statusType': 'ongoing',
-      'statusColor': Color(0xFF2D5F4C),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-    {
-      'name': 'Robil Rahaman',
-      'rating': '4.2(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'On going',
-      'statusType': 'ongoing',
-      'statusColor': Color(0xFF2D5F4C),
-      'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-    },
-  ];
-
-  final List<Map<String, dynamic>> _completedOrders = [
-    {
-      'name': 'Tamim',
-      'rating': '3.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'Completed',
-      'statusType': 'completed',
-      'statusColor': Color(0xFF4CAF50),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-    {
-      'name': 'Tamin Sarkar',
-      'rating': '4.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '07/08/2025',
-      'status': 'Completed',
-      'statusType': 'completed',
-      'statusColor': Color(0xFF4CAF50),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-  ];
-
-  final List<Map<String, dynamic>> _rejectedOrders = [
-    {
-      'name': 'Tamim',
-      'rating': '3.8(1,200)',
-      'service': 'Expert House Cleaning Services',
-      'price': '\$100',
-      'date': '01/09/2025',
-      'status': 'Cancelled',
-      'statusType': 'cancelled',
-      'statusColor': Color(0xFFE53935),
-      'image': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-    },
-    {
-      'name': 'John Doe',
-      'rating': '4.5(1,100)',
-      'service': 'Pet Care Services',
-      'price': '\$80',
-      'date': '06/08/2025',
-      'status': 'Cancelled',
-      'statusType': 'cancelled',
-      'statusColor': Color(0xFFE53935),
-      'image': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-    },
-  ];
-
-  void _navigateToOrderDetails(Map<String, dynamic> order) {
-    final statusType = order['statusType'];
-
-    switch (statusType) {
-      case 'ongoing':
-        Get.to(()=> OrderDetailsScreen());
-        break;
-      case 'pending':
-        Get.to(()=> OrderDetailsScreen());
-        break;
-      case 'cancelled':
-        Get.to(()=> OrderDetailsScreen());
-        break;
-      case 'completed':
-        Get.to(()=> OrderDetailsScreen());
-        break;
-      case 'reschedule':
-        Get.to(()=> OrderDetailsScreen());
-        break;
-      default:
-        Get.to(()=> OrderDetailsScreen());
-    }
-  }
+  final OrderController _controller = Get.put(OrderController());
 
   @override
   Widget build(BuildContext context) {
@@ -190,71 +46,86 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
           // Order List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _getOrdersByTab().length,
-              itemBuilder: (context, index) {
-                final order = _getOrdersByTab()[index];
-                return GestureDetector(
-                  onTap: () => _navigateToOrderDetails(order),
-                  child: _buildAppointmentCard(order),
-                );
-              },
-            ),
+            child: Obx(() {
+              if (_controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (_controller.orderList.isEmpty) {
+                return const Center(child: Text("No orders found"));
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: _controller.orderList.length,
+                itemBuilder: (context, index) {
+                  final order = _controller.orderList[index];
+                  return GestureDetector(
+                    onTap: () => _navigateToOrderDetails(order),
+                    child: _buildAppointmentCard(order),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),
     );
   }
 
-  List<Map<String, dynamic>> _getOrdersByTab() {
-    switch (_selectedTab) {
-      case 'Appointment':
-        return _appointmentOrders;
-      case 'On going':
-        return _ongoingOrders;
-      case 'Completed':
-        return _completedOrders;
-      case 'Rejected':
-        return _rejectedOrders;
-      default:
-        return _appointmentOrders;
-    }
-  }
-
   Widget _buildTab(String title) {
-    final isSelected = _selectedTab == title;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedTab = title;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF2D5F4C) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF2D5F4C) : Colors.grey.shade300,
-            width: 1,
+    return Obx(() {
+      final isSelected = _controller.currentTab.value == title;
+      return GestureDetector(
+        onTap: () {
+          _controller.changeTab(title);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF2D5F4C) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? const Color(0xFF2D5F4C) : Colors.grey.shade300,
+              width: 1,
+            ),
           ),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: isSelected ? Colors.white : Colors.black87,
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.white : Colors.black87,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget _buildAppointmentCard(Map<String, dynamic> order) {
+  Widget _buildAppointmentCard(OrderModel order) {
+    // Determine status display and color
+    String displayStatus = order.bookingStatus ?? 'Unknown';
+    Color statusColor = Colors.grey;
+
+    if (displayStatus.toLowerCase() == 'pending') {
+      statusColor = Colors.orange;
+    } else if (displayStatus.toLowerCase() == 'accepted' || displayStatus.toLowerCase() == 'ongoing') {
+      statusColor = const Color(0xFF2D5F4C); // Greenish
+    } else if (displayStatus.toLowerCase() == 'completed') {
+      statusColor = const Color(0xFF4CAF50); // Green
+    } else if (displayStatus.toLowerCase() == 'cancelled' || displayStatus.toLowerCase() == 'rejected') {
+      statusColor = const Color(0xFFE53935); // Red
+    }
+
+    // Capitalize first letter of status
+    displayStatus = displayStatus.isNotEmpty
+        ? displayStatus[0].toUpperCase() + displayStatus.substring(1)
+        : displayStatus;
+
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -278,7 +149,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               // Profile Image
               CircleAvatar(
                 radius: 24,
-                backgroundImage: NetworkImage(order['image']),
+                backgroundImage: NetworkImage(order.provider?.user?.profilePicture ?? 'https://via.placeholder.com/150'),
               ),
               const SizedBox(width: 12),
               // Details
@@ -290,7 +161,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          order['name'],
+                          order.provider?.user?.fullName ?? 'Provider',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -298,7 +169,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           ),
                         ),
                         Text(
-                          order['date'],
+                          // Simple date formatting, can use DateFormat from intl package properly
+                          order.bookingDate?.split('T')[0] ?? '',
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.grey.shade600,
@@ -316,7 +188,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          order['rating'],
+                          "${order.provider?.rating ?? 0.0} (${order.provider?.totalReviews ?? 0})",
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade700,
@@ -331,7 +203,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            order['service'],
+            order.serviceSnapshot?.serviceName ?? 'Service Name',
             style: const TextStyle(
               fontSize: 14,
               color: Colors.black87,
@@ -342,7 +214,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Appointment Price: ${order['price']}',
+                'Price: \$${order.totalAmount ?? 0}',
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -352,11 +224,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
-                  color: order['statusColor'],
+                  color: statusColor,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  order['status'],
+                  displayStatus,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -369,5 +241,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         ],
       ),
     );
+  }
+
+  void _navigateToOrderDetails(OrderModel order) {
+    // Navigate to details screen, passing arguments if needed
+    Get.to(() => OrderDetailsScreen(), arguments: order);
   }
 }

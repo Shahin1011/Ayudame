@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import '../../../models/user/orders/order_model.dart';
 
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -10,6 +12,8 @@ class OrderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final OrderModel order = Get.arguments;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(title: "Order Details"),
@@ -36,7 +40,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     backgroundColor: Colors.white,
                     child: ClipOval(
                       child: Image.network(
-                        'https://i.pravatar.cc/150?img=12',
+                        order.provider?.user?.profilePicture ?? 'https://via.placeholder.com/150',
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
@@ -54,8 +58,8 @@ class OrderDetailsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Tamim Sarkar',
+                         Text(
+                          order.provider?.user?.fullName ?? 'Provider Name',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -63,8 +67,8 @@ class OrderDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          'Dhanmondi,Dhaka 1209',
+                         Text(
+                          order.provider?.occupation ?? 'Occupation',
                           style: TextStyle(
                             color: Colors.black.withOpacity(0.7),
                             fontSize: 12,
@@ -77,20 +81,14 @@ class OrderDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Date: 01/08/2025',
+                        'Date: ${order.bookingDate?.split('T')[0] ?? ''}',
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.9),
                           fontSize: 11,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        'Time: 12:00pm',
-                        style: TextStyle(
-                          color: Colors.black.withOpacity(0.9),
-                          fontSize: 11,
-                        ),
-                      ),
+                      // Time is not readily available in the ISO date, ignoring for now or parsing if needed
                     ],
                   ),
                 ],
@@ -111,8 +109,8 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Expert House Cleaning Services: Making Every Corner Sparkle',
+                   Text(
+                   order.serviceSnapshot?.serviceName ?? 'Service Name',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black54,
@@ -137,8 +135,8 @@ class OrderDetailsScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.mainAppColor),
                     ),
-                    child: const Text(
-                      'Please ensure all windows are securely locked after cleaning. Kindly use eco-friendly cleaning products as we prefer natural solutions.',
+                    child:  Text(
+                      order.userNotes ?? 'No notes provided',
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.black54,
@@ -147,8 +145,8 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Price : \$200',
+                   Text(
+                    'Price : \$${order.totalAmount ?? 0}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -163,9 +161,9 @@ class OrderDetailsScreen extends StatelessWidget {
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        'Completed',
+                        order.bookingStatus ?? 'Unknown',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,

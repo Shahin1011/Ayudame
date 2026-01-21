@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../../core/routes/app_routes.dart';
-import '../../models/user/profile/profile_model.dart';
-import '../../utils/constants.dart';
-import '../../utils/token_service.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../../models/user/profile/profile_model.dart';
+import '../../../utils/token_service.dart';
+import '../../../utils/constants.dart';
+
 
 
 class ProfileController extends GetxController {
@@ -158,7 +159,6 @@ class ProfileController extends GetxController {
 
     Get.offAllNamed(AppRoutes.userlogin);
   }
-
 
 
 }

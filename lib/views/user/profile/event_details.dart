@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:get/get.dart';
-import '../../../controller/home/event_details_controller.dart';
+import '../../../controller/user/home/event_details_controller.dart';
 
 class EventDetails extends StatelessWidget {
   final String eventId;

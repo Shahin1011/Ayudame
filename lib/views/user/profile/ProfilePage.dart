@@ -13,12 +13,15 @@ import 'package:middle_ware/views/user/profile/WishlistScreen.dart';
 import 'package:middle_ware/views/user/profile/my_events.dart';
 import 'package:middle_ware/views/user/profile/user_bank_information.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../controller/profile/profile_controller.dart';
+import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'PrivacyPolicyScreen.dart';
 import 'TermsConditionScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../utils/token_service.dart';
+
 
 
 class ProfilePage extends StatelessWidget {
@@ -347,8 +350,8 @@ class ProfilePage extends StatelessWidget {
                           SizedBox(height: 16.h),
                           settingsTile(
                             title: "Log out",
-                            onTap: () {
-                              Get.to(() => UserLoginScreen());
+                            onTap: () async {
+                              _showLogoutDialog(context);
                             },
                             iconPath: 'assets/icons/logout.svg',
                           ),
@@ -505,6 +508,117 @@ class ProfilePage extends StatelessWidget {
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                           color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // -------------------- Logout Confirmation Dialog --------------------
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.all(25),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: Padding(
+          padding: EdgeInsets.all(14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.logout,
+                size: 48,
+                color: AppColors.mainAppColor,
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                "Logout",
+                style: GoogleFonts.inter(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.mainAppColor,
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                "Are you sure you want to logout?",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF494949),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.grey, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.mainAppColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Clear the token
+                        await TokenService().clearToken();
+                        
+                        // Clear the isLoggedIn flag
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('isLoggedIn');
+                        
+                        // Close dialog
+                        Navigator.of(context).pop();
+                        
+                        // Navigate to login screen and clear all previous routes
+                        Get.offAllNamed('/user_login');
+                        
+                        // Show success message
+                        Get.snackbar(
+                          'Success',
+                          'Logged out successfully',
+                          backgroundColor: Colors.green,
+                          colorText: Colors.white,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.mainAppColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        'Logout',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),

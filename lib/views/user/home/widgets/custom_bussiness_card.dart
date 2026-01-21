@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
+import '../../../../core/routes/app_routes.dart';
 
 class BusinessCard extends StatelessWidget {
   final String name;
   final String category;
-  final double rating;
   final double distance;
   final String image;
 
@@ -11,86 +13,122 @@ class BusinessCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.category,
-    required this.rating,
     required this.distance,
+    this.showDistance = true,
     required this.image,
   });
 
+  final bool showDistance;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFEAEFE9), width: 1.5),
+    // Check if image is a URL or asset path
+    bool isNetworkImage = image.startsWith('http://') || image.startsWith('https://');
 
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: ClipRRect(
-              child: Image.asset(
-                image,
-                width: 44,
-                height: 44,
-                fit: BoxFit.cover, // or BoxFit.contain
+    return GestureDetector(
+      onTap: (){
+        Get.toNamed(AppRoutes.nearYouProvidersScreen);
+      },
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Color(0xFFEAEFE9), width: 1.5),
+
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: image.isEmpty
+                    ? Container(
+                        width: 55,
+                        height: 55,
+                        color: Colors.grey[200],
+                        child: Icon(Icons.category, color: Colors.grey[400]),
+                      )
+                    : isNetworkImage
+                        ? CachedNetworkImage(
+                            imageUrl: image,
+                            width: 55,
+                            height: 55,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 55,
+                              height: 55,
+                              color: Colors.grey[200],
+                              child: Icon(Icons.image, color: Colors.grey[400]),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 55,
+                              height: 55,
+                              color: Colors.grey[200],
+                              child: Icon(Icons.category, color: Colors.grey[400]),
+                            ),
+                          )
+                        : Image.asset(
+                            image,
+                            width: 55,
+                            height: 55,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              width: 55,
+                              height: 55,
+                              color: Colors.grey[200],
+                              child: Icon(Icons.category, color: Colors.grey[400]),
+                            ),
+                          ),
               ),
             ),
-          ),
 
 
-          SizedBox(height: 12),
+            SizedBox(height: 12),
 
-          /// Name
-          Text(
-            name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          /// Category
-          Text(
-            category,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.grey[600],
-            ),
-          ),
-
-          const Spacer(),
-
-          /// Rating + Distance
-          Row(
-            children: [
-              const Icon(Icons.star, size: 16, color: Colors.orange),
-              const SizedBox(width: 4),
-              Text(
-                rating.toString(),
-                style: const TextStyle(fontWeight: FontWeight.w600),
+            /// Name
+            Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-              const Spacer(),
-              const Icon(Icons.location_on,
-                  size: 16, color: Colors.green),
-              const SizedBox(width: 4),
-              Text(
-                '${distance} Km',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.green,
-                ),
+            ),
+
+            const SizedBox(height: 4),
+
+            /// Provider Count
+            Text(
+              category,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[600],
               ),
-            ],
-          ),
-        ],
+            ),
+            SizedBox(height: 24),
+
+            /// Distance
+            if (showDistance)
+              Row(
+                children: [
+                  const Icon(Icons.location_on,
+                      size: 16, color: Colors.green),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${distance.toStringAsFixed(1)} Km',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

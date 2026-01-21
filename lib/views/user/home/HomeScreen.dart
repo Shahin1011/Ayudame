@@ -9,8 +9,9 @@ import 'package:middle_ware/views/user/home/widgets/custom_events_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_top_businesses_card.dart';
 import 'package:middle_ware/views/user/profile/my_events.dart';
-import '../../../controller/home/event_controller.dart';
-import '../../../controller/home/recent_providers_controller.dart';
+import '../../../controller/user/home/event_controller.dart';
+import '../../../controller/user/home/nearby_providers_controller.dart';
+import '../../../controller/user/home/recent_providers_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -27,35 +28,10 @@ class _HomePageState extends State<HomePage> {
 
   final EventController eventController = Get.put(EventController());
   final RecentProviderController recentController = Get.put(RecentProviderController());
-
-
+  final NearbyProvidersController nearbyController = Get.put(NearbyProvidersController());
 
   @override
   Widget build(BuildContext context) {
-
-    final List<String> _names = [
-      "Style Hair Cut",
-      "Power Flex Gym",
-      "Pure Life Wellness",
-      "Knowledge Tree",
-    ];
-
-    final List<String> _categories = [
-      "Beauty",
-      "Fitness",
-      "Health",
-      "Education",
-    ];
-
-    final List<double> _distances = [0.8, 0.9, 1.2, 1.4];
-
-    final List<String> _images = [
-      'assets/images/hairCut.png',
-      'assets/images/gymIcon.png',
-      'assets/images/healthIcon.png',
-      'assets/images/education.png',
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.bgColor1,
       body: Column(
@@ -216,40 +192,83 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.black
                                   ),
                                 ),
-                                Text(
-                                  "Within 6 km radius",
+                                Obx(() => Text(
+                                  "Within ${nearbyController.searchRadiusKm.value} km radius",
                                   style: GoogleFonts.inter(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey[600]
                                   ),
-                                ),
+                                )),
                               ],
                             ),
                             SizedBox(height: 10.h),
 
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.all(0),
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                                childAspectRatio: 0.95,
-                              ),
-                              itemCount: 4,
-                              itemBuilder: (context, index) {
-                                  return BusinessCard(
-                                    name: _names[index],
-                                    category: _categories[index],
-                                    rating: 4.8,
-                                    distance: _distances[index],
-                                    image: _images[index],
+                            Obx(() {
+                              if (nearbyController.isLoading.value) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
 
-                                 );
-                              },
-                            ),
+                              if (nearbyController.errorMessage.isNotEmpty) {
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Text(
+                                      nearbyController.errorMessage.value,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (nearbyController.categories.isEmpty) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: Text("No nearby providers found"),
+                                  ),
+                                );
+                              }
+
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: const EdgeInsets.all(0),
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                  childAspectRatio: 0.95,
+                                ),
+                                itemCount: nearbyController.categories.length,
+                                itemBuilder: (context, index) {
+                                  final category = nearbyController.categories[index];
+                                  
+                                  // Parse average distance from string or use the numeric value if available
+                                  double avgDistance = 0.0;
+                                  if (category.averageDistanceKm != null) {
+                                    avgDistance = double.tryParse(category.averageDistanceKm!) ?? 0.0;
+                                  } else if (category.averageDistance != null) {
+                                     // If we only have meters (assuming numeric averageDistance is meters), convert to km 
+                                     // But based on JSON example, averageDistanceKm should be present.
+                                     avgDistance = (category.averageDistance!.toDouble()) / 1000;
+                                  }
+
+                                  return BusinessCard(
+                                    name: category.categoryName ?? 'Unknown',
+                                    category: "${category.providerCount ?? 0} Providers",
+                                    distance: avgDistance,
+                                    showDistance: (category.providerCount ?? 0) > 0,
+                                    image: category.categoryImage ?? '',
+                                  );
+                                },
+                              );
+                            }),
                             SizedBox(height: 20.h),
 
 

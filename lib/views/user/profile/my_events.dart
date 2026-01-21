@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
-import '../../../controller/home/event_controller.dart';
+import '../../../controller/user/home/event_controller.dart';
 import '../home/widgets/custom_events_card.dart';
 import 'package:get/get.dart';
 

@@ -8,5 +8,7 @@ class AppIcons{
   static String userOrderS = "assets/icons/orderHistoryS.svg";
   static String userProfile = "assets/icons/profileNav.svg";
   static String userProfileS = "assets/icons/profileS.svg";
+  static String createIcon = "assets/icons/createIcon.svg";
+  static String crateIconS = "assets/icons/createIconS.svg";
 
 }

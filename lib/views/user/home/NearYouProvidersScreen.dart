@@ -1,35 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
 
 
-class ProvidersScreen extends StatelessWidget {
-  const ProvidersScreen({Key? key}) : super(key: key);
+class NearYouProvidersScreen extends StatelessWidget {
+  const NearYouProvidersScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1B5E4E),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 18),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Providers',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: false,
-      ),
+      appBar: CustomAppBar(title: "Providers"),
       body: ListView(
-        padding: const EdgeInsets.all(0),
+        padding:  EdgeInsets.all(20),
         children: const [
           ProviderCard(
             imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
@@ -118,7 +102,7 @@ class ProviderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -309,9 +293,7 @@ class ProviderCard extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-    onPressed: () {
-    Navigator.pushNamed(context, '/service/profile');
-    },
+                      onPressed: () { Navigator.pushNamed(context, '/service/profile');},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1B5E4E),
                         foregroundColor: Colors.white,
