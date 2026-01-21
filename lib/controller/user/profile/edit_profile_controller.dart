@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import '../../utils/constants.dart';
+
+import '../../../utils/constants.dart';
 
 
 class EditProfile extends GetxController {
@@ -43,6 +44,9 @@ class EditProfile extends GetxController {
     request.headers["Accept"] = "*/*";
 
     request.fields["fullname"] = fullname;
+    if (phoneNumber != null && phoneNumber.isNotEmpty) {
+      request.fields["phoneNumber"] = phoneNumber;
+    }
 
     if (profilePicture != null && profilePicture.existsSync()) {
       final ext = profilePicture.path.split('.').last.toLowerCase();
@@ -50,7 +54,7 @@ class EditProfile extends GetxController {
 
       request.files.add(
         await http.MultipartFile.fromPath(
-          "profileImage",
+          "profilePicture",
           profilePicture.path,
           contentType: MediaType('image', mimeType.split('/').last),
         ),

@@ -23,9 +23,11 @@ import '../../views/onboarding/onboardinglanguage_screen.dart';
 import '../../views/onboarding/splash_screen.dart';
 import '../../views/business/employee/BusinessEmployeeScreen.dart';
 import '../../views/event_manager/home/EditEventPage.dart';
+import '../../views/provider/bottom_nav/provider_bottom_nav.dart';
 import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../views/user/auth/otp_verification_for_sigup.dart';
 import '../../views/user/bottom_nav/bottom_nav.dart';
+import '../../views/user/home/NearYouProvidersScreen.dart';
 import '../../widgets/bottom_navb.dart';
 import '../../widgets/bottom_nave.dart';
 import '../../views/provider/auth/LoginProviderScreen.dart';
@@ -49,7 +51,6 @@ import '../../views/user/home/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
 import '../../views/user/home/ProviderDetailsScreen.dart';
-import '../../views/user/home/ProvidersScreen.dart';
 import '../../views/user/orders/AppointmentScreen.dart';
 import '../../views/user/orders/BookingPaidScreen.dart';
 import '../../views/user/orders/BookingScreen.dart';
@@ -87,7 +88,7 @@ class AppRoutes {
   static const String userProfile = '/user-profile';
   static const String userEditProfile = '/user-edit-profile';
   static const String userCategories = '/user-categories';
-  static const String userProviders = '/ProvidersScreen';
+  static const String nearYouProvidersScreen = '/NearYouProvidersScreen.dart';
   static const String userProviderDetails = '/ProviderDetailsScreen';
   static const String userAppointment = '/user-appointment';
   static const String userBooking = '/user-booking';
@@ -106,6 +107,7 @@ class AppRoutes {
   static const String providerForgotPass = '/ProviderForgotPasswordScreen';
   static const String providerOtp = '/providerVerificationCodeScreen';
   static const String providerHome = '/provider-home';
+  static const String providerBottomNavScreen = '/provider_bottom_nav';
   static const String providerProfile = '/ProviderProfilePage';
   static const String providerCreateService = '/CreateServiceProvider';
   static const String providerOrders = '/OrderProvider';
@@ -175,7 +177,7 @@ class AppRoutes {
     GetPage(name: userCategories, page: () => const CategoriesPage()),
 
     GetPage(name: userNotification, page: () => const userNotificationPage()),
-    GetPage(name: userProviders, page: () => const ProvidersScreen()),
+    GetPage(name: nearYouProvidersScreen, page: () => const NearYouProvidersScreen()),
     GetPage(
       name: userProviderDetails,
       page: () => const ProviderDetailsScreen(),
@@ -206,10 +208,11 @@ class AppRoutes {
 
     GetPage(name: providerHome, page: () => const HomeProviderScreen()),
     GetPage(name: providerProfile, page: () => ProviderProfilePage()),
-    GetPage(name: providerCreateService, page: () => CreateServicePage()),
+    GetPage(name: providerCreateService, page: () => ProviderCreateServicePage()),
     GetPage(name: providerOrders, page: () => OrderHistoryProviderScreen()),
     GetPage(name: providerPortfolio, page: () => const PortfolioListScreen()),
     GetPage(name: providerAddPortfolio, page: () => const AddPortfolioScreen()),
+    GetPage(name: providerBottomNavScreen, page: () => ProviderBottomNavScreen()),
     GetPage(
       name: providerBankAdd,
       page: () => const ProviderBankInformationScreen(),

@@ -14,29 +14,6 @@ class HomeProviderScreen extends StatefulWidget {
 }
 
 class _HomeProviderScreenState extends State<HomeProviderScreen> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Navigate to different routes based on index
-    switch (index) {
-      case 0:
-        Get.toNamed(AppRoutes.providerHome);
-        break;
-      case 1:
-        Get.toNamed(AppRoutes.providerCreateService);
-        break;
-      case 2:
-        Get.toNamed(AppRoutes.providerOrders);
-        break;
-      case 3:
-        Get.toNamed(AppRoutes.providerProfile);
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,79 +188,6 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
               const SizedBox(height: 20),
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-
-          onTap: _onItemTapped,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFF2D6A4F),
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 11,
-          unselectedFontSize: 11,
-          elevation: 0,
-          items: [
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                AppIcons.home,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  _selectedIndex == 0 ? const Color(0xFF2D6A4F) : Colors.grey,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                AppIcons.add,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  _selectedIndex == 1 ? const Color(0xFF2D6A4F) : Colors.grey,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: 'Create service',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                AppIcons.booking,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  _selectedIndex == 2 ? const Color(0xFF2D6A4F) : Colors.grey,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: 'Order history',
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                AppIcons.profileIcon,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  _selectedIndex == 3 ? const Color(0xFF2D6A4F) : Colors.grey,
-                  BlendMode.srcIn,
-                ),
-              ),
-              label: 'Profile',
-            ),
-          ],
         ),
       ),
     );

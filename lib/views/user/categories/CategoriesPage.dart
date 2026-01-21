@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:middle_ware/views/user/categories/providers_screen.dart';
 import 'package:middle_ware/views/user/categories/widgets/custom_categories_card.dart';
-import '../../../controller/category_controller/category_conttroller.dart';
+import '../../../controller/user/category_controller/category_conttroller.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:get/get.dart';
 

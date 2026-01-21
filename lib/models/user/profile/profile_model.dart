@@ -2,6 +2,7 @@ class UserModel {
   final String id;
   final String fullName;
   final String email;
+  final String phoneNumber;
   final String? profilePicture;
   final String userType;
   final bool isActive;
@@ -9,6 +10,7 @@ class UserModel {
   UserModel({
     required this.id,
     required this.fullName,
+    required this.phoneNumber,
     required this.email,
     this.profilePicture,
     required this.userType,
@@ -20,6 +22,7 @@ class UserModel {
       id: json['id'].toString(),
       fullName: json['fullName'].toString(),
       email: json['email'].toString(),
+      phoneNumber: json['phoneNumber'],
       profilePicture: json['profilePicture']?.toString(), // Fixed: handle null properly
       userType: json['userType'].toString(),
       isActive: json['isActive'] as bool,

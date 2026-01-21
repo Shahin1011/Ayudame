@@ -37,7 +37,7 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoutes.userProviders);
+        //Get.toNamed(AppRoutes.userProviders);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),

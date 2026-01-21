@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../models/user/home/event_model.dart';
-import '../../utils/constants.dart';
-import '../../utils/token_service.dart';
+import '../../../models/user/home/event_model.dart';
+import '../../../utils/token_service.dart';
+import '../../../utils/constants.dart';
 
 
 class EventController extends GetxController {

@@ -7,14 +7,14 @@ import 'package:middle_ware/views/provider/home/HomeProviderScreen.dart';
 import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-class CreateServicePage extends StatefulWidget {
-  const CreateServicePage({Key? key}) : super(key: key);
+class ProviderCreateServicePage extends StatefulWidget {
+  const ProviderCreateServicePage({Key? key}) : super(key: key);
 
   @override
-  State<CreateServicePage> createState() => _CreateServicePageState();
+  State<ProviderCreateServicePage> createState() => _ProviderCreateServicePageState();
 }
 
-class _CreateServicePageState extends State<CreateServicePage> {
+class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
   final TextEditingController _headlineController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();

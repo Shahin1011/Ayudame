@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/utils/token_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,10 +13,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to onboarding screen after 4 seconds
-    Future.delayed(const Duration(seconds: 4), () {
-      Navigator.pushNamed(context, '/onboarding');
-    });
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    // Wait for 2 seconds to show splash screen
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Check if user has a valid token
+    final token = await TokenService().getToken();
+    
+    if (!mounted) return;
+
+    if (token != null && token.isNotEmpty) {
+      // User is logged in, navigate to home
+      Navigator.pushReplacementNamed(context, '/bottom_nav');
+    } else {
+      // User is not logged in, navigate to onboarding
+      Navigator.pushReplacementNamed(context, '/onboarding');
+    }
   }
 
   @override
