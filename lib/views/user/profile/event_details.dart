@@ -4,6 +4,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:get/get.dart';
 import '../../../controller/user/home/event_details_controller.dart';
+import 'buy_ticket_screen.dart';
 
 class EventDetails extends StatelessWidget {
   final String eventId;
@@ -136,7 +137,9 @@ class EventDetails extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: event.isSoldOut
                                 ? null
-                                : () {},
+                                : () {
+                                    Get.to(() => const BuyTicketScreen());
+                                  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: event.isSoldOut
                                   ? Colors.grey

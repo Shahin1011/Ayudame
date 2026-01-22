@@ -1,74 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+import '../../../controller/user/home/category_providers_controller.dart';
 
-
-class NearYouProvidersScreen extends StatelessWidget {
+class NearYouProvidersScreen extends StatefulWidget {
   const NearYouProvidersScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NearYouProvidersScreen> createState() => _NearYouProvidersScreenState();
+}
+
+class _NearYouProvidersScreenState extends State<NearYouProvidersScreen> {
+  final CategoryProvidersController controller = Get.put(CategoryProvidersController());
+  String categoryName = "Providers";
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args != null) {
+       if (args['categoryId'] != null) {
+         controller.fetchCategoryProviders(args['categoryId']);
+       }
+       if (args['categoryName'] != null) {
+         categoryName = args['categoryName'];
+       }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
+      appBar: CustomAppBar(title: categoryName),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      appBar: CustomAppBar(title: "Providers"),
-      body: ListView(
-        padding:  EdgeInsets.all(20),
-        children: const [
-          ProviderCard(
-            imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-            profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
-            name: 'Jackson Builder',
-            location: 'Dhanmondi Dhaka 1209',
-            postedTime: '1 day ago',
-            description:
-            'I take care of every corner, deep cleaning every room withcare,leaving your home fresh and perfectly tidy for you.',
-            rating: 4.00,
-            reviewCount: 120,
-            price: 'From \$100',
-            showOnlineIndicator: true,
-          ),
-          ProviderCard(
-            imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800',
-            profileUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
-            name: 'Jackson Builder',
-            location: 'Dhanmondi Dhaka 1209',
-            postedTime: '1 day ago',
-            description:
-            'I take care of every corner, deep cleaning every room withcare,leaving your home fresh and perfectly tidy for you.',
-            rating: 4.00,
-            reviewCount: 120,
-            price: 'From \$100',
-            showOnlineIndicator: true,
-          ),
-          ProviderCard(
-            imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800',
-            profileUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-            name: 'Jackson Builder',
-            location: 'Dhanmondi Dhaka 1209',
-            postedTime: '1 day ago',
-            description:
-            'I take your dog out for regular walks, keeping them active and happy.Every walk is safe, fun, and tailored to your pet\'s needs.',
-            rating: 4.00,
-            reviewCount: 120,
-            price: 'From \$100',
-            showOnlineIndicator: false,
-          ),
-          ProviderCard(
-            imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800',
-            profileUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-            name: 'Jackson Builder',
-            location: 'Dhanmondi Dhaka 1209',
-            postedTime: '1 day ago',
-            description:
-            'I take your dog out for regular walks, keeping them active and happy.Every walk is safe, fun, and tailored to your pet\'s needs.',
-            rating: 4.00,
-            reviewCount: 120,
-            price: 'From \$100',
-            showOnlineIndicator: false,
-          ),
-        ],
-      ),
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(child: Text(controller.errorMessage.value));
+        }
+
+        if (controller.providers.isEmpty) {
+          return const Center(child: Text("No providers found in this category"));
+        }
+
+        // Flatten providers and services
+        final allServices = [];
+        for (var provider in controller.providers) {
+          if (provider.services != null) {
+            for (var service in provider.services!) {
+              allServices.add({
+                'provider': provider,
+                'service': service,
+              });
+            }
+          }
+        }
+
+        if (allServices.isEmpty) {
+           return const Center(child: Text("No services available"));
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.all(20.w),
+          itemCount: allServices.length,
+          itemBuilder: (context, index) {
+            final item = allServices[index];
+            final provider = item['provider'];
+            final service = item['service'];
+            
+            return ProviderCard(
+              imageUrl: service.image ?? '',
+              profileUrl: provider.profileImage ?? '',
+              name: provider.name ?? "", // Name from API
+              location: provider.address ?? 'Unknown Location',
+              postedTime: "${provider.distanceKm ?? '0'} km away",
+              title: service.title ?? 'No Title',
+              description: service.description ?? 'No description',
+              rating: (service.rating ?? 0).toDouble(),
+              reviewCount: service.totalReviews ?? 0,
+              price: (service.appointmentEnabled == true) 
+                  ? "Appointment Price: \$${service.price ?? 0}" 
+                  : "Service Price: \$${service.price ?? 0}",
+              showOnlineIndicator: false,
+            );
+          },
+        );
+      }),
     );
   }
 }
@@ -79,6 +100,7 @@ class ProviderCard extends StatelessWidget {
   final String name;
   final String location;
   final String postedTime;
+  final String title;
   final String description;
   final double rating;
   final int reviewCount;
@@ -92,6 +114,7 @@ class ProviderCard extends StatelessWidget {
     required this.name,
     required this.location,
     required this.postedTime,
+    required this.title,
     required this.description,
     required this.rating,
     required this.reviewCount,
@@ -119,7 +142,8 @@ class ProviderCard extends StatelessWidget {
           // Image section
           Stack(
             children: [
-              Image.network(
+              imageUrl.isNotEmpty 
+              ? Image.network(
                 imageUrl,
                 height: 200,
                 width: double.infinity,
@@ -131,7 +155,13 @@ class ProviderCard extends StatelessWidget {
                     child: const Icon(Icons.image, size: 50, color: Colors.grey),
                   );
                 },
-              ),
+              )
+              : Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                ),
               Positioned(
                 top: 12,
                 right: 12,
@@ -177,7 +207,8 @@ class ProviderCard extends StatelessWidget {
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: ClipOval(
-                            child: Image.network(
+                            child: profileUrl.isNotEmpty
+                            ? Image.network(
                               profileUrl,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
@@ -186,7 +217,11 @@ class ProviderCard extends StatelessWidget {
                                   child: const Icon(Icons.person, size: 24),
                                 );
                               },
-                            ),
+                            )
+                            : Container(
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.person, size: 24),
+                              ),
                           ),
                         ),
                         if (showOnlineIndicator)
@@ -246,6 +281,15 @@ class ProviderCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF212121),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
                   description,
                   style: const TextStyle(
                     fontSize: 13,
@@ -263,7 +307,7 @@ class ProviderCard extends StatelessWidget {
                         child: Icon(
                           Icons.star,
                           size: 16,
-                          color: index < 4
+                          color: index < rating.round()
                               ? const Color(0xFFFFC107)
                               : const Color(0xFFE0E0E0),
                         ),

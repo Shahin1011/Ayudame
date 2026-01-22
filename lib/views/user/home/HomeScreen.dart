@@ -265,6 +265,7 @@ class _HomePageState extends State<HomePage> {
                                     distance: avgDistance,
                                     showDistance: (category.providerCount ?? 0) > 0,
                                     image: category.categoryImage ?? '',
+                                    categoryId: category.categoryId ?? '',
                                   );
                                 },
                               );
