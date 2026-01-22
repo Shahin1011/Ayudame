@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/viewmodels/bank_controller.dart';
+import 'package:middle_ware/controller/user/profile/bank_controller.dart';
 import 'package:middle_ware/views/user/profile/user_bank_form_screen.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../components/custom_app_bar.dart';
@@ -23,7 +23,7 @@ class userBankInformation extends StatelessWidget{
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -56,8 +56,86 @@ class userBankInformation extends StatelessWidget{
                 SizedBox(height: MediaQuery.of(context).size.height * 0.035),
 
                 /// Here will show default payment Method
+                /// Here will show default payment Method
                 Obx(() {
+                  if (bankController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
                   final card = bankController.defaultCard.value;
+                  final bankInfo = bankController.bankInfo.value;
+
+                  // Prioritize displaying Bank Information if available, or modify based on requirement (showing both or one). 
+                  // The prompt shows Payout Information card.
+                  
+                  if (bankInfo != null) {
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 16.h),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(15.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Payout Information",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                     Get.to(() => UserAddBankInformation(existingBankInfo: bankInfo));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Text(
+                                      "Edit",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            _buildInfoRow("Account Name", bankInfo.accountHolderName),
+                            SizedBox(height: 16.h),
+                            _buildInfoRow("Bank Account Number", "**********${bankInfo.last4Digits}"),
+                            SizedBox(height: 16.h),
+                            _buildInfoRow("Bank name", bankInfo.bankName),
+                            SizedBox(height: 16.h),
+                            _buildInfoRow("Routing Number", bankInfo.routingNumber),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
 
                   if (card == null) return const SizedBox.shrink();
 
@@ -131,4 +209,27 @@ class userBankInformation extends StatelessWidget{
     );
   }
 
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 14.sp,
+            color: Colors.black.withOpacity(0.8),
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.inter(
+            fontSize: 14.sp,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
 }

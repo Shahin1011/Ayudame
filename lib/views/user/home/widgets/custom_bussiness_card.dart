@@ -7,11 +7,13 @@ class BusinessCard extends StatelessWidget {
   final String name;
   final String category;
   final double distance;
+  final String categoryId;
   final String image;
 
   const BusinessCard({
     super.key,
     required this.name,
+    required this.categoryId,
     required this.category,
     required this.distance,
     this.showDistance = true,
@@ -27,7 +29,13 @@ class BusinessCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: (){
-        Get.toNamed(AppRoutes.nearYouProvidersScreen);
+        Get.toNamed(
+          AppRoutes.nearYouProvidersScreen, 
+          arguments: {
+            'categoryId': categoryId,
+            'categoryName': name
+          }
+        );
       },
       child: Container(
         padding: EdgeInsets.all(10),
