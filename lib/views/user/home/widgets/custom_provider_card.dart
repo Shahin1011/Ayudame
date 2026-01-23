@@ -13,6 +13,10 @@ class CustomRecentProviderCard extends StatefulWidget {
   final String reviews;
   final double? appointmentPrice;
   final double? servicePrice;
+  final String? serviceImage;
+  final String? providerImage;
+  final String? serviceId;
+  final String? providerId;
 
   const CustomRecentProviderCard.custom_provider_card({
     super.key,
@@ -24,6 +28,10 @@ class CustomRecentProviderCard extends StatefulWidget {
     required this.reviews,
     this.appointmentPrice,
     this.servicePrice,
+    this.serviceImage,
+    this.providerImage,
+    this.serviceId,
+    this.providerId,
   });
 
   @override
@@ -61,7 +69,7 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Image.network(
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
+                    widget.serviceImage ?? 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -96,8 +104,8 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                     children: [
                       CircleAvatar(
                         radius: 25.r,
-                        backgroundImage: const NetworkImage(
-                          'https://randomuser.me/api/portraits/men/32.jpg',
+                        backgroundImage: NetworkImage(
+                          widget.providerImage ?? 'https://randomuser.me/api/portraits/men/32.jpg',
                         ),
                       ),
                       SizedBox(width: 10.w),
@@ -196,7 +204,10 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.userProviderDetails);
+                          Get.toNamed(AppRoutes.providerServiceDetailsScreen, arguments: {
+                            'serviceId': widget.serviceId,
+                            'providerId': widget.providerId,
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D6A4F),

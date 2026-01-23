@@ -230,7 +230,7 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.userProviderDetails);
+                          Get.toNamed(AppRoutes.providerServiceDetailsScreen);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D6A4F),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 import '../../../controller/user/home/category_providers_controller.dart';
 
 class NearYouProvidersScreen extends StatefulWidget {
@@ -86,6 +87,16 @@ class _NearYouProvidersScreenState extends State<NearYouProvidersScreen> {
                   ? "Appointment Price: \$${service.price ?? 0}" 
                   : "Service Price: \$${service.price ?? 0}",
               showOnlineIndicator: false,
+              onViewDetails: () {
+                 if (service.serviceId != null) {
+                    Get.toNamed(AppRoutes.providerServiceDetailsScreen, arguments: {
+                      'serviceId': service.serviceId,
+                      'providerId': provider.providerId,
+                    });
+                 } else {
+                    Get.snackbar("Error", "Service ID not available");
+                 }
+              },
             );
           },
         );
@@ -106,6 +117,7 @@ class ProviderCard extends StatelessWidget {
   final int reviewCount;
   final String price;
   final bool showOnlineIndicator;
+  final VoidCallback onViewDetails;
 
   const ProviderCard({
     Key? key,
@@ -120,6 +132,7 @@ class ProviderCard extends StatelessWidget {
     required this.reviewCount,
     required this.price,
     required this.showOnlineIndicator,
+    required this.onViewDetails,
   }) : super(key: key);
 
   @override
@@ -142,26 +155,29 @@ class ProviderCard extends StatelessWidget {
           // Image section
           Stack(
             children: [
-              imageUrl.isNotEmpty 
-              ? Image.network(
-                imageUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                  );
-                },
-              )
-              : Container(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: imageUrl.isNotEmpty
+                ? Image.network(
+                  imageUrl,
                   height: 200,
                   width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
-                ),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                    );
+                  },
+                )
+                : Container(
+                    height: 200,
+                    width: double.infinity,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                  ),
+              ),
               Positioned(
                 top: 12,
                 right: 12,
@@ -337,7 +353,7 @@ class ProviderCard extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () { Navigator.pushNamed(context, '/service/profile');},
+                      onPressed: onViewDetails,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1B5E4E),
                         foregroundColor: Colors.white,

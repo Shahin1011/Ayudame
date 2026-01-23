@@ -28,6 +28,10 @@ import '../../views/provider/profile/ProviderPortfolioPage.dart';
 import '../../views/user/auth/otp_verification_for_sigup.dart';
 import '../../views/user/bottom_nav/bottom_nav.dart';
 import '../../views/user/home/NearYouProvidersScreen.dart';
+import '../../views/user/home/ProviderServiceDetailsScreen.dart';
+import '../../views/user/home/AllTopBusinessesScreen.dart';
+import '../../views/user/home/BusinessDetailsScreen.dart';
+import '../../views/user/home/EmployeeServiceDetailsScreen.dart';
 import '../../widgets/bottom_navb.dart';
 import '../../widgets/bottom_nave.dart';
 import '../../views/provider/auth/LoginProviderScreen.dart';
@@ -50,7 +54,6 @@ import '../../views/user/auth/VerificationCodeScreen.dart';
 import '../../views/user/home/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
-import '../../views/user/home/ProviderDetailsScreen.dart';
 import '../../views/user/orders/AppointmentScreen.dart';
 import '../../views/user/orders/BookingPaidScreen.dart';
 import '../../views/user/orders/BookingScreen.dart';
@@ -58,6 +61,8 @@ import '../../views/user/orders/PaymentScreen.dart';
 import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
 import '../../views/user/profile/WishlistScreen.dart';
+import '../../views/user/home/NearYouProviderProfileScreen.dart';
+
 
 class AppRoutes {
   // ============================================
@@ -89,7 +94,7 @@ class AppRoutes {
   static const String userEditProfile = '/user-edit-profile';
   static const String userCategories = '/user-categories';
   static const String nearYouProvidersScreen = '/NearYouProvidersScreen.dart';
-  static const String userProviderDetails = '/ProviderDetailsScreen';
+  static const String providerServiceDetailsScreen = '/ProviderServiceDetailsScreen';
   static const String userAppointment = '/user-appointment';
   static const String userBooking = '/user-booking';
   static const String userBookingPaid = '/user-booking-paid';
@@ -98,6 +103,10 @@ class AppRoutes {
   static const String userWishlist = '/user-wishlist';
   static const String userChat = '/user-chat';
   static const String userPayment = '/user-payment';
+  static const String userProviderProfile = '/NearYouProviderProfileScreen';
+  static const String allTopBusinesses = '/AllTopBusinessesScreen';
+  static const String businessDetails = '/BusinessDetailsScreen';
+  static const String employeeServiceDetails = '/EmployeeServiceDetailsScreen';
 
   // ============================================
   // PROVIDER ROUTES
@@ -179,8 +188,7 @@ class AppRoutes {
     GetPage(name: userNotification, page: () => const userNotificationPage()),
     GetPage(name: nearYouProvidersScreen, page: () => const NearYouProvidersScreen()),
     GetPage(
-      name: userProviderDetails,
-      page: () => const ProviderDetailsScreen(),
+      name: providerServiceDetailsScreen, page: () => const ProviderServiceDetailsScreen(),
     ),
     GetPage(name: userAppointment, page: () => const AppointmentScreen()),
     GetPage(name: userBooking, page: () => const BookingScreen()),
@@ -193,6 +201,10 @@ class AppRoutes {
     GetPage(name: userWishlist, page: () => const WishlistScreen()),
     GetPage(name: userChat, page: () => const ChatScreen()),
     GetPage(name: userPayment, page: () => const PaymentScreen()),
+    GetPage(name: userProviderProfile, page: () => const NearYouProviderProfileScreen()),
+    GetPage(name: allTopBusinesses, page: () => const AllTopBusinessesScreen()),
+    GetPage(name: businessDetails, page: () => const BusinessDetailsScreen()),
+    GetPage(name: employeeServiceDetails, page: () => const EmployeeServiceDetailsScreen()),
 
     // Provider Auth & Features
     GetPage(name: providerLogin, page: () => const LoginProviderScreen()),
