@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -11,6 +12,10 @@ class CustomTopbusinessesCard extends StatelessWidget {
   final int numberEmployees;
   final int numberOfServices;
 
+  final String? businessPhoto;
+  final String? businessOwnerId;
+  final VoidCallback? onTap;
+
   const CustomTopbusinessesCard({
     Key? key,
     required this.title,
@@ -18,6 +23,9 @@ class CustomTopbusinessesCard extends StatelessWidget {
     required this.location,
     required this.numberEmployees,
     required this.numberOfServices,
+    this.businessPhoto,
+    this.businessOwnerId,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -30,7 +38,11 @@ class CustomTopbusinessesCard extends StatelessWidget {
         color: Colors.white,
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap ?? () {
+          if (businessOwnerId != null) {
+            Get.toNamed('/BusinessDetailsScreen', arguments: businessOwnerId);
+          }
+        },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
           child: Column(
@@ -41,12 +53,15 @@ class CustomTopbusinessesCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius:
                     const BorderRadius.all(Radius.circular(12)),
-                    child: Image.network(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcJtC8sXLqdg1ZzQ6TQ8rljPxBMilyRv7mwQ&s',
-                      height: 85.h,
-                      width: 85.w,
-                      fit: BoxFit.cover,
-                    ),
+                    child: (businessPhoto != null && businessPhoto!.isNotEmpty)
+                      ? Image.network(
+                          businessPhoto!,
+                          height: 85.h,
+                          width: 85.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                        )
+                      : _buildPlaceholder(),
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
@@ -85,21 +100,27 @@ class CustomTopbusinessesCard extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 12.h),
-                    
+
                         Row(
                           children: [
                             Icon(Icons.location_on, size: 20, color: Colors.grey[600]),
                             SizedBox(width: 2.w),
-                            Text(
-                              location,
-                              style: GoogleFonts.inter(
+
+                            Expanded(
+                              child: Text(
+                                location,
+                                style: GoogleFonts.inter(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.grey[600]
+                                  color: Colors.grey[600],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
+
                         SizedBox(height: 12.h),
                     
                         Row(
@@ -143,6 +164,14 @@ class CustomTopbusinessesCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 85.h,
+      width: 85.w,
+      color: Colors.grey[200],
+      child: Icon(Icons.business, size: 40.sp, color: Colors.grey),
     );
   }
 }

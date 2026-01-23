@@ -12,6 +12,7 @@ import 'package:middle_ware/views/user/profile/my_events.dart';
 import '../../../controller/user/home/event_controller.dart';
 import '../../../controller/user/home/nearby_providers_controller.dart';
 import '../../../controller/user/home/recent_providers_controller.dart';
+import '../../../controller/user/home/top_businesses_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   final EventController eventController = Get.put(EventController());
   final RecentProviderController recentController = Get.put(RecentProviderController());
   final NearbyProvidersController nearbyController = Get.put(NearbyProvidersController());
+  final TopBusinessesController topBusinessesController = Get.put(TopBusinessesController());
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +437,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 InkWell(
-                                  onTap: (){},
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.allTopBusinesses);
+                                  },
                                   child: Text(
                                     "View all",
                                     style: GoogleFonts.inter(
@@ -449,21 +453,56 @@ class _HomePageState extends State<HomePage> {
                             ),
                             SizedBox(height: 10.h),
 
-                            ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount: 5,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index){
-                                return CustomTopbusinessesCard(
-                                  title: "Expert house cleaning service",
-                                  review: "4.8",
-                                  location: "321 Fashion Blvb,City Center",
-                                  numberEmployees: 121,
-                                  numberOfServices: 12,
+                            Obx(() {
+                              if (topBusinessesController.isLoading.value) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 );
-                              },
-                            ),
+                              }
+
+                              if (topBusinessesController.errorMessage.isNotEmpty) {
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Text(
+                                      topBusinessesController.errorMessage.value,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (topBusinessesController.businesses.isEmpty) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: Text("No top businesses found"),
+                                  ),
+                                );
+                              }
+
+                              return ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: topBusinessesController.businesses.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final business = topBusinessesController.businesses[index];
+                                  return CustomTopbusinessesCard(
+                                    title: business.businessName ?? "Business Name",
+                                    review: (business.businessRating ?? 0.0).toStringAsFixed(1),
+                                    location: business.businessAddress ?? "Address not available",
+                                    numberEmployees: business.employeeCount ?? 0,
+                                    numberOfServices: business.serviceCount ?? 0,
+                                    businessPhoto: business.businessPhoto,
+                                    businessOwnerId: business.businessOwnerId,
+                                  );
+                                },
+                              );
+                            }),
                             SizedBox(height: 10.h),
 
                           ],
