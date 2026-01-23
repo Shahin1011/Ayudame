@@ -16,6 +16,10 @@ class EventManagerViewModel extends GetxController {
   // For forgot password flow
   var forgotPasswordEmail = ''.obs;
   var recoveryOtp = ''.obs;
+  var privacyPolicyContent = ''.obs;
+  var termsContent = ''.obs;
+  var aboutUsContent = ''.obs;
+  var faqList = <Map<String, String>>[].obs;
 
   /// Send OTP for password recovery
   Future<void> sendOtp(String email) async {
@@ -465,6 +469,98 @@ class EventManagerViewModel extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch Privacy Policy
+  Future<void> fetchPrivacyPolicy() async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.getPrivacyPolicy();
+
+      // Handle different possible response structures
+      if (response['data'] != null && response['data']['content'] != null) {
+        privacyPolicyContent.value = response['data']['content'];
+      } else if (response['content'] != null) {
+        privacyPolicyContent.value = response['content'];
+      } else if (response['data'] is String) {
+        privacyPolicyContent.value = response['data'];
+      } else {
+        privacyPolicyContent.value = "No privacy policy content available.";
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to load privacy policy: ${e.toString().replaceAll('Exception: ', '')}",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch Terms and Conditions
+  Future<void> fetchTermsAndConditions() async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.getTermsAndConditions();
+      if (response['data'] != null && response['data']['content'] != null) {
+        termsContent.value = response['data']['content'];
+      } else if (response['content'] != null) {
+        termsContent.value = response['content'];
+      } else if (response['data'] is String) {
+        termsContent.value = response['data'];
+      } else {
+        termsContent.value = "No terms and conditions available.";
+      }
+    } catch (e) {
+      debugPrint("Error fetching terms: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch FAQ
+  Future<void> fetchFaq() async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.getFaq();
+      var data = response['data'];
+
+      if (data != null && data is List) {
+        faqList.value = data.map((item) {
+          return {
+            'question': item['question']?.toString() ?? '',
+            'answer': item['answer']?.toString() ?? '',
+          };
+        }).toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching FAQ: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Fetch About Us
+  Future<void> fetchAboutUs() async {
+    isLoading.value = true;
+    try {
+      final response = await _authService.getAboutUs();
+      if (response['data'] != null && response['data']['content'] != null) {
+        aboutUsContent.value = response['data']['content'];
+      } else if (response['content'] != null) {
+        aboutUsContent.value = response['content'];
+      } else if (response['data'] is String) {
+        aboutUsContent.value = response['data'];
+      } else {
+        aboutUsContent.value = "No about us content available.";
+      }
+    } catch (e) {
+      debugPrint("Error fetching About Us: $e");
     } finally {
       isLoading.value = false;
     }

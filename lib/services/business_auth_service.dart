@@ -80,16 +80,19 @@ class BusinessAuthService {
 
       if (email != null && email.isNotEmpty) {
         fields['email'] = email;
-      } else if (phone != null && phone.isNotEmpty) {
-        fields['email'] = "${phone}@tempmail.com";
       }
-
       if (phone != null && phone.isNotEmpty) {
         fields['phoneNumber'] = phone;
-      } else if (email != null && email.isNotEmpty) {
+      }
+
+      // If one is missing, only then apply workarounds if the backend requires both
+      if (fields['email'] == null && phone != null) {
+        fields['email'] = "${phone}@tempmail.com";
+      }
+      if (fields['phoneNumber'] == null && email != null) {
         String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
         fields['phoneNumber'] =
-            "01" + timestamp.substring(timestamp.length - 9);
+            "01${timestamp.substring(timestamp.length - 9)}";
       }
 
       if (address != null) fields['businessAddress'] = address;
@@ -101,6 +104,7 @@ class BusinessAuthService {
         try {
           final parts = dob.split('/');
           if (parts.length == 3) {
+            // Convert dd/mm/yyyy to yyyy-mm-dd
             fields['dateOfBirth'] =
                 "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
           } else {
@@ -109,14 +113,16 @@ class BusinessAuthService {
         } catch (_) {
           fields['dateOfBirth'] = dob;
         }
-      } else {
-        fields['dateOfBirth'] = dob ?? '';
+      } else if (dob != null) {
+        fields['dateOfBirth'] = dob;
       }
 
       final files = <String, dynamic>{};
       if (idCardFront != null) files['idCardFront'] = idCardFront;
       if (idCardBack != null) files['idCardBack'] = idCardBack;
-      if (businessPhoto != null) files['logo'] = businessPhoto;
+      if (businessPhoto != null) {
+        files['businessPhoto'] = businessPhoto;
+      }
 
       final streamedResponse = await ApiService.postMultipart(
         endpoint: '/api/business-owners/register',
@@ -454,12 +460,16 @@ class BusinessAuthService {
         files['coverPhoto'] = businessCoverPath;
       }
 
+      // Use hybrid approach to ensure maximum compatibility
+      // For files + text: Multipart POST with _method=PUT (Standard Laravel spoofing)
+      // For text only: JSON PUT with _method=PUT (Safety net)
+
       http.Response response;
 
       if (files.isNotEmpty) {
-        fields['_method'] = 'POST'; // Usually POST for creating
+        fields['_method'] = 'PUT';
         final streamedResponse = await ApiService.postMultipart(
-          endpoint: '/api/business-owners/business-profile',
+          endpoint: '/api/business-owners/business-profile?_method=PUT',
           fields: fields,
           files: files,
           requireAuth: true,
@@ -467,8 +477,12 @@ class BusinessAuthService {
         );
         response = await http.Response.fromStream(streamedResponse);
       } else {
-        response = await ApiService.post(
-          endpoint: '/api/business-owners/business-profile',
+        // Remove _method from body for JSON request to avoid pollution,
+        // relying on query param or native PUT
+        fields.remove('_method');
+
+        response = await ApiService.put(
+          endpoint: '/api/business-owners/business-profile?_method=PUT',
           body: fields,
           requireAuth: true,
         );
@@ -656,6 +670,127 @@ class BusinessAuthService {
       }
     } catch (e) {
       debugPrint("❌ Change Password Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Get Bank Information
+  Future<Map<String, dynamic>> getBankInfo() async {
+    try {
+      final response = await ApiService.get(
+        endpoint: '/api/business-owners/bank-information',
+        requireAuth: true,
+      );
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data'] as Map<String, dynamic>;
+        } else {
+          return {}; // Return empty if no bank info found but success
+        }
+      } else {
+        throw Exception(jsonResponse['message'] ?? 'Failed to get bank info');
+      }
+    } catch (e) {
+      debugPrint("❌ Get Bank Info Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Create Bank Information
+  Future<Map<String, dynamic>> createBankInfo(Map<String, dynamic> data) async {
+    try {
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/bank-information',
+        body: data,
+        requireAuth: true,
+      );
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonResponse;
+      } else {
+        throw Exception(jsonResponse['message'] ?? 'Failed to save bank info');
+      }
+    } catch (e) {
+      debugPrint("❌ Create Bank Info Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Update Bank Information
+  Future<Map<String, dynamic>> updateBankInfo(Map<String, dynamic> data) async {
+    try {
+      final response = await ApiService.put(
+        endpoint: '/api/business-owners/bank-information',
+        body: data,
+        requireAuth: true,
+      );
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonResponse;
+      } else {
+        throw Exception(
+          jsonResponse['message'] ?? 'Failed to update bank info',
+        );
+      }
+    } catch (e) {
+      debugPrint("❌ Update Bank Info Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Get Notifications
+  Future<Map<String, dynamic>> getNotifications({
+    int page = 1,
+    int limit = 20,
+    bool isRead = false,
+  }) async {
+    try {
+      final queryParams = 'isRead=$isRead&page=$page&limit=$limit';
+      final response = await ApiService.get(
+        endpoint: '/api/business-owners/notifications?$queryParams',
+        requireAuth: true,
+      );
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        if (jsonResponse['success'] == true) {
+          return jsonResponse;
+        } else {
+          throw Exception(
+            jsonResponse['message'] ?? 'Failed to get notifications',
+          );
+        }
+      } else {
+        throw Exception(
+          jsonResponse['message'] ?? 'Failed to get notifications',
+        );
+      }
+    } catch (e) {
+      debugPrint("❌ Get Notifications Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Delete Account
+  Future<Map<String, dynamic>> deleteAccount(String id) async {
+    try {
+      final response = await ApiService.delete(
+        endpoint: '/api/admin/business-owners/$id',
+        requireAuth: true,
+      );
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return jsonResponse;
+      } else {
+        throw Exception(jsonResponse['message'] ?? 'Failed to delete account');
+      }
+    } catch (e) {
+      debugPrint("❌ Delete Account Error: $e");
       rethrow;
     }
   }

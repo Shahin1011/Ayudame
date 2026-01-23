@@ -34,62 +34,85 @@ class BusinessModel {
 
   /// Create BusinessModel from JSON
   factory BusinessModel.fromJson(Map<String, dynamic> json) {
-    // Check if data is nested under 'businessOwner' or just top-level
-    final data = json['businessOwner'] != null ? json['businessOwner'] : json;
-    final userData = data['userId'];
+    // Determine the source of data (merged or nested)
+    final Map<String, dynamic> data;
+    if (json['businessProfile'] != null && json['businessProfile'] is Map) {
+      data = json['businessProfile'];
+    } else if (json['businessOwner'] != null && json['businessOwner'] is Map) {
+      data = json['businessOwner'];
+    } else {
+      data = json;
+    }
+
+    // Capture User Info (might be root or nested)
+    final userData = data['userId'] ?? data['user'] ?? data;
+
+    // Helper to parse categories which might be a List of objects
+    String? parseCategories(dynamic val) {
+      if (val is List) {
+        if (val.isEmpty) return null;
+        if (val.first is Map && val.first['name'] != null) {
+          return val.map((e) => e['name'].toString()).join(', ');
+        }
+        return val.join(', ');
+      }
+      return val?.toString();
+    }
+
+    // Helper to parse logo/photo
+    String? parseLogo(dynamic val) {
+      if (val is List) {
+        final valid = val.where((e) => e != null).toList();
+        if (valid.isNotEmpty) return valid.last.toString();
+        return null;
+      }
+      return val?.toString();
+    }
 
     return BusinessModel(
       id: data['id']?.toString() ?? data['_id']?.toString(),
       businessName:
-          data['business_name']?.toString() ??
           data['businessName']?.toString() ??
+          data['business_name']?.toString() ??
           data['name']?.toString(),
-      // Extract from userId object if available
-      ownerName: userData != null
-          ? userData['fullName']?.toString()
-          : (data['owner_name']?.toString() ??
-                data['ownerName']?.toString() ??
-                data['fullName']?.toString() ??
-                data['full_name']?.toString()),
-      email: userData != null
+      ownerName: userData is Map
+          ? (userData['fullName'] ?? userData['name'])?.toString()
+          : data['fullName']?.toString(),
+      email: userData is Map
           ? userData['email']?.toString()
           : data['email']?.toString(),
-      phone: userData != null
-          ? userData['phoneNumber']?.toString()
-          : (data['phone']?.toString() ?? data['phoneNumber']?.toString()),
-      // Map other fields
-      address:
-          data['address']?.toString() ??
-          data['businessAddress']?['fullAddress']?.toString() ??
-          data['businessAddress']?.toString() ??
-          data['location']?.toString(),
-      businessType:
-          data['business_type']?.toString() ??
-          data['businessType']?.toString() ??
-          data['businessCategory']?.toString() ??
-          data['categories']?.toString(),
+      phone: userData is Map
+          ? (userData['phoneNumber'] ?? userData['phone'])?.toString()
+          : (data['phoneNumber'] ?? data['phone'])?.toString(),
+      address: data['businessAddress'] != null && data['businessAddress'] is Map
+          ? data['businessAddress']['fullAddress']?.toString()
+          : (data['address']?.toString() ?? data['location']?.toString()),
+      businessType: parseCategories(
+        data['businessCategory'] ??
+            data['categories'] ??
+            data['businessType'] ??
+            data['business_type'],
+      ),
       description: data['description']?.toString() ?? data['about']?.toString(),
-      // Check userData for profile picture first, then business photo
-      logo: userData != null
-          ? userData['profilePicture']?.toString()
-          : (data['logo']?.toString() ??
-                data['profilePicture']?.toString() ??
-                data['business_photo']?.toString() ??
-                data['businessPhotos']?.toString() ??
-                data['businessPhoto']?.toString()),
+      logo: parseLogo(
+        data['businessPhoto'] ??
+            data['logo'] ??
+            data['profilePicture'] ??
+            data['profilePhoto'] ??
+            data['photos'],
+      ),
       coverPhoto:
-          data['cover_photo']?.toString() ??
           data['coverPhoto']?.toString() ??
-          data['businessProfile']?['coverPhoto']?.toString() ??
+          data['cover_photo']?.toString() ??
           data['b_cover']?.toString(),
       occupation: data['occupation']?.toString(),
       dateOfBirth: data['dateOfBirth']?.toString(),
-      isVerified: data['is_verified'] ?? data['isVerified'] ?? false,
-      createdAt: data['created_at'] != null
-          ? DateTime.tryParse(data['created_at'].toString())
-          : data['createdAt'] != null
+      isVerified: data['isVerified'] ?? data['is_verified'] ?? false,
+      createdAt: data['createdAt'] != null
           ? DateTime.tryParse(data['createdAt'].toString())
-          : null,
+          : (data['created_at'] != null
+                ? DateTime.tryParse(data['created_at'].toString())
+                : null),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/employee/create_employee.dart';
+import '../../../../models/business_employee_model.dart';
 import '../../../../viewmodels/business_employee_viewmodel.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -30,7 +31,9 @@ class BusinessEmployeeListScreen extends StatelessWidget {
             InkWell(
               onTap: () async {
                 await Get.to(() => const CreateEmployee());
-                _viewModel.fetchAllEmployees(); // Refresh after return
+                _viewModel.fetchAllEmployees(
+                  forceRefresh: true,
+                ); // Force refresh after return
               },
               child: CustomPaint(
                 painter: DashedBorderPainter(
@@ -90,33 +93,36 @@ class BusinessEmployeeListScreen extends StatelessWidget {
                         );
                       },
                       child: ProviderUICard(
+                        borderRadius: 12,
                         name: employee.name ?? 'No Name',
                         location:
                             employee.headline ??
-                            'No Headline', // Using headline as sub-text
-                        serviceTitle: employee.serviceCategory ?? 'Service',
+                            employee.serviceCategory ??
+                            'Service Provider', // Using headline or category as sub-text
+                        serviceTitle:
+                            employee.headline ??
+                            employee.serviceCategory ??
+                            'Service',
                         description:
                             employee.about ?? 'No description available',
                         rating: 4.5, // Placeholder rating
                         reviewCount: 0, // Placeholder
-                        price: '\$${employee.price?.toStringAsFixed(0) ?? '0'}',
+                        price: _getDisplayPrice(employee),
                         onViewDetails: () {
                           Get.toNamed(
                             AppRoutes.businessEmployee,
                             arguments: employee,
                           );
                         },
-                        // Use servicePhoto (idCardBack) as the main service image
                         imageUrl:
-                            (employee.idCardBack != null &&
-                                employee.idCardBack!.isNotEmpty)
-                            ? employee.idCardBack!
+                            (employee.servicePhoto != null &&
+                                employee.servicePhoto!.isNotEmpty)
+                            ? employee.servicePhoto!
                             : 'assets/images/men_cleaning.jpg',
-                        // Use photo (profileImage) as the profile picture
                         profileUrl:
-                            (employee.profileImage != null &&
-                                employee.profileImage!.isNotEmpty)
-                            ? employee.profileImage!
+                            (employee.profilePicture != null &&
+                                employee.profilePicture!.isNotEmpty)
+                            ? employee.profilePicture!
                             : 'assets/images/profile.png',
                         postedTime: employee.availableTime ?? 'Available',
                         showOnlineIndicator: true,
@@ -130,5 +136,21 @@ class BusinessEmployeeListScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getDisplayPrice(BusinessEmployeeModel employee) {
+    if (employee.appointmentOptions != null &&
+        employee.appointmentOptions!.isNotEmpty) {
+      final prices = employee.appointmentOptions!
+          .map((e) => e.price)
+          .where((p) => p != null)
+          .map((p) => p!)
+          .toList();
+      if (prices.isNotEmpty) {
+        prices.sort();
+        return "\$${prices.first.toStringAsFixed(0)}";
+      }
+    }
+    return "\$${employee.pricing}";
   }
 }

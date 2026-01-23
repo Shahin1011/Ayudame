@@ -190,12 +190,12 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                   borderRadius: BorderRadius.circular(8),
                   border: isSelected
                       ? null
-                      : Border.all(color: Colors.grey[300]!, width: 1),
+                      : Border.all(color: AppColors.mainAppColor, width: 1),
                 ),
                 child: Text(
                   filter,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected ? Colors.white : AppColors.mainAppColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -229,12 +229,12 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                 borderRadius: BorderRadius.circular(6),
                 border: isSelected
                     ? null
-                    : Border.all(color: Colors.grey[300]!, width: 1),
+                    : Border.all(color: AppColors.mainAppColor, width: 1),
               ),
               child: Text(
                 category,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black87,
+                  color: isSelected ? Colors.white : AppColors.mainAppColor,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),

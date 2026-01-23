@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -264,13 +265,11 @@ class _EventHomeScreenState extends State<EventHomeScreen> {
                     children: [
                       _buildInfoCol(
                         'Date',
-                        event.eventStartDateTime?.split(' ')[0] ?? 'N/A',
+                        _formatDate(event.eventStartDateTime),
                       ),
                       _buildInfoCol(
                         'Time',
-                        event.eventStartDateTime?.contains(' ') == true
-                            ? event.eventStartDateTime.split(' ')[1]
-                            : 'N/A',
+                        _formatTime(event.eventStartDateTime),
                       ),
                     ],
                   ),
@@ -418,5 +417,33 @@ class _EventHomeScreenState extends State<EventHomeScreen> {
         ),
       ),
     );
+  }
+
+  String _formatDate(String? dateTimeStr) {
+    if (dateTimeStr == null || dateTimeStr.isEmpty) return 'N/A';
+    try {
+      final dateTime = DateTime.tryParse(dateTimeStr);
+      if (dateTime == null) return dateTimeStr.split(' ')[0];
+      return DateFormat('dd MMM, yyyy').format(dateTime);
+    } catch (e) {
+      return dateTimeStr.split('T')[0];
+    }
+  }
+
+  String _formatTime(String? dateTimeStr) {
+    if (dateTimeStr == null || dateTimeStr.isEmpty) return 'N/A';
+    try {
+      final dateTime = DateTime.tryParse(dateTimeStr);
+      if (dateTime == null) {
+        if (dateTimeStr.contains(' ')) return dateTimeStr.split(' ')[1];
+        if (dateTimeStr.contains('T')) {
+          return dateTimeStr.split('T')[1].split('.')[0].substring(0, 5);
+        }
+        return 'N/A';
+      }
+      return DateFormat('hh:mm a').format(dateTime);
+    } catch (e) {
+      return 'N/A';
+    }
   }
 }

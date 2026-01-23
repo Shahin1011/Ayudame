@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:middle_ware/views/user/profile/NotificationPage.dart';
 import 'package:middle_ware/views/user/categories/CategoriesPage.dart';
 import 'package:middle_ware/views/user/home/HomeScreen.dart';
 import 'package:middle_ware/views/user/orders/OrderHistoryScreen.dart';
 import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/app_icons.dart';
-
-
 
 class UserBottomNavScreen extends StatefulWidget {
   const UserBottomNavScreen({super.key});
@@ -37,9 +34,14 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
   // Create nav items in a getter
   List<BottomNavigationBarItem> get _navItems => [
     _navItem(AppIcons.userHomeIcon, AppIcons.userHomeIconS, "Home", 0),
-    _navItem(AppIcons.userCategories, AppIcons.userCategoriesS, "Categories",  1),
-    _navItem(AppIcons.userOrderIcon, AppIcons.userOrderS, "Order History",  2),
-    _navItem(AppIcons.userProfile, AppIcons.userProfileS, "Profile",  3),
+    _navItem(
+      AppIcons.userCategories,
+      AppIcons.userCategoriesS,
+      "Categories",
+      1,
+    ),
+    _navItem(AppIcons.userOrderIcon, AppIcons.userOrderS, "Order History", 2),
+    _navItem(AppIcons.userProfile, AppIcons.userProfileS, "Profile", 3),
   ];
 
   @override
@@ -62,10 +64,7 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
           //   ),
           // ],
           border: const Border(
-            top: BorderSide(
-              color: Color(0xFFE3E6F0),
-              width: 1,
-            ),
+            top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
           ),
         ),
         height: MediaQuery.of(context).size.height * 0.15,
@@ -98,25 +97,17 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
 
   // 🎯 FIX: Simplified _navItem and added color logic for SVG
   BottomNavigationBarItem _navItem(
-      String unselected,
-      String selected,// Only one path needed
-      String label,
-      int index,
-      ) {
-
-    final bool isSelected = selectedIndex == index;
-    final Color iconColor = isSelected
-        ? AppColors.mainAppColor
-        : AppColors.grey;
-
+    String unselected,
+    String selected, // Only one path needed
+    String label,
+    int index,
+  ) {
     return BottomNavigationBarItem(
       // 🎯 FIX: Removed the unnecessary Column and SizedBox(height: 10.h)
       icon: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            selectedIndex == index ? selected : unselected,
-          ),
+          SvgPicture.asset(selectedIndex == index ? selected : unselected),
           SizedBox(height: 10.h),
         ],
       ),

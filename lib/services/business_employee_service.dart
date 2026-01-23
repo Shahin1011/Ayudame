@@ -15,27 +15,53 @@ class BusinessEmployeeService {
         'fullName': employee.name ?? '',
         'mobileNumber': employee.phone ?? '',
         'email': employee.email ?? '',
-        'categories': employee.serviceCategory ?? '',
         'headline': employee.headline ?? '',
         'description': employee.about ?? '',
         'appointmentEnabled': employee.isAppointmentBased.toString(),
       };
 
-      // Send whyChooseService as JSON array
-      if (employee.whyChooseUs != null && employee.whyChooseUs!.isNotEmpty) {
-        fields['whyChooseService'] = jsonEncode(employee.whyChooseUs);
+      // Add basePrice (required by backend)
+      if (employee.price != null) {
+        fields['basePrice'] = employee.price.toString();
       }
 
-      // Send appointmentSlots as JSON array
+      // Add categories as JSON array (backend expects array)
+      if (employee.serviceCategory != null &&
+          employee.serviceCategory!.isNotEmpty) {
+        fields['categories'] = jsonEncode([employee.serviceCategory]);
+      }
+
+      // Send whyChooseService as a map of reasons
+      if (employee.whyChooseUs != null && employee.whyChooseUs!.isNotEmpty) {
+        final Map<String, String> reasons = {};
+        for (int i = 0; i < employee.whyChooseUs!.length; i++) {
+          reasons['reason${i + 1}'] = employee.whyChooseUs![i];
+        }
+        fields['whyChooseService'] = jsonEncode(reasons);
+      }
+
+      // Send appointmentSlots with durationUnit
       if (employee.appointmentOptions != null &&
           employee.appointmentOptions!.isNotEmpty) {
-        fields['appointmentSlots'] = jsonEncode(
-          employee.appointmentOptions?.map((e) => e.toJson()).toList(),
-        );
+        final slots = employee.appointmentOptions!.map((slot) {
+          return {
+            'duration':
+                int.tryParse(
+                  slot.duration?.replaceAll(RegExp(r'[^0-9]'), '') ?? '0',
+                ) ??
+                0,
+            'durationUnit': 'minutes',
+            'price': slot.price ?? 0,
+          };
+        }).toList();
+        fields['appointmentSlots'] = jsonEncode(slots);
       }
 
       final files = <String, dynamic>{};
-      // Backend only has servicePhoto field, not photo
+      // Backend expects both profilePhoto and servicePhoto
+      if (idCardFront != null && idCardFront.isNotEmpty) {
+        files['profilePhoto'] = idCardFront;
+      }
       if (idCardBack != null && idCardBack.isNotEmpty) {
         files['servicePhoto'] = idCardBack;
       }
@@ -43,7 +69,6 @@ class BusinessEmployeeService {
       // 🔍 DEBUG: Print what we're sending
       debugPrint("📤 Creating Employee - Fields: $fields");
       debugPrint("📤 Creating Employee - Files: ${files.keys.toList()}");
-      debugPrint("📤 servicePhoto path: $idCardBack");
 
       final streamedResponse = await ApiService.postMultipart(
         endpoint: '/api/business-owners/employees',
@@ -62,8 +87,52 @@ class BusinessEmployeeService {
       if (statusCode == 200 || statusCode == 201) {
         final jsonResponse = jsonDecode(responseBody) as Map<String, dynamic>;
         if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
-          debugPrint("✅ Employee Created: ${jsonResponse['data']}");
-          return BusinessEmployeeModel.fromJson(jsonResponse['data']);
+          debugPrint("✅ Employee Created Successfully");
+
+          final data = jsonResponse['data'];
+          final employeeData = data['employee'] as Map<String, dynamic>?;
+
+          if (employeeData != null) {
+            debugPrint("👤 Employee Data Keys: ${employeeData.keys.toList()}");
+            debugPrint("📸 ProfilePhoto: ${employeeData['profilePhoto']}");
+
+            // Check for service (singular) or services (plural list)
+            Map<String, dynamic>? serviceData;
+            if (data['service'] != null) {
+              serviceData = data['service'] as Map<String, dynamic>;
+              debugPrint("🔧 Found 'service' (singular)");
+            } else if (data['services'] != null &&
+                (data['services'] as List).isNotEmpty) {
+              serviceData = data['services'][0] as Map<String, dynamic>;
+              debugPrint("🔧 Found 'services' (plural) - using first item");
+              debugPrint("🔧 Service Data Keys: ${serviceData.keys.toList()}");
+              debugPrint("📸 ServicePhoto: ${serviceData['servicePhoto']}");
+              debugPrint("📝 Headline: ${serviceData['headline']}");
+              debugPrint("📝 Description: ${serviceData['description']}");
+              debugPrint("💰 BasePrice: ${serviceData['basePrice']}");
+              debugPrint(
+                "📅 AppointmentSlots: ${serviceData['appointmentSlots']}",
+              );
+            }
+
+            final model = BusinessEmployeeModel.fromJsonWithService(
+              employeeData: employeeData,
+              serviceData: serviceData,
+            );
+
+            debugPrint(
+              "🎯 Final Model - ProfilePicture: ${model.profilePicture}",
+            );
+            debugPrint("🎯 Final Model - ServicePhoto: ${model.servicePhoto}");
+            debugPrint("🎯 Final Model - Headline: ${model.headline}");
+            debugPrint("🎯 Final Model - About: ${model.about}");
+            debugPrint("🎯 Final Model - Price: ${model.price}");
+            debugPrint(
+              "🎯 Final Model - AppointmentOptions: ${model.appointmentOptions?.length}",
+            );
+
+            return model;
+          }
         }
         return BusinessEmployeeModel.fromJson(jsonResponse); // Fallback
       } else {
@@ -91,12 +160,71 @@ class BusinessEmployeeService {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        // Assuming standard response structure { success: true, data: [...] }
         final List<dynamic> data = jsonResponse['data'] ?? [];
         debugPrint("📋 Total Employees: ${data.length}");
-        if (data.isNotEmpty) {
-          debugPrint("📋 First Employee Data: ${data[0]}");
+
+        if (data.isEmpty) return [];
+
+        debugPrint("📋 First Item Keys: ${(data[0] as Map).keys.toList()}");
+        debugPrint("📋 First Employee Full Data: ${jsonEncode(data[0])}");
+
+        // Check if data contains employee and services separately
+        if (data[0]['employee'] != null) {
+          debugPrint(
+            "✅ Response has separate 'employee' and 'services' fields",
+          );
+          // Response format: [{ employee: {...}, services: [...] }]
+          return data.map((item) {
+            final employeeData = item['employee'] as Map<String, dynamic>;
+            final services = item['services'] as List?;
+
+            final serviceData = (services != null && services.isNotEmpty)
+                ? services[0] as Map<String, dynamic>
+                : null;
+
+            return BusinessEmployeeModel.fromJsonWithService(
+              employeeData: employeeData,
+              serviceData: serviceData,
+            );
+          }).toList();
+        } else {
+          debugPrint(
+            "ℹ️ Response has direct employee objects (no separate services)",
+          );
+
+          // Check if the first employee has service details
+          final firstEmployee = data[0] as Map<String, dynamic>;
+          final hasServiceData =
+              firstEmployee['profilePhoto'] != null ||
+              firstEmployee['headline'] != null ||
+              firstEmployee['servicePhoto'] != null;
+
+          if (!hasServiceData && firstEmployee['_id'] != null) {
+            debugPrint(
+              "⚠️ List response missing service data - fetching full details for each employee",
+            );
+
+            // Fetch full details for each employee
+            List<BusinessEmployeeModel> employees = [];
+            for (var item in data) {
+              try {
+                final employeeId = item['_id'] ?? item['id'];
+                if (employeeId != null) {
+                  debugPrint("🔄 Fetching details for employee: $employeeId");
+                  final fullEmployee = await getEmployeeDetail(employeeId);
+                  employees.add(fullEmployee);
+                }
+              } catch (e) {
+                debugPrint("❌ Failed to fetch employee detail: $e");
+                // Fallback to basic data
+                employees.add(BusinessEmployeeModel.fromJson(item));
+              }
+            }
+            return employees;
+          }
         }
+
+        // Standard format: direct employee objects with all data
         return data.map((e) => BusinessEmployeeModel.fromJson(e)).toList();
       } else {
         throw Exception('Failed to load employees: ${response.statusCode}');
@@ -120,7 +248,49 @@ class BusinessEmployeeService {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        debugPrint("📋 Employee Detail Data: ${jsonResponse['data']}");
+        debugPrint(
+          "📋 Employee Detail Data Keys: ${jsonResponse['data']?.keys.toList()}",
+        );
+
+        final data = jsonResponse['data'];
+
+        // Check if response has nested employee and services structure
+        if (data['employee'] != null) {
+          debugPrint(
+            "✅ Detail response has 'employee' and 'services' structure",
+          );
+          final employeeData = data['employee'] as Map<String, dynamic>;
+          final services = data['services'] as List?;
+
+          debugPrint("👤 Employee: ${employeeData['fullName']}");
+          debugPrint("📸 ProfilePhoto: ${employeeData['profilePhoto']}");
+
+          Map<String, dynamic>? serviceData;
+          if (services != null && services.isNotEmpty) {
+            serviceData = services[0] as Map<String, dynamic>;
+            debugPrint("🔧 Service Data Found");
+            debugPrint("📸 ServicePhoto: ${serviceData['servicePhoto']}");
+            debugPrint("📝 Headline: ${serviceData['headline']}");
+            debugPrint("📝 Description: ${serviceData['description']}");
+            debugPrint("💰 BasePrice: ${serviceData['basePrice']}");
+          }
+
+          final model = BusinessEmployeeModel.fromJsonWithService(
+            employeeData: employeeData,
+            serviceData: serviceData,
+          );
+
+          debugPrint(
+            "🎯 Detail Model - ProfilePicture: ${model.profilePicture}",
+          );
+          debugPrint("🎯 Detail Model - ServicePhoto: ${model.servicePhoto}");
+          debugPrint("🎯 Detail Model - Headline: ${model.headline}");
+          debugPrint("🎯 Detail Model - About: ${model.about}");
+
+          return model;
+        }
+
+        // Fallback to direct parsing
         return BusinessEmployeeModel.fromJson(jsonResponse['data']);
       } else {
         throw Exception('Failed to load employee details');
@@ -138,17 +308,6 @@ class BusinessEmployeeService {
     String? idCardFront,
     String? idCardBack,
   }) async {
-    // NOTE: PUT requests with Multipart are sometimes tricky depending on the Http client and backend.
-    // ApiService.put usually sends JSON. If update requires image, we might need a custom multipart PUT or PATCH.
-    // Based on ApiService, postMultipart sends POST.
-    // I will assume for now update might be JSON only if no image, or I need to check ApiService capabilities.
-    // The user request says "Update Employee Information -> PUT".
-    // If image is updated, usually it's better to use POST with method override or special endpoint,
-    // but let's try standard JSON PUT first if no image change, or if ApiService supports it.
-    // Scanning ApiService... it has `put` (JSON). It does NOT have `putMultipart`.
-    // If the user wants to update the image, I might need to use `postMultipart` to a specific update endpoint or add `putMultipart` to ApiService.
-    // For now, I will implement JSON update.
-
     try {
       // Check if we need to use Multipart (if images are provided)
       if ((idCardFront != null && idCardFront.isNotEmpty) ||
@@ -157,28 +316,54 @@ class BusinessEmployeeService {
           'fullName': employee.name ?? '',
           'mobileNumber': employee.phone ?? '',
           'email': employee.email ?? '',
-          'categories': employee.serviceCategory ?? '',
           'headline': employee.headline ?? '',
           'description': employee.about ?? '',
           'appointmentEnabled': employee.isAppointmentBased.toString(),
           '_method': 'PUT', // Method override for backends that need it
         };
 
-        // Send whyChooseService as JSON array
-        if (employee.whyChooseUs != null && employee.whyChooseUs!.isNotEmpty) {
-          fields['whyChooseService'] = jsonEncode(employee.whyChooseUs);
+        // Add basePrice (required by backend)
+        if (employee.price != null) {
+          fields['basePrice'] = employee.price.toString();
         }
 
-        // Send appointmentSlots as JSON array
+        // Add categories as JSON array (backend expects array)
+        if (employee.serviceCategory != null &&
+            employee.serviceCategory!.isNotEmpty) {
+          fields['categories'] = jsonEncode([employee.serviceCategory]);
+        }
+
+        // Send whyChooseService as a map of reasons
+        if (employee.whyChooseUs != null && employee.whyChooseUs!.isNotEmpty) {
+          final Map<String, String> reasons = {};
+          for (int i = 0; i < employee.whyChooseUs!.length; i++) {
+            reasons['reason${i + 1}'] = employee.whyChooseUs![i];
+          }
+          fields['whyChooseService'] = jsonEncode(reasons);
+        }
+
+        // Send appointmentSlots with durationUnit
         if (employee.appointmentOptions != null &&
             employee.appointmentOptions!.isNotEmpty) {
-          fields['appointmentSlots'] = jsonEncode(
-            employee.appointmentOptions?.map((e) => e.toJson()).toList(),
-          );
+          final slots = employee.appointmentOptions!.map((slot) {
+            return {
+              'duration':
+                  int.tryParse(
+                    slot.duration?.replaceAll(RegExp(r'[^0-9]'), '') ?? '0',
+                  ) ??
+                  0,
+              'durationUnit': 'minutes',
+              'price': slot.price ?? 0,
+            };
+          }).toList();
+          fields['appointmentSlots'] = jsonEncode(slots);
         }
 
         final files = <String, dynamic>{};
-        // Backend only has servicePhoto field
+        // Backend expects both profilePhoto and servicePhoto
+        if (idCardFront != null && idCardFront.isNotEmpty) {
+          files['profilePhoto'] = idCardFront;
+        }
         if (idCardBack != null && idCardBack.isNotEmpty) {
           files['servicePhoto'] = idCardBack;
         }
@@ -186,9 +371,9 @@ class BusinessEmployeeService {
         debugPrint("📤 Updating Employee - Fields: $fields");
         debugPrint("📤 Updating Employee - Files: ${files.keys.toList()}");
 
-        // We use POST with _method=PUT for multipart updates usually
+        // Use POST with _method=PUT for multipart updates (Laravel compatibility)
         final streamedResponse = await ApiService.postMultipart(
-          endpoint: '/api/business-owners/employees/$id',
+          endpoint: '/api/business-owners/employees/$id?_method=PUT',
           fields: fields,
           files: files,
           requireAuth: true,
@@ -197,15 +382,79 @@ class BusinessEmployeeService {
         final responseBody = await streamedResponse.stream.bytesToString();
         debugPrint("📥 Update Response: $responseBody");
 
-        if (streamedResponse.statusCode == 200) {
-          final jsonResponse = jsonDecode(responseBody);
-          return BusinessEmployeeModel.fromJson(jsonResponse['data']);
+        if (streamedResponse.statusCode == 200 ||
+            streamedResponse.statusCode == 201) {
+          final jsonResponse = jsonDecode(responseBody) as Map<String, dynamic>;
+          if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+            final data = jsonResponse['data'];
+            final employeeData = data['employee'] as Map<String, dynamic>?;
+
+            if (employeeData != null) {
+              Map<String, dynamic>? serviceData;
+              if (data['service'] != null) {
+                serviceData = data['service'] as Map<String, dynamic>;
+              } else if (data['services'] != null &&
+                  (data['services'] as List).isNotEmpty) {
+                serviceData = data['services'][0] as Map<String, dynamic>;
+              }
+
+              return BusinessEmployeeModel.fromJsonWithService(
+                employeeData: employeeData,
+                serviceData: serviceData,
+              );
+            }
+            return BusinessEmployeeModel.fromJson(data);
+          }
         }
         throw Exception('Failed to update employee with images');
       }
 
       // Standard JSON update if no images
-      final body = employee.toJson();
+      final body = <String, dynamic>{
+        'fullName': employee.name,
+        'mobileNumber': employee.phone,
+        'email': employee.email,
+        'headline': employee.headline,
+        'description': employee.about,
+        'appointmentEnabled': employee.isAppointmentBased,
+      };
+
+      // Add basePrice
+      if (employee.price != null) {
+        body['basePrice'] = employee.price;
+      }
+
+      // Add categories as array
+      if (employee.serviceCategory != null &&
+          employee.serviceCategory!.isNotEmpty) {
+        body['categories'] = [employee.serviceCategory];
+      }
+
+      // Add whyChooseService as a map of reasons
+      if (employee.whyChooseUs != null && employee.whyChooseUs!.isNotEmpty) {
+        final Map<String, String> reasons = {};
+        for (int i = 0; i < employee.whyChooseUs!.length; i++) {
+          reasons['reason${i + 1}'] = employee.whyChooseUs![i];
+        }
+        body['whyChooseService'] = reasons;
+      }
+
+      // Add appointmentSlots with durationUnit
+      if (employee.appointmentOptions != null &&
+          employee.appointmentOptions!.isNotEmpty) {
+        body['appointmentSlots'] = employee.appointmentOptions!.map((slot) {
+          return {
+            'duration':
+                int.tryParse(
+                  slot.duration?.replaceAll(RegExp(r'[^0-9]'), '') ?? '0',
+                ) ??
+                0,
+            'durationUnit': 'minutes',
+            'price': slot.price ?? 0,
+          };
+        }).toList();
+      }
+
       body.removeWhere((key, value) => value == null);
 
       final response = await ApiService.put(
@@ -214,12 +463,30 @@ class BusinessEmployeeService {
         requireAuth: true,
       );
 
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        return BusinessEmployeeModel.fromJson(jsonResponse['data']);
-      } else {
-        throw Exception('Failed to update employee');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          final data = jsonResponse['data'];
+          final employeeData = data['employee'] as Map<String, dynamic>?;
+
+          if (employeeData != null) {
+            Map<String, dynamic>? serviceData;
+            if (data['service'] != null) {
+              serviceData = data['service'] as Map<String, dynamic>;
+            } else if (data['services'] != null &&
+                (data['services'] as List).isNotEmpty) {
+              serviceData = data['services'][0] as Map<String, dynamic>;
+            }
+
+            return BusinessEmployeeModel.fromJsonWithService(
+              employeeData: employeeData,
+              serviceData: serviceData,
+            );
+          }
+          return BusinessEmployeeModel.fromJson(data);
+        }
       }
+      throw Exception('Failed to update employee');
     } catch (e) {
       debugPrint("❌ Update Employee Error: $e");
       rethrow;
@@ -239,6 +506,7 @@ class BusinessEmployeeService {
       }
     } catch (e) {
       debugPrint("❌ Delete Employee Error: $e");
+      rethrow;
     }
   }
 
@@ -264,6 +532,83 @@ class BusinessEmployeeService {
       }
     } catch (e) {
       debugPrint("❌ Get Employee Stats Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Search Employees
+  Future<List<BusinessEmployeeModel>> searchEmployees(String query) async {
+    try {
+      final response = await ApiService.get(
+        endpoint: '/api/business-owners/employees/search?q=$query',
+        requireAuth: true,
+      );
+
+      debugPrint("📥 Search Employees Status: ${response.statusCode}");
+      debugPrint("📥 Search Employees Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final List<dynamic> data = jsonResponse['data'] ?? [];
+        return data.map((e) => BusinessEmployeeModel.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to search employees: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint("❌ Search Employees Error: $e");
+      rethrow;
+    }
+  }
+
+  /// Get Employee Phone
+  Future<String?> getEmployeePhone(String id) async {
+    try {
+      final response = await ApiService.get(
+        endpoint: '/api/business-owners/employees/$id/phone',
+        requireAuth: true,
+      );
+
+      debugPrint("📥 Get Employee Phone Status: ${response.statusCode}");
+      debugPrint("📥 Get Employee Phone Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is String) return data;
+          if (data is Map) {
+            return data['phoneNumber']?.toString() ??
+                data['phone']?.toString() ??
+                data['mobileNumber']?.toString();
+          }
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint("❌ Get Employee Phone Error: $e");
+      return null;
+    }
+  }
+
+  /// Toggle Employee Status (Block/Unblock)
+  Future<bool> toggleEmployeeStatus(String id) async {
+    try {
+      final response = await ApiService.patch(
+        endpoint: '/api/business-owners/employees/$id/toggle-status',
+        body: {},
+        requireAuth: true,
+      );
+
+      debugPrint("📥 Toggle Employee Status Code: ${response.statusCode}");
+      debugPrint("📥 Toggle Employee Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return jsonResponse['success'] == true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("❌ Toggle Employee Status Error: $e");
       rethrow;
     }
   }

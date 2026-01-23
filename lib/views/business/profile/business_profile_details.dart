@@ -95,12 +95,16 @@ class BusinessProfileViewPage extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
               ),
+              const SizedBox(height: 40),
+
+              const SizedBox(height: 20),
             ],
           ),
         );
       }),
     );
   }
+
 
   Widget _infoField(String title, String value) {
     return Padding(

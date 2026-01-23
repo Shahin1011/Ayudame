@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -520,8 +521,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
             lastDate: DateTime(2030),
           );
           if (picked != null) {
-            controller.text =
-                '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+            final isoDate =
+                picked.toIso8601String().split('T')[0] + 'T00:00:00.000Z';
+            controller.text = isoDate;
           }
         },
         decoration: InputDecoration(
@@ -614,10 +616,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              final String formattedTime =
-                  '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
-              controller.text =
-                  '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')} $formattedTime:00';
+              final finalDateTime = DateTime(
+                pickedDate.year,
+                pickedDate.month,
+                pickedDate.day,
+                pickedTime.hour,
+                pickedTime.minute,
+              );
+              controller.text = finalDateTime.toIso8601String() + 'Z';
             }
           }
         },
@@ -729,7 +735,7 @@ class EventPreviewPage extends StatelessWidget {
                   _buildInfoRow(
                     AppIcons.date,
                     'Date & Time',
-                    '${event.eventStartDateTime} - ${event.eventEndDateTime}',
+                    '${_formatDateTime(event.eventStartDateTime)} - ${_formatDateTime(event.eventEndDateTime)}',
                   ),
                   const SizedBox(height: 16),
                   _buildInfoRow(
@@ -911,6 +917,17 @@ class EventPreviewPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _formatDateTime(String? dateTimeStr) {
+    if (dateTimeStr == null || dateTimeStr.isEmpty) return 'N/A';
+    try {
+      final dateTime = DateTime.tryParse(dateTimeStr);
+      if (dateTime == null) return dateTimeStr;
+      return DateFormat('dd MMM, yyyy hh:mm a').format(dateTime);
+    } catch (e) {
+      return dateTimeStr;
+    }
   }
 
   Widget _buildSectionCard({required String title, required Widget child}) {

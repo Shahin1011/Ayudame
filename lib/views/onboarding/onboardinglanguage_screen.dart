@@ -16,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+      backgroundColor: const Color(0xFFF3F8F4),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
@@ -24,58 +24,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-
-              // Title
-              Text(
+              const Text(
                 'Select your comfortable language',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   fontSize: 20,
                 ),
                 textAlign: TextAlign.center,
               ),
-
-              const SizedBox(height: 80),
-
-              // Language Selection Cards
+              SizedBox(height: MediaQuery.of(context).size.height * 0.050),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // English Card
                   Flexible(
                     child: _buildLanguageCard(
                       context: context,
                       language: 'English',
                       flag: '🇺🇸',
                       imagePath: 'assets/images/uk.png',
-                      cardColor: Color(0xFF1C5941),
+                      cardColor: AppColors.mainAppColor,
                       textColor: Colors.white,
-                      onTap: () {
-                        _handleLanguageSelection(context, 'English');
-                      },
+                      onTap: () => _handleLanguageSelection(context, 'English'),
                     ),
                   ),
-
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.05), // 5% of screen width
-
-                  // Spanish Card
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                   Flexible(
                     child: _buildLanguageCard(
                       context: context,
                       language: 'Spanish',
                       flag: '🇪🇸',
-                      textColor: Colors.black,
                       imagePath: 'assets/images/spain.png',
-                      cardColor: AppColors.mainAppColor.withOpacity(0.1),
-                      onTap: () {
-                        _handleLanguageSelection(context, 'Spanish');
-                      },
+                      cardColor: Colors.white,
+                      textColor: Colors.black,
+                      onTap: () => _handleLanguageSelection(context, 'Spanish'),
                     ),
                   ),
                 ],
               ),
-
               const Spacer(),
             ],
           ),
@@ -99,8 +85,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         width: 150,
         height: 150,
         decoration: BoxDecoration(
-          color: cardColor, // Different color for each card
+          color: cardColor,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.mainAppColor, width: 2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -112,52 +99,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Flag Icon - Circular with border
             Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white, // White background for flag circle
-                shape: BoxShape.circle,
-              ),
+              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
               child: ClipOval(
                 child: Image.asset(
-                  imagePath, // Different image for each card
+                  imagePath,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    // Fallback to emoji if image fails to load
-                    return Center(
-                      child: Text(
-                        flag,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    );
-                  },
+                  errorBuilder: (context, error, stackTrace) => Center(
+                    child: Text(flag, style: const TextStyle(fontSize: 20)),
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            // Language Name
             Text(
               language,
-              style: TextStyle( // REMOVED 'const' from here
-                fontWeight: FontWeight.w500,
-                color: textColor, // This makes it non-constant
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, color: textColor, fontSize: 16),
             ),
           ],
         ),
       ),
     );
   }
+
+  // ল্যাঙ্গুয়েজ সিলেক্ট করলে ডাটা রিসেট হবে এবং ডায়ালগ ওপেন হবে
   void _handleLanguageSelection(BuildContext context, String language) {
     setState(() {
       privacyAccepted = false;
+      termsAccepted = false;
     });
+    // এখানে language পাস করা হয়েছে যা আগে মিসিং ছিল
     _showPrivacyPolicyDialog(context, language);
   }
 
+  // ১. Privacy & Policy Dialog
   void _showPrivacyPolicyDialog(BuildContext context, String language) {
     showDialog(
       context: context,
@@ -166,180 +143,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: AppColors.bgColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Privacy & Policy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.black),
+                  ),
+                ],
               ),
-              contentPadding: const EdgeInsets.all(28),
               content: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header
-                    const Text(
-                      'Privacy & Policy',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 24,
-                      ),
-                    ),
-
-                    const SizedBox(height: 6),
-
-                    // Last updated date
-                    Text(
-                      'Last updated on 23 August 2025',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 13,
-                      ),
-                    ),
-
+                    Text('Last updated on 23 August 2025', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
                     const SizedBox(height: 20),
-
-                    // Description
-                    Text(
-                      'We collect personal information that you voluntarily provide to us when you register on the [app/service], express an interest in obtaining information about us or our products and services.',
-                      style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-
+                    _buildBodyText('We collect personal information that you voluntarily provide to us when you register on the Services App, express an interest in obtaining information about us or our products and services.'),
                     const SizedBox(height: 15),
-
-                    Text(
-                      'The personal information that we collect depends on the context of your interactions with us and the [app/service], the choices you make, and the products and features you use.',
-                      style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-
+                    _buildBodyText('The personal information that we collect depends on the context of your interactions with us and the Services App.'),
                     const SizedBox(height: 20),
-
-                    // Section 1
-                    const Text(
-                      '1. Information we collect',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    Text(
-                      'The personal information that we collect depends on the context of your interactions with us and the [app/service], the choices you make, and the products and features you use.',
-                      style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-
+                    _buildSectionTitle('1. Information we collect'),
+                    _buildBodyText('The personal information that we collect depends on the context of your interactions with us and the choices you make.'),
                     const SizedBox(height: 20),
-
-                    // Section 2
-                    const Text(
-                      '2. Information use collect',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                    ),
-
+                    _buildSectionTitle('2. Information use collect'),
+                    _buildBodyText('We process your personal information for these purposes in reliance on our legitimate business interests.'),
+                    const SizedBox(height: 25),
+                    _buildCheckbox('Accept privacy & policy', privacyAccepted, (val) {
+                      setDialogState(() => privacyAccepted = !privacyAccepted);
+                    }),
+                    const SizedBox(height: 20),
+                    _buildNextButton(privacyAccepted, () {
+                      Navigator.pop(context);
+                      _showTermsAndConditionsDialog(context);
+                    }),
                     const SizedBox(height: 10),
-
-                    Text(
-                      'We process your personal information for these purposes in reliance on our legitimate business interests, in order to enter into or perform a contract with you.',
-                      style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    // Accept Terms Checkbox
-                    InkWell(
-                      onTap: () {
-                        setDialogState(() {
-                          privacyAccepted = !privacyAccepted;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 22,
-                            height: 22,
-                            decoration: BoxDecoration(
-                              color: privacyAccepted ? const Color(0xFF9CCCA9) : Colors.white,
-                              border: Border.all(
-                                color: const Color(0xFF9CCCA9),
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: privacyAccepted
-                                ? const Icon(
-                              Icons.check,
-                              size: 16,
-                              color: Colors.white,
-                            )
-                                : null,
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'Accept terms & conditions',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 25),
-
-                    // Next Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: privacyAccepted
-                            ? () {
-                          Navigator.of(context).pop();
-                          _handleGetStarted(context, language);
-                        }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF9CCCA9),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey.shade300,
-                          disabledForegroundColor: Colors.grey.shade500,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -350,244 +192,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  void _handleGetStarted(BuildContext context, String language) {
-    setState(() {
-      termsAccepted = false;
-    });
-
+  // ২. Terms & Condition Dialog
+  void _showTermsAndConditionsDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return Dialog(
+            return AlertDialog(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Terms & Condition', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.black),
+                  ),
+                ],
               ),
-
-
+              content: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: const BoxDecoration(
-
-                      ),
-                      child: const Text(
-                        'Terms & Condition',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-
-                    // Scrollable Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome to Services App I',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            Text(
-                              'Accessing or using our services, you agree to be bound by these Terms of Service. If you do not agree with any part of the terms, you must not use our services.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade800,
-                                height: 1.6,
-                              ),
-                            ),
-
-
-
-                            const SizedBox(height: 20),
-
-                            const Text(
-                              '2. User Responsibilities',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            Text(
-                              'As a user, you agree to:',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade800,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            _buildBulletPoint('Use the service only for lawful purposes.'),
-                            _buildBulletPoint('Provide accurate and complete information when required.'),
-                            _buildBulletPoint('Maintain the confidentiality of your account password.'),
-
-                            const SizedBox(height: 20),
-
-                            const Text(
-                              '3. Intellectual Property',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            Text(
-                              'All content, trademarks, and data on this service, including but not limited to text, graphics, logos, and images, are the property of [Your Company Name]',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade800,
-                                height: 1.6,
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            const Text(
-                              '4. Disclaimers',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            Text(
-                              'The service is provided on an "as is" and "as available" basis. [Your Company Name] makes no warranties, expressed or implied, regarding the operation.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade800,
-                                height: 1.6,
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            InkWell(
-                              onTap: () {
-                                setDialogState(() {
-                                  termsAccepted = !termsAccepted;
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 16,
-                                      height: 16,
-                                      decoration: BoxDecoration(
-                                        color: termsAccepted ? const Color(0xFF9CCCA9) : Colors.white,
-                                        border: Border.all(
-                                          color: const Color(0xFF9CCCA9),
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: termsAccepted
-                                          ? const Icon(
-                                        Icons.check,
-                                        size: 14,
-                                        color: Colors.white,
-                                      )
-                                          : null,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Accept terms & conditions',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Next Button
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Color(0xFFE5E7EB),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: termsAccepted
-                              ? () {
-                            Navigator.of(context).pop();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const WelcomeScreen(),
-                              ),
-                            );
-                          }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF9CCCA9),
-                            foregroundColor: Colors.white,
-                            disabledBackgroundColor: Colors.grey.shade300,
-                            disabledForegroundColor: Colors.grey.shade500,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: const Text(
-                            'Next',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildSectionTitle('1. Welcome to Services App !'),
+                    _buildBodyText('Accessing or using our services, you agree to be bound by these Terms of Service. If you do not agree, you must not use our services.'),
+                    const SizedBox(height: 20),
+                    _buildSectionTitle('2. User Responsibilities'),
+                    _buildBodyText('As a user, you agree to:'),
+                    _buildBulletPoint('Use the service only for lawful purposes.'),
+                    _buildBulletPoint('Provide accurate and complete information.'),
+                    _buildBulletPoint('Maintain confidentiality of your account.'),
+                    const SizedBox(height: 20),
+                    _buildSectionTitle('3. Intellectual Property'),
+                    _buildBodyText('All content, trademarks, and data are property of Services App.'),
+                    const SizedBox(height: 20),
+                    _buildSectionTitle('4. Disclaimers'),
+                    _buildBodyText('The service is provided on an "as is" and "as available" basis.'),
+                    const SizedBox(height: 25),
+                    _buildCheckbox('Accept terms & conditions', termsAccepted, (val) {
+                      setDialogState(() => termsAccepted = !termsAccepted);
+                    }),
+                    const SizedBox(height: 20),
+                    _buildNextButton(termsAccepted, () {
+                      Navigator.pop(context);
+                      // WelcomeScreen এ নেভিগেট করার কোড
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen()));
+                    }),
+                    const SizedBox(height: 10),
                   ],
                 ),
-
+              ),
             );
           },
         );
@@ -595,34 +254,67 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildBulletPoint(String text) {
+  // সাহায্যকারী উইজেটসমূহ
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
+      child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black)),
+    );
+  }
+
+  Widget _buildBodyText(String text) {
+    return Text(text, style: TextStyle(color: Colors.grey.shade800, fontSize: 14, height: 1.5));
+  }
+
+  Widget _buildBulletPoint(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, left: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 7, right: 10),
-            child: Container(
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade600,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade800,
-                height: 1.5,
-              ),
-            ),
-          ),
+          const Padding(padding: EdgeInsets.only(top: 6, right: 8), child: Icon(Icons.circle, size: 6, color: Colors.black54)),
+          Expanded(child: _buildBodyText(text)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCheckbox(String label, bool value, Function(bool?) onChanged) {
+    return InkWell(
+      onTap: () => onChanged(!value),
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: value ? AppColors.mainAppColor : Colors.white,
+              border: Border.all(color: AppColors.mainAppColor, width: 2),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: value ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+          ),
+          const SizedBox(width: 10),
+          Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNextButton(bool isEnabled, VoidCallback onPressed) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: OutlinedButton(
+        onPressed: isEnabled ? onPressed : null,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: isEnabled ? AppColors.mainAppColor : Colors.grey.shade300, width: 1.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: Colors.white,
+          foregroundColor: AppColors.mainAppColor,
+          disabledForegroundColor: Colors.grey.shade500,
+        ),
+        child: const Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }

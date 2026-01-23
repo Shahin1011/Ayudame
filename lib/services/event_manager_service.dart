@@ -578,6 +578,73 @@ class EventManagerService {
     }
   }
 
+  /// Get Terms and Conditions
+  Future<Map<String, dynamic>> getTermsAndConditions() async {
+    try {
+      final endpoint = '/api/event-managers/terms-and-conditions';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Failed to fetch terms and conditions',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error fetching terms and conditions: $e');
+      rethrow;
+    }
+  }
+
+  /// Get FAQ
+  Future<Map<String, dynamic>> getFaq() async {
+    try {
+      final endpoint = '/api/settings/faq';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: false,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(decodedResponse['message'] ?? 'Failed to fetch FAQ');
+      }
+    } catch (e) {
+      debugPrint('Error fetching FAQ: $e');
+      rethrow;
+    }
+  }
+
+  /// Get About Us
+  Future<Map<String, dynamic>> getAboutUs() async {
+    try {
+      final endpoint = '/api/settings/about_us';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: false,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Failed to fetch About Us',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error fetching About Us: $e');
+      rethrow;
+    }
+  }
+
   /// Delete Account
   Future<Map<String, dynamic>> deleteAccount() async {
     try {
@@ -596,6 +663,29 @@ class EventManagerService {
       }
     } catch (e) {
       debugPrint('Error deleting account: $e');
+      rethrow;
+    }
+  }
+
+  /// Get Privacy Policy
+  Future<Map<String, dynamic>> getPrivacyPolicy() async {
+    try {
+      final endpoint = '/api/event-managers/privacy-policy';
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
+      );
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Failed to fetch privacy policy',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error fetching privacy policy: $e');
       rethrow;
     }
   }

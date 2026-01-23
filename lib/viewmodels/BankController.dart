@@ -3,21 +3,39 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/bank_model.dart';
+import '../services/business_auth_service.dart';
 
 class BankController extends GetxController {
+  final BusinessAuthService _authService = BusinessAuthService();
+
   final accountHolderCtrl = TextEditingController();
   final bankNameCtrl = TextEditingController();
   final accountNumberCtrl = TextEditingController();
   final routingNumberCtrl = TextEditingController();
+  // Default to personal if not specified/available in UI
+  final accountHolderType = 'personal'.obs;
 
   final List<String> usBanks = [
     "JPMorgan Chase",
     "Bank of America",
     "Wells Fargo",
+    "Citi",
+    "U.S. Bank",
+    "PNC Bank",
+    "Capital One",
+    "TD Bank",
+    "Truist",
+    "Goldman Sachs",
   ];
 
   var isLoading = false.obs;
   var bankInfo = Rxn<BankInfoModel>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchBankInfo();
+  }
 
   // Form clear korar jonno
   void clearFields() {
@@ -25,6 +43,7 @@ class BankController extends GetxController {
     bankNameCtrl.clear();
     accountNumberCtrl.clear();
     routingNumberCtrl.clear();
+    accountHolderType.value = 'personal';
   }
 
   // Edit-er somoy data fill korar jonno
@@ -34,26 +53,73 @@ class BankController extends GetxController {
       bankNameCtrl.text = bankInfo.value!.bankName;
       accountNumberCtrl.text = bankInfo.value!.accountNumber;
       routingNumberCtrl.text = bankInfo.value!.routingNumber;
+      accountHolderType.value = bankInfo.value!.accountHolderType;
+    }
+  }
+
+  Future<void> fetchBankInfo() async {
+    try {
+      isLoading.value = true;
+      final data = await _authService.getBankInfo();
+      if (data.isNotEmpty && data['bankInformation'] != null) {
+        bankInfo.value = BankInfoModel.fromJson(data['bankInformation']);
+        loadBankInfo();
+      }
+    } catch (e) {
+      debugPrint("❌ Error fetching bank info: $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 
   Future<void> addOrUpdateBank({bool isEdit = false}) async {
+    if (accountHolderCtrl.text.isEmpty ||
+        bankNameCtrl.text.isEmpty ||
+        accountNumberCtrl.text.isEmpty ||
+        routingNumberCtrl.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill in all fields",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1)); // API call mimic
+    try {
+      final bankData = BankInfoModel(
+        accountHolderName: accountHolderCtrl.text.trim(),
+        bankName: bankNameCtrl.text.trim(),
+        accountNumber: accountNumberCtrl.text.trim(),
+        routingNumber: routingNumberCtrl.text.trim(),
+        accountHolderType: accountHolderType.value,
+      ).toJson();
 
-    bankInfo.value = BankInfoModel(
-      accountHolderName: accountHolderCtrl.text,
-      bankName: bankNameCtrl.text,
-      accountNumber: accountNumberCtrl.text,
-      routingNumber: routingNumberCtrl.text,
-    );
+      if (isEdit) {
+        await _authService.updateBankInfo(bankData);
+      } else {
+        await _authService.createBankInfo(bankData);
+      }
 
-    isLoading.value = false;
-    _showSuccessDialog(
-      isEdit
-          ? 'Your bank account information change has been successfully.'
-          : 'The bank account you added has been successfully added.',
-    );
+      // Refresh local data
+      await fetchBankInfo();
+
+      _showSuccessDialog(
+        isEdit
+            ? 'Your bank account information change has been successfully.'
+            : 'The bank account you added has been successfully added.',
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void _showSuccessDialog(String message) {
@@ -97,7 +163,7 @@ class BankController extends GetxController {
                   ),
                   onPressed: () {
                     Get.back(); // Close dialog
-                    Get.back(); // Go to Main Screen
+                    Get.back(); // Go to previous screen
                   },
                   child: Text(
                     'Go Home',

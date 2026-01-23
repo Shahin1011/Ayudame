@@ -4,22 +4,21 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../widgets/custom_appbar.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
-class EventTermsConditionScreen extends StatefulWidget {
-  const EventTermsConditionScreen({Key? key}) : super(key: key);
+class EventAboutUsScreen extends StatefulWidget {
+  const EventAboutUsScreen({Key? key}) : super(key: key);
 
   @override
-  State<EventTermsConditionScreen> createState() =>
-      _EventTermsConditionScreenState();
+  State<EventAboutUsScreen> createState() => _EventAboutUsScreenState();
 }
 
-class _EventTermsConditionScreenState extends State<EventTermsConditionScreen> {
+class _EventAboutUsScreenState extends State<EventAboutUsScreen> {
   final EventManagerViewModel _viewModel = Get.put(EventManagerViewModel());
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _viewModel.fetchTermsAndConditions();
+      _viewModel.fetchAboutUs();
     });
   }
 
@@ -27,7 +26,7 @@ class _EventTermsConditionScreenState extends State<EventTermsConditionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Terms & Condition"),
+      appBar: CustomAppBar(title: "About Us"),
       body: Obx(() {
         if (_viewModel.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -39,7 +38,7 @@ class _EventTermsConditionScreenState extends State<EventTermsConditionScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Terms & Condition',
+                  'About Us',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -48,9 +47,9 @@ class _EventTermsConditionScreenState extends State<EventTermsConditionScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _viewModel.termsContent.value.isEmpty
-                      ? 'No terms and conditions available.'
-                      : _viewModel.termsContent.value,
+                  _viewModel.aboutUsContent.value.isEmpty
+                      ? 'No about us information available.'
+                      : _viewModel.aboutUsContent.value,
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[700],

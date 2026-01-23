@@ -1,3 +1,5 @@
+import '../services/api_service.dart';
+
 class BusinessEmployeeModel {
   final String? id;
   final String? name;
@@ -15,6 +17,7 @@ class BusinessEmployeeModel {
   final String? availableTime;
   final List<AppointmentOption>? appointmentOptions;
   final String? businessId;
+  final bool? isActive;
 
   BusinessEmployeeModel({
     this.id,
@@ -33,45 +36,202 @@ class BusinessEmployeeModel {
     this.availableTime,
     this.appointmentOptions,
     this.businessId,
+    this.isActive,
   });
 
+  // Aliases for UI compatibility with robust formatting
+  String _formatUrl(String? url) {
+    if (url == null || url.isEmpty) return '';
+    if (url.startsWith('http')) return url;
+    // Base URL for images
+    final String baseUrl = ApiService.baseURL;
+    return '$baseUrl${url.startsWith('/') ? '' : '/'}$url';
+  }
+
+  String? get servicePhoto => _formatUrl(idCardBack ?? profileImage);
+  String? get profilePicture => _formatUrl(profileImage);
+  String get pricing => price?.toString() ?? '0';
+
   factory BusinessEmployeeModel.fromJson(Map<String, dynamic> json) {
+    // Determine the source of data (merged or nested)
+    final Map<String, dynamic> employeeData;
+    final Map<String, dynamic>? serviceData;
+
+    if (json['employee'] != null && json['employee'] is Map) {
+      employeeData = json['employee'];
+      // Check for 'services' array as seen in Postman response
+      if (json['services'] != null &&
+          json['services'] is List &&
+          (json['services'] as List).isNotEmpty) {
+        serviceData = json['services'][0] as Map<String, dynamic>;
+      } else if (json['service'] != null && json['service'] is Map) {
+        serviceData = json['service'] as Map<String, dynamic>;
+      } else {
+        serviceData = null;
+      }
+    } else {
+      employeeData = json;
+      serviceData = null;
+    }
+
+    // Helper to parse categories which might be a List of objects, strings or a single object
+    dynamic parseCategory(Map<String, dynamic> data) {
+      final val =
+          data['categories'] ??
+          data['category'] ??
+          data['serviceCategory'] ??
+          data['service_category'];
+      if (val == null) return null;
+
+      if (val is List) {
+        if (val.isEmpty) return null;
+        if (val[0] is Map) {
+          return val[0]['name']?.toString() ??
+              val[0]['_id']?.toString() ??
+              val[0]['id']?.toString();
+        }
+        return val[0].toString();
+      }
+
+      if (val is Map) {
+        return val['name']?.toString() ??
+            val['_id']?.toString() ??
+            val['id']?.toString();
+      }
+
+      return val.toString();
+    }
+
+    // Helper to parse whyChooseUs
+    List<String>? parseWhyChoose(Map<String, dynamic> data) {
+      final val =
+          data['whyChooseService'] ??
+          data['why_choose_service'] ??
+          data['whyChooseUs'] ??
+          data['why_choose_us'];
+      if (val == null) return null;
+
+      if (val is List) {
+        return val.map((e) => e.toString()).toList();
+      }
+
+      if (val is Map) {
+        return val.values
+            .map((v) => v.toString())
+            .where((v) => v.isNotEmpty)
+            .toList();
+      }
+
+      return [val.toString()];
+    }
+
+    // Merge logic: fields in serviceData take priority for headline/description etc.
+    final String? headline =
+        (serviceData?['headline'] ??
+                employeeData['headline'] ??
+                serviceData?['service_name'])
+            ?.toString();
+
+    final String? description =
+        (serviceData?['description'] ??
+                employeeData['description'] ??
+                employeeData['about'] ??
+                serviceData?['about'])
+            ?.toString();
+
+    final String? servicePhoto =
+        (serviceData?['servicePhoto'] ??
+                serviceData?['service_photo'] ??
+                employeeData['servicePhoto'] ??
+                employeeData['idCardBack'] ??
+                employeeData['id_card_back'])
+            ?.toString();
+
     return BusinessEmployeeModel(
-      id: json['id']?.toString() ?? json['_id']?.toString(),
-      name: json['fullName'] ?? json['name'] ?? json['employeeName'],
-      phone: json['mobileNumber'] ?? json['phone'],
-      email: json['email'],
-      // Backend doesn't have 'photo' field - use servicePhoto for both
+      id: employeeData['id']?.toString() ?? employeeData['_id']?.toString(),
+      name:
+          (employeeData['fullName'] ??
+                  employeeData['full_name'] ??
+                  employeeData['name'] ??
+                  employeeData['employeeName'])
+              ?.toString(),
+      phone:
+          (employeeData['mobileNumber'] ??
+                  employeeData['mobile_number'] ??
+                  employeeData['phone'])
+              ?.toString(),
+      email: employeeData['email']?.toString(),
       profileImage:
-          json['servicePhoto'] ?? json['photo'] ?? json['profileImage'],
-      idCardFront: json['idCardFront'],
-      idCardBack: json['servicePhoto'] ?? json['idCardBack'],
-      serviceCategory:
-          json['categories'] ?? json['serviceCategory'] ?? json['category'],
-      headline: json['headline'],
-      about: json['description'] ?? json['about'],
-      whyChooseUs: json['whyChooseService'] != null
-          ? (json['whyChooseService'] is List
-                ? List<String>.from(json['whyChooseService'])
-                : [json['whyChooseService'].toString()])
-          : (json['whyChooseUs'] != null
-                ? List<String>.from(json['whyChooseUs'])
-                : null),
-      price: json['price'] != null
-          ? double.tryParse(json['price'].toString())
+          (employeeData['profilePhoto'] ??
+                  employeeData['profile_photo'] ??
+                  employeeData['profileImage'] ??
+                  employeeData['photo'])
+              ?.toString(),
+      idCardFront:
+          (employeeData['idCardFront'] ??
+                  employeeData['id_card_front'] ??
+                  employeeData['profilePhoto'] ??
+                  employeeData['profile_photo'])
+              ?.toString(),
+      idCardBack: servicePhoto,
+      serviceCategory: parseCategory(serviceData ?? employeeData),
+      headline: headline,
+      about: description,
+      whyChooseUs: parseWhyChoose(serviceData ?? employeeData),
+      price: (serviceData?['basePrice'] ?? employeeData['basePrice']) != null
+          ? double.tryParse(
+              (serviceData?['basePrice'] ?? employeeData['basePrice'])
+                  .toString(),
+            )
+          : (serviceData?['price'] ?? employeeData['price']) != null
+          ? double.tryParse(
+              (serviceData?['price'] ?? employeeData['price']).toString(),
+            )
           : null,
       isAppointmentBased:
-          json['appointmentEnabled'] ?? json['isAppointmentBased'] ?? false,
-      availableTime: json['availableTime'],
+          (serviceData?['appointmentEnabled'] ??
+                  employeeData['appointmentEnabled'] ??
+                  employeeData['isAppointmentBased'] ??
+                  false)
+              .toString()
+              .toLowerCase() ==
+          'true',
+      availableTime:
+          (employeeData['availableTime'] ?? employeeData['available_time'])
+              ?.toString(),
       appointmentOptions:
-          (json['appointmentSlots'] != null ||
-              json['appointmentOptions'] != null)
-          ? ((json['appointmentSlots'] ?? json['appointmentOptions']) as List)
+          (serviceData?['appointmentSlots'] ??
+                  serviceData?['appointment_slots'] ??
+                  employeeData['appointmentOptions']) !=
+              null
+          ? ((serviceData?['appointmentSlots'] ??
+                        serviceData?['appointment_slots'] ??
+                        employeeData['appointmentOptions'])
+                    as List)
                 .map((e) => AppointmentOption.fromJson(e))
                 .toList()
           : null,
-      businessId: json['businessId'],
+      businessId:
+          (employeeData['businessId'] ??
+                  employeeData['business_id'] ??
+                  employeeData['businessOwnerId'])
+              ?.toString(),
+      isActive: employeeData['isActive'] ?? employeeData['active'] ?? true,
     );
+  }
+
+  /// Factory to merge employee and service data when they come separately
+  factory BusinessEmployeeModel.fromJsonWithService({
+    required Map<String, dynamic> employeeData,
+    Map<String, dynamic>? serviceData,
+  }) {
+    // Construct a composite map to reuse fromJson nested logic precisely
+    Map<String, dynamic> composite = {};
+    composite['employee'] = employeeData;
+    if (serviceData != null) {
+      composite['services'] = [serviceData];
+    }
+    return BusinessEmployeeModel.fromJson(composite);
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +252,7 @@ class BusinessEmployeeModel {
       'availableTime': availableTime,
       'appointmentSlots': appointmentOptions?.map((e) => e.toJson()).toList(),
       'businessId': businessId,
+      'isActive': isActive,
     };
   }
 }
@@ -104,7 +265,7 @@ class AppointmentOption {
 
   factory AppointmentOption.fromJson(Map<String, dynamic> json) {
     return AppointmentOption(
-      duration: json['duration'],
+      duration: json['duration']?.toString(),
       price: json['price'] != null
           ? double.tryParse(json['price'].toString())
           : null,

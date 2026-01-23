@@ -27,6 +27,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
   final TextEditingController _emailController = TextEditingController();
 
   // Service Controllers
+  final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _headlineController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -38,7 +39,6 @@ class _CreateEmployeeState extends State<CreateEmployee> {
   ];
 
   bool _makeAppointment = false;
-  String? _selectedCategory;
   int _charCount = 0;
   XFile? _idCardBackImage;
   XFile? _idCardFrontImage;
@@ -82,7 +82,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
       _employeeNameController.text = e.name ?? '';
       _mobileNumberController.text = e.phone ?? '';
       _emailController.text = e.email ?? '';
-      _selectedCategory = e.serviceCategory;
+      _categoryController.text = e.serviceCategory ?? '';
       _headlineController.text = e.headline ?? '';
       _aboutController.text = e.about ?? '';
       _priceController.text = e.price?.toString() ?? '';
@@ -125,7 +125,17 @@ class _CreateEmployeeState extends State<CreateEmployee> {
       return;
     }
 
-    // Validate required service photo (backend only has servicePhoto field)
+    // Validate required images (backend requires both profilePhoto and servicePhoto)
+    if (_idCardFrontImage == null) {
+      Get.snackbar(
+        "Error",
+        "Please upload profile photo",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     if (_idCardBackImage == null) {
       Get.snackbar(
         "Error",
@@ -156,7 +166,9 @@ class _CreateEmployeeState extends State<CreateEmployee> {
       name: _employeeNameController.text,
       phone: _mobileNumberController.text,
       email: _emailController.text,
-      serviceCategory: _selectedCategory,
+      serviceCategory: _categoryController.text.trim().isNotEmpty
+          ? _categoryController.text.trim()
+          : null,
       headline: _headlineController.text,
       about: _aboutController.text,
       whyChooseUs: _whyChooseControllers
@@ -179,18 +191,18 @@ class _CreateEmployeeState extends State<CreateEmployee> {
     );
 
     if (widget.employee != null) {
-      // Update Mode - only send servicePhoto
+      // Update Mode
       await _viewModel.updateEmployee(
         id: widget.employee!.id!,
         employee: employee,
-        idCardFront: null, // Backend doesn't have this field
+        idCardFront: _idCardFrontImage?.path,
         idCardBack: _idCardBackImage?.path,
       );
     } else {
-      // Create Mode - only send servicePhoto
+      // Create Mode
       await _viewModel.createEmployee(
         employee: employee,
-        idCardFront: null, // Backend doesn't have this field
+        idCardFront: _idCardFrontImage!.path,
         idCardBack: _idCardBackImage!.path,
       );
     }
@@ -201,6 +213,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
     _employeeNameController.dispose();
     _mobileNumberController.dispose();
     _emailController.dispose();
+    _categoryController.dispose();
     _headlineController.dispose();
     _aboutController.dispose();
     _priceController.dispose();
@@ -219,7 +232,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.employee != null ? "Update Service" : "Create Service",
+        title: widget.employee != null ? "Update Service" : "Create Employee",
       ),
       backgroundColor: AppColors.bgColor,
       body: Column(
@@ -524,9 +537,9 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                     ),
                     const SizedBox(height: 25),
 
-                    // Select Category
+                    // Category ID
                     const Text(
-                      'Select category',
+                      'Category ID',
                       style: TextStyle(
                         fontFamily: "Inter",
                         fontSize: 14,
@@ -535,61 +548,43 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF2D6A4F),
-                          width: 1.5,
+                    TextFormField(
+                      controller: _categoryController,
+                      style: const TextStyle(fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText:
+                            'Enter category ID (e.g., 691a3d69bd6bcc9b83148ed6)',
+                        hintStyle: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF999999),
                         ),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          border: InputBorder.none,
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
                         ),
-                        hint: const Text(
-                          'Select service category',
-                          style: TextStyle(
-                            fontFamily: "Inter",
-                            fontSize: 13,
-                            color: Color(0xFF999999),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFD0D0D0),
+                            width: 1.5,
                           ),
                         ),
-                        value: _selectedCategory,
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color(0xFF2D6A4F),
-                          size: 24,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
                         ),
-                        items:
-                            [
-                                  'Handyman Services',
-                                  'Childcare Services',
-                                  'Home Security Services',
-                                  'Senior Care Services',
-                                  'Computer Services',
-                                  'Junk Removal Services',
-                                ]
-                                .map(
-                                  (category) => DropdownMenuItem(
-                                    value: category,
-                                    child: Text(
-                                      category,
-                                      style: const TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCategory = value;
-                          });
-                        },
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF2D6A4F),
+                            width: 1.5,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),

@@ -14,6 +14,11 @@ class ProviderUICard extends StatelessWidget {
   final bool showOnlineIndicator;
   final VoidCallback onViewDetails;
 
+  final double? borderRadius;
+  final EdgeInsets? margin;
+
+  final List<BoxShadow>? boxShadow;
+
   const ProviderUICard({
     super.key,
     required this.imageUrl,
@@ -28,22 +33,27 @@ class ProviderUICard extends StatelessWidget {
     required this.price,
     required this.showOnlineIndicator,
     required this.onViewDetails,
+    this.borderRadius,
+    this.margin,
+    this.boxShadow,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
+      margin: margin ?? const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(borderRadius ?? 20),
+        boxShadow:
+            boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,8 +61,8 @@ class ProviderUICard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius ?? 20),
                 ),
                 child: imageUrl.startsWith('http')
                     ? Image.network(

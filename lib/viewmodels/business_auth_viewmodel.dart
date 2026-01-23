@@ -760,6 +760,52 @@ class BusinessAuthViewModel extends GetxController {
     }
   }
 
+  /// Delete Account
+  Future<void> deleteAccount() async {
+    final businessId = currentBusiness.value?.id;
+    if (businessId == null) {
+      Get.snackbar(
+        "Error",
+        "Business ID not found",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await _authService.deleteAccount(businessId);
+
+      // Clear data and storage
+      await StorageService.clearAll();
+      currentBusiness.value = null;
+      isLoggedIn.value = false;
+
+      // Navigate to login
+      Get.offAllNamed(AppRoutes.businessLogin);
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Account deleted successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      debugPrint("❌ Delete Account ViewModel Error: $e");
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   @override
   void onClose() {
     emailController.dispose();

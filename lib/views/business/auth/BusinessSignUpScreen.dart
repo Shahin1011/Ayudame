@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'dart:io';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 
@@ -92,15 +93,15 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F5), // AppColors.bgColor
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      backgroundColor: AppColors.bgColor, // AppColors.bgColor
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+      //     onPressed: () => Navigator.pop(context),
+      //   ),
+      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -116,7 +117,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 const SizedBox(height: 4),
                 const Text(
                   'It only takes a minute to create your account',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                  style: TextStyle(fontSize: 13, color: Color(0xFF5E5E5E)),
                 ),
                 const SizedBox(height: 25),
 
@@ -148,7 +149,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 // Date of Birth
                 const Text(
                   'Date of birth',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 14, fontFamily: "Inter", fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 GestureDetector(
@@ -203,7 +204,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 // Business Photo
                 const Text(
                   'Business photo',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 _buildImagePickerBox(
@@ -217,11 +218,11 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 // ID Information
                 const Text(
                   'ID Information*',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 const Text(
                   'Please upload real and valid information',
-                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Color(0xFF5E5E5E)),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -397,15 +398,16 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
+        border: Border.all(color: const Color(0xFFD8D8D8)),
       ),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         validator: validator,
         decoration: InputDecoration(
+          fillColor: Color(0xFFFAFAFA),
           hintText: hint,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+          hintStyle: const TextStyle(color: Color(0xFFBFBFBF), fontSize: 14),
           border: InputBorder.none,
           errorStyle: const TextStyle(height: 0.1, fontSize: 10),
           contentPadding: const EdgeInsets.symmetric(
@@ -413,7 +415,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
             vertical: 14,
           ),
           suffixIcon: suffixIcon != null
-              ? Icon(suffixIcon, color: Colors.grey, size: 20)
+              ? Icon(suffixIcon, color: Color(0xFFBFBFBF), size: 20)
               : null,
         ),
       ),
@@ -433,7 +435,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: const TextStyle(fontSize: 14, fontFamily: "Inter", fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         _buildTextField(

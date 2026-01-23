@@ -36,21 +36,27 @@ class BusinessAuthData {
 
   factory BusinessAuthData.fromJson(Map<String, dynamic> json) {
     // Try to find business data in different possible locations
-    Map<String, dynamic>? businessData;
+    Map<String, dynamic> mergedData = {};
 
-    if (json['business'] != null) {
-      businessData = json['business'] as Map<String, dynamic>;
-    } else if (json['businessOwner'] != null) {
-      businessData = json['businessOwner'] as Map<String, dynamic>;
-    } else if (json['owner'] != null) {
-      businessData = json['owner'] as Map<String, dynamic>;
-    } else if (json['user'] != null) {
-      businessData = json['user'] as Map<String, dynamic>;
-    } else if (json['data'] != null && json['data'] is Map) {
-      businessData = json['data'] as Map<String, dynamic>;
-    } else {
-      // If no nested object, use the json itself (might contain business fields directly)
-      businessData = json;
+    // 1. If 'user' exists, add its data (usually contains ID, name, email)
+    if (json['user'] != null && json['user'] is Map) {
+      mergedData.addAll(json['user'] as Map<String, dynamic>);
+    }
+
+    // 2. If 'businessOwner' or 'business' exists, merge it (contains business-specific info)
+    final businessObj =
+        json['businessOwner'] ?? json['business'] ?? json['owner'];
+    if (businessObj != null && businessObj is Map) {
+      mergedData.addAll(businessObj as Map<String, dynamic>);
+      // Ensure we keep the user object if it was nested inside businessOwner (for 'me' endpoint compatibility)
+      if (businessObj['user'] != null) mergedData['user'] = businessObj['user'];
+      if (businessObj['userId'] != null)
+        mergedData['userId'] = businessObj['userId'];
+    }
+
+    // 3. If nothing was found yet, use the root json
+    if (mergedData.isEmpty) {
+      mergedData = json;
     }
 
     return BusinessAuthData(
@@ -59,7 +65,7 @@ class BusinessAuthData {
           json['accessToken']?.toString() ??
           json['access_token']?.toString() ??
           '',
-      business: BusinessModel.fromJson(businessData),
+      business: BusinessModel.fromJson(mergedData),
     );
   }
 

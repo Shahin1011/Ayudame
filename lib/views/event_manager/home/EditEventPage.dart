@@ -506,8 +506,9 @@ class _EditEventPageState extends State<EditEventPage> {
           );
           if (picked != null) {
             setState(() {
-              controller.text =
-                  '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+              final isoDate =
+                  picked.toIso8601String().split('T')[0] + 'T00:00:00.000Z';
+              controller.text = isoDate;
             });
           }
         },
@@ -570,11 +571,15 @@ class _EditEventPageState extends State<EditEventPage> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              final String formattedTime =
-                  '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
               setState(() {
-                controller.text =
-                    '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')} $formattedTime:00';
+                final finalDateTime = DateTime(
+                  pickedDate.year,
+                  pickedDate.month,
+                  pickedDate.day,
+                  pickedTime.hour,
+                  pickedTime.minute,
+                );
+                controller.text = finalDateTime.toIso8601String() + 'Z';
               });
             }
           }

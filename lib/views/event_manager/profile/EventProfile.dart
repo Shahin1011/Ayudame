@@ -10,6 +10,7 @@ import '../../../widgets/custom_appbar.dart';
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
 import 'EventNotificationPage.dart';
+import 'EventAboutUsScreen.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventProfilePage extends StatefulWidget {
@@ -174,9 +175,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
                         _buildMenuItem(
                           iconPath: AppIcons.terms,
                           title: 'Terms & Condition',
-
                           onTap: () =>
                               Get.to(() => EventTermsConditionScreen()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons
+                              .help, // Or use a separate about icon if available
+                          title: 'About Us',
+                          onTap: () => Get.to(() => const EventAboutUsScreen()),
                           showDivider: false,
                         ),
                       ],

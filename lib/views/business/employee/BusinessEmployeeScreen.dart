@@ -7,6 +7,7 @@ import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/business_employee_model.dart';
 import '../../../viewmodels/business_employee_viewmodel.dart';
+import '../../../services/api_service.dart';
 
 class EmployeeDetailsScreen extends StatefulWidget {
   const EmployeeDetailsScreen({super.key});
@@ -18,6 +19,7 @@ class EmployeeDetailsScreen extends StatefulWidget {
 class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   int selectedTab = 0; // 0: Overview, 1: Activities, 2: Orders
   late BusinessEmployeeModel employee;
+  bool _isActive = true;
   final BusinessEmployeeViewModel _viewModel =
       Get.find<BusinessEmployeeViewModel>();
 
@@ -36,6 +38,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       // Fallback
       employee = BusinessEmployeeModel(name: "Unknown");
     }
+    _isActive = employee.isActive ?? true;
   }
 
   @override
@@ -73,13 +76,9 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             children: [
               CircleAvatar(
                 radius: 45,
-                backgroundImage:
-                    employee.profileImage != null &&
-                        employee.profileImage!.isNotEmpty
-                    ? (employee.profileImage!.startsWith('http')
-                          ? NetworkImage(employee.profileImage!)
-                          : AssetImage(employee.profileImage!) as ImageProvider)
-                    : const AssetImage('assets/images/provider_avatar.png'),
+                backgroundImage: _getProfileImageProvider(
+                  employee.profilePicture,
+                ),
               ),
               Positioned(
                 bottom: 5,
@@ -88,7 +87,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   height: 15,
                   width: 15,
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: _isActive ? Colors.green : Colors.grey,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: const Color(0xFF1C5941),
@@ -118,46 +117,66 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               fontFamily: "Inter",
             ),
           ),
+
           const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              // Outer border matching the dark green theme
-              border: Border.all(color: const Color(0xFF1B5E44), width: 1.5),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min, // Shrinks to fit content
-              children: [
-                const Text(
-                  'Call now',
-                  style: TextStyle(
-                    color: Color(0xFF1B5E44),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: "Inter",
+          GestureDetector(
+            onTap: () {
+              if (employee.id != null) {
+                _viewModel.makePhoneCall(employee.id!);
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                // Outer border matching the dark green theme
+                border: Border.all(color: const Color(0xFF1B5E44), width: 1.5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // Shrinks to fit content
+                children: [
+                  const Text(
+                    'Call now',
+                    style: TextStyle(
+                      color: Color(0xFF1B5E44),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Inter",
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                // Icon container with solid background
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1B5E44),
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(width: 12),
+                  // Icon container with solid background
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1B5E44),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.phone_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons
-                        .phone_outlined, // Use SvgPicture.asset if using your svg file
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  ImageProvider _getProfileImageProvider(String? path) {
+    if (path == null || path.isEmpty) {
+      return const AssetImage('assets/images/provider_avatar.png');
+    }
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    // Handle relative server paths
+    return NetworkImage(
+      '${ApiService.baseURL}${path.startsWith('/') ? '' : '/'}$path',
     );
   }
 
@@ -254,6 +273,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           joinedDate = overview['joinedDate'].toString();
         }
       }
+      if (_viewModel.isStatsLoading.value && stats == null) {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.mainAppColor),
+        );
+      }
 
       return ListView(
         padding: const EdgeInsets.all(16),
@@ -296,7 +320,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 20),
           if (upcomingSchedules.isNotEmpty)
             Container(
               decoration: BoxDecoration(
@@ -322,9 +346,15 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                     return Column(
                       children: [
                         _scheduleCard(
-                          schedule['title'] ?? "Service",
-                          schedule['clientName'] ?? "Client",
-                          schedule['date'] ?? "Time",
+                          schedule['title'] ??
+                              schedule['serviceName'] ??
+                              "Service",
+                          schedule['userName'] ??
+                              schedule['clientName'] ??
+                              "Client",
+                          _formatTime(
+                            schedule['date'] ?? schedule['time'] ?? "N/A",
+                          ),
                         ),
                         const Divider(height: 1),
                       ],
@@ -522,6 +552,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
     return Obx(() {
       final activities =
           _viewModel.employeeStats.value?['activities'] as List? ?? [];
+      if (_viewModel.isStatsLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.mainAppColor),
+        );
+      }
       if (activities.isEmpty) {
         return const Center(child: Text("No activities found"));
       }
@@ -609,6 +644,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   Widget _buildOrders() {
     return Obx(() {
       final orders = _viewModel.employeeStats.value?['orders'] as List? ?? [];
+      if (_viewModel.isStatsLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(color: AppColors.mainAppColor),
+        );
+      }
       if (orders.isEmpty) {
         return const Center(child: Text("No orders found"));
       }
@@ -712,6 +752,20 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       return dateStr;
     }
   }
+
+  String _formatTime(String? dateStr) {
+    if (dateStr == null) return "N/A";
+    try {
+      final date = DateTime.parse(dateStr);
+      String hour = (date.hour % 12 == 0 ? 12 : date.hour % 12).toString();
+      String minute = date.minute.toString().padLeft(2, '0');
+      String ampm = date.hour >= 12 ? "pm" : "am";
+      return "$hour:$minute $ampm";
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
   // <----------- showActionSheet --------->
 
   void _showActionSheet(BuildContext context) {
@@ -769,11 +823,23 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   'assets/icons/block.svg',
                   color: Colors.black87,
                 ),
-                title: const Text(
-                  "Block Employee",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                title: Text(
+                  _isActive ? "Block Employee" : "Unblock Employee",
+                  style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
-                onTap: () => Navigator.pop(context),
+                onTap: () async {
+                  Navigator.pop(context);
+                  if (employee.id != null) {
+                    bool success = await _viewModel.toggleEmployeeStatus(
+                      employee.id!,
+                    );
+                    if (success) {
+                      setState(() {
+                        _isActive = !_isActive;
+                      });
+                    }
+                  }
+                },
               ),
             ),
             SizedBox(height: 20),
@@ -797,9 +863,32 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context); // Close action sheet
                   if (employee.id != null) {
-                    _viewModel.deleteEmployee(employee.id!);
+                    Get.dialog(
+                      AlertDialog(
+                        title: const Text("Remove Employee"),
+                        content: const Text(
+                          "Are you sure you want to remove this employee? This action cannot be undone.",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Get.back(),
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Get.back(); // Close dialog
+                              _viewModel.deleteEmployee(employee.id!);
+                            },
+                            child: const Text(
+                              "Remove",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                 },
               ),
