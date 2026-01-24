@@ -371,12 +371,13 @@ class BusinessEmployeeService {
         debugPrint("📤 Updating Employee - Fields: $fields");
         debugPrint("📤 Updating Employee - Files: ${files.keys.toList()}");
 
-        // Use POST with _method=PUT for multipart updates (Laravel compatibility)
+        // Use direct PUT for multipart updates (matching the pattern that works for profile)
         final streamedResponse = await ApiService.postMultipart(
           endpoint: '/api/business-owners/employees/$id?_method=PUT',
           fields: fields,
           files: files,
           requireAuth: true,
+          method: 'PUT',
         );
 
         final responseBody = await streamedResponse.stream.bytesToString();

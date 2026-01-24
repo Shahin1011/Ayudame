@@ -272,23 +272,17 @@ class EventManagerService {
       http.Response response;
       if (profilePicturePath != null && profilePicturePath.isNotEmpty) {
         // Use Multipart if uploading image
-        // IMPORTANT: Use POST method with _method: PUT field for Laravel/PHP backends
-        fields['_method'] = 'PUT';
-
+        // Adding query param spoofing (?_method=PUT) for better backend compatibility
         final streamedResponse = await ApiService.postMultipart(
-          endpoint: _meEndpoint, // endpoint is /api/event-managers/me
+          endpoint: '$_meEndpoint?_method=PUT',
           fields: fields,
           files: {'profilePicture': profilePicturePath},
           requireAuth: true,
-          method: 'POST', // Actually sending POST
+          method: 'PUT',
         );
         response = await http.Response.fromStream(streamedResponse);
       } else {
         // Use standard JSON PUT if no image
-        // Need to add dynamic map support to fields or convert manually
-        // Since ApiService.put expects Map<String, dynamic> body
-
-        // Convert Map<String, String> to Map<String, dynamic>
         final Map<String, dynamic> jsonBody = Map<String, dynamic>.from(fields);
 
         response = await ApiService.put(

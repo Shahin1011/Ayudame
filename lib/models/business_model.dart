@@ -77,13 +77,21 @@ class BusinessModel {
           data['name']?.toString(),
       ownerName: userData is Map
           ? (userData['fullName'] ?? userData['name'])?.toString()
-          : data['fullName']?.toString(),
+          : (data['fullName'] ??
+                    data['name'] ??
+                    json['user']?['fullName'] ??
+                    json['user']?['name'])
+                ?.toString(),
       email: userData is Map
           ? userData['email']?.toString()
-          : data['email']?.toString(),
+          : (data['email'] ?? json['user']?['email'])?.toString(),
       phone: userData is Map
           ? (userData['phoneNumber'] ?? userData['phone'])?.toString()
-          : (data['phoneNumber'] ?? data['phone'])?.toString(),
+          : (data['phoneNumber'] ??
+                    data['phone'] ??
+                    json['user']?['phoneNumber'] ??
+                    json['user']?['phone'])
+                ?.toString(),
       address: data['businessAddress'] != null && data['businessAddress'] is Map
           ? data['businessAddress']['fullAddress']?.toString()
           : (data['address']?.toString() ?? data['location']?.toString()),
@@ -97,6 +105,10 @@ class BusinessModel {
       logo: parseLogo(
         data['businessPhoto'] ??
             data['logo'] ??
+            (userData is Map ? userData['profilePicture'] : null) ??
+            (userData is Map ? userData['profilePhoto'] : null) ??
+            json['user']?['profilePicture'] ??
+            json['user']?['profilePhoto'] ??
             data['profilePicture'] ??
             data['profilePhoto'] ??
             data['photos'],

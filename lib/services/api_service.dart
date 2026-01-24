@@ -7,7 +7,7 @@ import 'storage_service.dart';
 class ApiService {
   // Lavellh Backend API
   static const String baseURL =
-      'https://gasoline-written-distribution-lbs.trycloudflare.com';
+      'https://cal-intensity-achieved-neo.trycloudflare.com';
 
   /// Get default headers with authentication token
   static Future<Map<String, String>> _getDefaultHeaders({
@@ -266,7 +266,7 @@ class ApiService {
     }
 
     try {
-      debugPrint("🌐 POST Multipart Request to: $url");
+      debugPrint("🌐 $method Multipart Request to: $url");
       debugPrint("📦 Fields: $fields");
       debugPrint("📂 Files keys: ${files.keys}");
 

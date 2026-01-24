@@ -43,6 +43,34 @@ class BusinessAuthViewModel extends GetxController {
     getBusinessProfile();
   }
 
+  void _handleError(dynamic e, {String prefix = "Error"}) {
+    String errorMsg = e.toString().replaceAll('Exception: ', '');
+    debugPrint("❌ $prefix: $errorMsg");
+
+    if (errorMsg.toLowerCase().contains("token") &&
+        (errorMsg.toLowerCase().contains("expired") ||
+            errorMsg.toLowerCase().contains("expaired") ||
+            errorMsg.toLowerCase().contains("unauthorized"))) {
+      Get.snackbar(
+        "Session Expired",
+        "Please login again.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      StorageService.clearAll();
+      isLoggedIn.value = false;
+      Get.offAllNamed(AppRoutes.businessLogin);
+    } else {
+      Get.snackbar(
+        "Error",
+        errorMsg,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   /// Check if business user is logged in
   Future<void> checkAuthStatus() async {
     try {
@@ -578,14 +606,7 @@ class BusinessAuthViewModel extends GetxController {
 
       Get.back(); // Go back from edit screen
     } catch (e) {
-      debugPrint("❌ Profile Update Viewmodel Error: $e");
-      Get.snackbar(
-        "Error",
-        e.toString().replaceAll('Exception: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      _handleError(e, prefix: "Profile Update Viewmodel Error");
     } finally {
       isLoading.value = false;
     }
@@ -641,14 +662,7 @@ class BusinessAuthViewModel extends GetxController {
 
       Get.back(); // Go back from edit screen
     } catch (e) {
-      debugPrint("❌ Business Profile Update ViewModel Error: $e");
-      Get.snackbar(
-        "Error",
-        e.toString().replaceAll('Exception: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      _handleError(e, prefix: "Business Profile Update ViewModel Error");
     } finally {
       isLoading.value = false;
     }

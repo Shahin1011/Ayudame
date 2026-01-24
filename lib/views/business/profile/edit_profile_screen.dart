@@ -117,95 +117,99 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "Edit Profile"),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50.r,
-                    backgroundImage: _selectedImage != null
-                        ? FileImage(_selectedImage!) as ImageProvider
-                        : _viewModel.currentBusiness.value?.logo != null &&
-                              _viewModel.currentBusiness.value!.logo!
-                                  .startsWith('http')
-                        ? NetworkImage(_viewModel.currentBusiness.value!.logo!)
-                        : const AssetImage('assets/images/profile.png')
-                              as ImageProvider,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: _pickImage,
-                      child: _buildCameraIcon(),
+      body: Obx(
+        () => SingleChildScrollView(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50.r,
+                      backgroundImage: _selectedImage != null
+                          ? FileImage(_selectedImage!) as ImageProvider
+                          : _viewModel.currentBusiness.value?.logo != null &&
+                                _viewModel.currentBusiness.value!.logo!
+                                    .startsWith('http')
+                          ? NetworkImage(
+                              _viewModel.currentBusiness.value!.logo!,
+                            )
+                          : const AssetImage('assets/images/profile.png')
+                                as ImageProvider,
                     ),
-                  ),
-                ],
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: _buildCameraIcon(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            SizedBox(height: 20.h),
-            _buildFieldLabel('Full Name'),
-            CustomTextField(controller: _nameController, hintText: 'Name'),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('E-mail address'),
-            CustomTextField(
-              controller: _emailController,
-              hintText: 'E-mail address',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('Phone number'),
-            CustomTextField(
-              controller: _phoneController,
-              hintText: 'Phone number',
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('Date of birth'),
-            CustomTextField(
-              controller: _dobController,
-              hintText: 'YYYY-MM-DD',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.calendar_month, color: Colors.grey),
-                onPressed: () => _selectDate(context),
+              SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
+              _buildFieldLabel('Full Name'),
+              CustomTextField(controller: _nameController, hintText: 'Name'),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('E-mail address'),
+              CustomTextField(
+                controller: _emailController,
+                hintText: 'E-mail address',
+                keyboardType: TextInputType.emailAddress,
               ),
-              readOnly: true,
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('Select occupation'),
-            CustomTextField(
-              controller: _occupationController,
-              hintText: 'Doctor',
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('Current Password'),
-            _buildPasswordField(
-              _currentPasswordController,
-              _obscure1,
-              (v) => setState(() => _obscure1 = v),
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('New Password'),
-            _buildPasswordField(
-              _newPasswordController,
-              _obscure2,
-              (v) => setState(() => _obscure2 = v),
-            ),
-            SizedBox(height: 15.h),
-            _buildFieldLabel('Confirm Password'),
-            _buildPasswordField(
-              _confirmPasswordController,
-              _obscure3,
-              (v) => setState(() => _obscure3 = v),
-            ),
-            SizedBox(height: 30.h),
-            _buildSaveButton('Save Changes'),
-          ],
+              SizedBox(height: 15.h),
+              _buildFieldLabel('Phone number'),
+              CustomTextField(
+                controller: _phoneController,
+                hintText: 'Phone number',
+                keyboardType: TextInputType.phone,
+              ),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('Date of birth'),
+              CustomTextField(
+                controller: _dobController,
+                hintText: 'YYYY-MM-DD',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.calendar_month, color: Colors.grey),
+                  onPressed: () => _selectDate(context),
+                ),
+                readOnly: true,
+              ),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('Select occupation'),
+              CustomTextField(
+                controller: _occupationController,
+                hintText: 'Doctor',
+              ),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('Current Password'),
+              _buildPasswordField(
+                _currentPasswordController,
+                _obscure1,
+                (v) => setState(() => _obscure1 = v),
+              ),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('New Password'),
+              _buildPasswordField(
+                _newPasswordController,
+                _obscure2,
+                (v) => setState(() => _obscure2 = v),
+              ),
+              SizedBox(height: 15.h),
+              _buildFieldLabel('Confirm Password'),
+              _buildPasswordField(
+                _confirmPasswordController,
+                _obscure3,
+                (v) => setState(() => _obscure3 = v),
+              ),
+              SizedBox(height: 30.h),
+              _buildSaveButton('Save Changes'),
+            ],
+          ),
         ),
       ),
     );

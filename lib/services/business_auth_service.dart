@@ -374,13 +374,13 @@ class BusinessAuthService {
       }
 
       if (files.isNotEmpty) {
-        fields['_method'] = 'PUT'; // Laravel Multipart PUT override
+        // Matching the pattern that worked for Event Managers
         final streamedResponse = await ApiService.postMultipart(
-          endpoint: '/api/business-owners/me',
+          endpoint: '/api/business-owners/me?_method=PUT',
           fields: fields,
           files: files,
           requireAuth: true,
-          method: 'POST', // Use POST with _method=PUT for multipart
+          method: 'PUT',
         );
         response = await http.Response.fromStream(streamedResponse);
       } else {
@@ -467,13 +467,12 @@ class BusinessAuthService {
       http.Response response;
 
       if (files.isNotEmpty) {
-        fields['_method'] = 'PUT';
         final streamedResponse = await ApiService.postMultipart(
           endpoint: '/api/business-owners/business-profile?_method=PUT',
           fields: fields,
           files: files,
           requireAuth: true,
-          method: 'POST',
+          method: 'PUT',
         );
         response = await http.Response.fromStream(streamedResponse);
       } else {

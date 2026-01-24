@@ -53,24 +53,27 @@ class BusinessEmployeeModel {
   String get pricing => price?.toString() ?? '0';
 
   factory BusinessEmployeeModel.fromJson(Map<String, dynamic> json) {
+    // Handle top-level 'data' wrapper if present
+    final Map<String, dynamic> root = json['data'] ?? json;
+
     // Determine the source of data (merged or nested)
     final Map<String, dynamic> employeeData;
     final Map<String, dynamic>? serviceData;
 
-    if (json['employee'] != null && json['employee'] is Map) {
-      employeeData = json['employee'];
+    if (root['employee'] != null && root['employee'] is Map) {
+      employeeData = root['employee'];
       // Check for 'services' array as seen in Postman response
-      if (json['services'] != null &&
-          json['services'] is List &&
-          (json['services'] as List).isNotEmpty) {
-        serviceData = json['services'][0] as Map<String, dynamic>;
-      } else if (json['service'] != null && json['service'] is Map) {
-        serviceData = json['service'] as Map<String, dynamic>;
+      if (root['services'] != null &&
+          root['services'] is List &&
+          (root['services'] as List).isNotEmpty) {
+        serviceData = root['services'][0] as Map<String, dynamic>;
+      } else if (root['service'] != null && root['service'] is Map) {
+        serviceData = root['service'] as Map<String, dynamic>;
       } else {
         serviceData = null;
       }
     } else {
-      employeeData = json;
+      employeeData = root;
       serviceData = null;
     }
 
