@@ -130,27 +130,27 @@ class _EmployeeServiceDetailsScreenState extends State<EmployeeServiceDetailsScr
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        ElevatedButton(
-                          onPressed: () {
-                             if (employeeId != null) {
-                               Get.to(() => const NearYouProviderProfileScreen(), arguments: employeeId);
-                             }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryGreen,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6.r),
-                            ),
-                            minimumSize: Size(0, 32.h),
-                          ),
-                          child: Text(
-                            "View profile",
-                            style: GoogleFonts.inter(fontSize: 12.sp, fontWeight: FontWeight.w600),
-                          ),
-                        ),
+                        // ElevatedButton(
+                        //   onPressed: () {
+                        //      if (employeeId != null) {
+                        //        Get.to(() => const NearYouProviderProfileScreen(), arguments: employeeId);
+                        //      }
+                        //   },
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: primaryGreen,
+                        //     foregroundColor: Colors.white,
+                        //     elevation: 0,
+                        //     padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(6.r),
+                        //     ),
+                        //     minimumSize: Size(0, 32.h),
+                        //   ),
+                        //   child: Text(
+                        //     "View profile",
+                        //     style: GoogleFonts.inter(fontSize: 12.sp, fontWeight: FontWeight.w600),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 16.h),
@@ -204,11 +204,18 @@ class _EmployeeServiceDetailsScreenState extends State<EmployeeServiceDetailsScr
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    // Using mock data for "Why Chose Us" as it's not in the provided JSON but in the design
-                    _buildNumberedPoint(1, "24/7 Serves."),
-                    _buildNumberedPoint(2, "Efficient & Fast."),
-                    _buildNumberedPoint(3, "Affordable Prices."),
-                    _buildNumberedPoint(4, "Expert Team."),
+                    if (service.whyChooseUs != null) ...[
+                      _buildNumberedPoint(1, service.whyChooseUs!.twentyFourSeven),
+                      _buildNumberedPoint(2, service.whyChooseUs!.efficientAndFast),
+                      _buildNumberedPoint(3, service.whyChooseUs!.affordablePrices),
+                      _buildNumberedPoint(4, service.whyChooseUs!.expertTeam),
+                    ] else ...[
+                      // If the API returns null, we show these default professional points
+                      _buildNumberedPoint(1, "Comprehensive 24/7 service coverage"),
+                      _buildNumberedPoint(2, "Efficiency and speed in every task"),
+                      _buildNumberedPoint(3, "Highly affordable and competitive prices"),
+                      _buildNumberedPoint(4, "Dedicated team of expert professionals"),
+                    ],
                     
                     SizedBox(height: 24.h),
 
@@ -257,7 +264,14 @@ class _EmployeeServiceDetailsScreenState extends State<EmployeeServiceDetailsScr
                           style: GoogleFonts.inter(fontSize: 15.sp, fontWeight: FontWeight.w500, color: Colors.black87),
                         ),
                         Text(
-                          "\$${(service.appointmentEnabled == true) ? service.minAppointmentPrice : service.basePrice}",
+                          () {
+                            if (service?.appointmentEnabled == true && service?.appointmentSlots != null && service!.appointmentSlots!.isNotEmpty) {
+                              // Find lowest price from slots
+                              num minPrice = service.appointmentSlots!.map((e) => e.price ?? 0).reduce((a, b) => a < b ? a : b);
+                              return "\$$minPrice";
+                            }
+                            return "\$${service?.basePrice ?? 0}";
+                          }(),
                           style: GoogleFonts.inter(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.black),
                         ),
                       ],
@@ -267,10 +281,26 @@ class _EmployeeServiceDetailsScreenState extends State<EmployeeServiceDetailsScr
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                           final Map<String, dynamic> args = {
+                             'serviceId': service?.serviceId,
+                             'providerId': employeeId, 
+                             'providerName': provider?.name,
+                             'providerImage': provider?.image,
+                             'providerAddress': provider?.address,
+                             'serviceTitle': service?.title,
+                             'servicePrice': service?.basePrice,
+                             'availableTime': provider?.availableTime,
+                             'appointmentSlots': service?.appointmentSlots?.map((e) => {
+                               'duration': e.duration,
+                               'durationUnit': e.durationUnit,
+                               'price': e.price,
+                             }).toList(),
+                           };
+
                            if (service!.appointmentEnabled == true) {
-                              Get.toNamed(AppRoutes.userAppointment, arguments: service.serviceId);
+                              Get.toNamed(AppRoutes.userAppointment, arguments: args);
                            } else {
-                              Get.toNamed(AppRoutes.userBooking, arguments: service.serviceId);
+                              Get.toNamed(AppRoutes.userBooking, arguments: args);
                            }
                         },
                         style: ElevatedButton.styleFrom(

@@ -1,10 +1,91 @@
+import 'dart:convert';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.dart';
+import 'package:http/http.dart' as http;
 import '../../../../core/routes/app_routes.dart';
+import '../../../utils/constants.dart';
+import '../../../widgets/custom_loading_button.dart';
 
-class ProviderForgotPasswordScreen extends StatelessWidget {
+class ProviderForgotPasswordScreen extends StatefulWidget {
   const ProviderForgotPasswordScreen({super.key});
+
+  @override
+  State<ProviderForgotPasswordScreen> createState() =>
+      _ProviderForgotPasswordScreenState();
+}
+
+class _ProviderForgotPasswordScreenState
+    extends State<ProviderForgotPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  final String _forgotPasswordUrl =
+      "${AppConstants.BASE_URL}/api/providers/forgot-password";
+
+  Future<void> _sendResetCode() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!await _hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(_forgotPasswordUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": _emailController.text.trim(),
+        }),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "OTP has been sent to your email.",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.toNamed(
+          AppRoutes.providerOtp,
+          arguments: {"email": _emailController.text.trim()},
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          data["message"] ?? "Request failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<bool> _hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +112,11 @@ class ProviderForgotPasswordScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             const SizedBox(height: 8),
 
             // Title
@@ -68,7 +151,8 @@ class ProviderForgotPasswordScreen extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            TextField(
+            TextFormField(
+              controller: _emailController,
               decoration: InputDecoration(
                 hintText: 'Enter your email or phone',
                 hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
@@ -96,30 +180,20 @@ class ProviderForgotPasswordScreen extends StatelessWidget {
                   vertical: 14,
                 ),
               ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return "Please enter your email";
+                }
+                return null;
+              },
             ),
 
             const SizedBox(height: 24),
 
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.to(() => ProviderVerificationCodeScreen() );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Send Reset Code',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
+            CustomLoadingButton(
+              title: "Send Reset Code",
+              isLoading: _isLoading,
+              onTap: _sendResetCode,
             ),
 
             const SizedBox(height: 20),
@@ -170,7 +244,8 @@ class ProviderForgotPasswordScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

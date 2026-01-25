@@ -6,13 +6,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/views/user/categories/widgets/custom_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_bussiness_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_events_card.dart';
-import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
+import 'package:middle_ware/views/user/home/widgets/custom_featured_provider_card.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_top_businesses_card.dart';
 import 'package:middle_ware/views/user/profile/my_events.dart';
 import '../../../controller/user/home/event_controller.dart';
 import '../../../controller/user/home/nearby_providers_controller.dart';
 import '../../../controller/user/home/recent_providers_controller.dart';
+import '../../../controller/user/home/featured_providers_controller.dart';
 import '../../../controller/user/home/top_businesses_controller.dart';
+import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -27,10 +29,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  final ProfileController profileController = Get.put(ProfileController());
   final EventController eventController = Get.put(EventController());
   final RecentProviderController recentController = Get.put(RecentProviderController());
   final NearbyProvidersController nearbyController = Get.put(NearbyProvidersController());
   final TopBusinessesController topBusinessesController = Get.put(TopBusinessesController());
+  final FeaturedProvidersController featuredProvidersController = Get.put(FeaturedProvidersController());
 
   @override
   Widget build(BuildContext context) {
@@ -62,41 +66,51 @@ class _HomePageState extends State<HomePage> {
                             },
                             child: Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 1.5,
+                                Obx(() {
+                                  final user = profileController.user.value;
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 1.5,
+                                      ),
                                     ),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 30.r,
-                                    backgroundImage: NetworkImage(
-                                      'https://randomuser.me/api/portraits/men/32.jpg',
+                                    child: CircleAvatar(
+                                      radius: 30.r,
+                                      backgroundColor: Colors.grey[200],
+                                      backgroundImage: (user?.profilePicture != null && user!.profilePicture!.isNotEmpty)
+                                          ? NetworkImage(user.profilePicture!)
+                                          : null,
+                                      child: (user?.profilePicture == null || user!.profilePicture!.isEmpty)
+                                          ? Icon(Icons.person, color: Colors.grey, size: 30.r)
+                                          : null,
                                     ),
-                                  ),
-                                ),
+                                  );
+                                }),
                                 const SizedBox(width: 12),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
+                                  children: [
+                                    const Text(
                                       'Welcome Back',
                                       style: TextStyle(
                                         color: Colors.white70,
                                         fontSize: 12,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
-                                    Text(
-                                      'Sean Rahman',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    const SizedBox(height: 2),
+                                    Obx(() {
+                                      final user = profileController.user.value;
+                                      return Text(
+                                        user?.fullName ?? 'User Name',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    }),
                                   ],
                                 ),
                               ],
@@ -155,32 +169,60 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 16.h),
-                            Text(
-                              "Near You",
-                              style: GoogleFonts.inter(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black
-                              ),
-                            ),
-                            ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount: 2,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index){
-                                return CustomProviderCard(
-                                  providerName: 'Shahin Alam',
-                                  location: 'Dhanmondi, Dhaka 1209',
-                                  activeStatus: '1 hour ago',
-                                  serviceTitle: 'Expert House Cleaning Service',
-                                  serviceDescription: 'I take care of every corner, deep cleaning every room without leaving your home fresh and perfectly tidy for you.',
-                                  reviews: '4.00 (120)',
-                                  appointmentPrice: 50,
-                                  servicePrice: 100,
+
+                            /// -------------- Featured Providers ----------------------------------- ///
+                            Obx(() {
+                              if (featuredProvidersController.isLoading.value) {
+                                return SizedBox(
+                                  height: 400.h,
+                                  child: const Center(child: CircularProgressIndicator()),
                                 );
-                              },
-                            ),
+                              }
+
+                              if (featuredProvidersController.allFeaturedServices.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return SizedBox(
+                                height: 370.h,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.zero,
+                                  itemCount: featuredProvidersController.allFeaturedServices.length,
+                                  itemBuilder: (context, index) {
+                                    final item = featuredProvidersController.allFeaturedServices[index];
+                                    final provider = item.provider;
+                                    final service = item.service;
+
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 8.w),
+                                      child: SizedBox(
+                                        width: 310.w,
+                                        child: CustomFeaturedProviderCard(
+                                          providerName: provider.name ?? 'Unknown',
+                                          location: provider.address ?? 'No Address',
+                                          activeStatus: provider.activityTime ?? '',
+                                          serviceTitle: service.serviceName ?? 'No Service',
+                                          serviceDescription: service.serviceDetail ?? 'No Description',
+                                          reviews: "${service.rating?.toStringAsFixed(1) ?? '0.0'} (${service.totalReviews ?? 0})",
+                                          appointmentPrice: service.appointmentEnabled == true 
+                                              ? (service.appointmentSlots != null && service.appointmentSlots!.isNotEmpty 
+                                                  ? (service.appointmentSlots![0]['price']?.toDouble() ?? 0.0) 
+                                                  : 0.0)
+                                              : null,
+                                          servicePrice: service.basePrice?.toDouble(),
+                                          providerImage: provider.profileImage,
+                                          serviceImage: service.servicePhoto,
+                                          serviceId: service.serviceId,
+                                          providerId: provider.providerId,
+                                          appointmentEnabled: service.appointmentEnabled,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }),
                             SizedBox(height: 18.h),
 
                             Column(

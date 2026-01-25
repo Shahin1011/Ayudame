@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/user/orders/OrderDetailsScreen.dart';
 import '../../../controller/user/orders/order_controller.dart';
 import '../../../models/user/orders/order_model.dart';
+import 'AppointmentDetailsScreen.dart';
+import 'BookingDetailsScreen.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  final OrderController _controller = Get.put(OrderController());
+  final OrderController _controller = Get.put(OrderController(), permanent: false);
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +27,22 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
           // Tabs
           SizedBox(
-            height: 36,
+            height: 40,
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _buildTab('Appointment'),
                 const SizedBox(width: 8),
-                _buildTab('On going'),
+                _buildTab('Pending'),
+                const SizedBox(width: 8),
+                _buildTab('Confirmed'),
+                const SizedBox(width: 8),
+                _buildTab('In Progress'),
                 const SizedBox(width: 8),
                 _buildTab('Completed'),
+                const SizedBox(width: 8),
+                _buildTab('Cancelled'),
                 const SizedBox(width: 8),
                 _buildTab('Rejected'),
               ],
@@ -48,11 +54,23 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           Expanded(
             child: Obx(() {
               if (_controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(color: Color(0xFF2D5F4C)));
               }
 
               if (_controller.orderList.isEmpty) {
-                return const Center(child: Text("No orders found"));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.assignment_outlined, size: 64, color: Colors.grey.shade300),
+                      const SizedBox(height: 16),
+                      Text(
+                        "No ${_controller.currentTab.value.toLowerCase()} found",
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               return ListView.builder(
@@ -61,8 +79,8 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 itemBuilder: (context, index) {
                   final order = _controller.orderList[index];
                   return GestureDetector(
-                    onTap: () => _navigateToOrderDetails(order),
-                    child: _buildAppointmentCard(order),
+                    onTap: () => _navigateToDetails(order),
+                    child: _buildOrderCard(order),
                   );
                 },
               );
@@ -81,7 +99,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           _controller.changeTab(title);
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF2D5F4C) : Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -95,7 +113,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               title,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: isSelected ? Colors.white : Colors.black87,
               ),
             ),
@@ -105,93 +123,75 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     });
   }
 
-  Widget _buildAppointmentCard(OrderModel order) {
-    // Determine status display and color
-    String displayStatus = order.bookingStatus ?? 'Unknown';
-    Color statusColor = Colors.grey;
+  Widget _buildOrderCard(OrderModel order) {
+    String status = order.overallStatus;
+    Color statusBgColor = Colors.grey;
 
-    if (displayStatus.toLowerCase() == 'pending') {
-      statusColor = Colors.orange;
-    } else if (displayStatus.toLowerCase() == 'accepted' || displayStatus.toLowerCase() == 'ongoing') {
-      statusColor = const Color(0xFF2D5F4C); // Greenish
-    } else if (displayStatus.toLowerCase() == 'completed') {
-      statusColor = const Color(0xFF4CAF50); // Green
-    } else if (displayStatus.toLowerCase() == 'cancelled' || displayStatus.toLowerCase() == 'rejected') {
-      statusColor = const Color(0xFFE53935); // Red
+    if (status.toLowerCase() == 'pending') {
+      statusBgColor = const Color(0xFFD9824B); // Muted orange from image
+    } else if (status.toLowerCase() == 'confirmed' || status.toLowerCase() == 'accepted' || status.toLowerCase() == 'ongoing') {
+      statusBgColor = const Color(0xFF2D5F4C);
+    } else if (status.toLowerCase() == 'completed') {
+      statusBgColor = Colors.green;
+    } else if (status.toLowerCase() == 'cancelled' || status.toLowerCase() == 'rejected') {
+      statusBgColor = Colors.red;
     }
 
-    // Capitalize first letter of status
-    displayStatus = displayStatus.isNotEmpty
-        ? displayStatus[0].toUpperCase() + displayStatus.substring(1)
-        : displayStatus;
-
-
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Row: Avatar, Name/Rating, Date
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Image
               CircleAvatar(
-                radius: 24,
-                backgroundImage: NetworkImage(order.provider?.user?.profilePicture ?? 'https://via.placeholder.com/150'),
+                radius: 28,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: (order.provider?.user?.profilePicture != null && order.provider!.user!.profilePicture!.isNotEmpty)
+                    ? NetworkImage(order.provider!.user!.profilePicture!)
+                    : null,
+                child: (order.provider?.user?.profilePicture == null || order.provider!.user!.profilePicture!.isEmpty)
+                    ? const Icon(Icons.person, color: Colors.grey, size: 30)
+                    : null,
               ),
               const SizedBox(width: 12),
-              // Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          order.provider?.user?.fullName ?? 'Provider',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Text(
-                          // Simple date formatting, can use DateFormat from intl package properly
-                          order.bookingDate?.split('T')[0] ?? '',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      order.provider?.user?.fullName ?? 'Provider Name',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 14,
-                          color: Color(0xFFFFC107),
-                        ),
+                        const Icon(Icons.star, size: 20, color: Colors.amber),
                         const SizedBox(width: 4),
                         Text(
-                          "${order.provider?.rating ?? 0.0} (${order.provider?.totalReviews ?? 0})",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
+                          "${order.provider?.rating ?? 0.0}(${order.provider?.totalReviews ?? 0})",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
                           ),
                         ),
                       ],
@@ -199,39 +199,51 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   ],
                 ),
               ),
+              Text(
+                order.overallDate?.split('T')[0] ?? '',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade600,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          
+          // Service Name
           Text(
             order.serviceSnapshot?.serviceName ?? 'Service Name',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+              color: Colors.black.withOpacity(0.7),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+
+          // Bottom Row: Price and Status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Price: \$${order.totalAmount ?? 0}',
+                '${order.isAppointment ? "Appointment Price" : "Service Price"}:\$${order.totalAmount ?? 0}',
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B5E4F), // Dark green for price
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                  color: statusColor,
-                  borderRadius: BorderRadius.circular(4),
+                  color: statusBgColor,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  displayStatus,
+                  status.capitalizeFirst!,
                   style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
                 ),
@@ -243,8 +255,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     );
   }
 
-  void _navigateToOrderDetails(OrderModel order) {
-    // Navigate to details screen, passing arguments if needed
-    Get.to(() => OrderDetailsScreen(), arguments: order);
+  void _navigateToDetails(OrderModel order) {
+    if (order.isAppointment) {
+      Get.to(() => const AppointmentDetailsScreen(), arguments: order);
+    } else {
+      Get.to(() => const BookingDetailsScreen(), arguments: order);
+    }
   }
 }

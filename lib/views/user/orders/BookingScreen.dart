@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
+import 'package:intl/intl.dart';
+import '../../../controller/user/orders/booking_controller.dart';
+import '../../../core/routes/app_routes.dart';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({Key? key}) : super(key: key);
@@ -8,9 +14,33 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  final TextEditingController dateController = TextEditingController(text: '01/06/2004');
-  final TextEditingController downPaymentController = TextEditingController(text: '100');
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController downPaymentController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
+
+  Map<String, dynamic>? args;
+  String? providerName;
+  String? providerImage;
+  String? providerAddress;
+  num? servicePrice;
+  String selectedDateDisplay = '';
+  DateTime? selectedDateTime;
+
+  final BookingController bookingController = Get.put(BookingController());
+
+  @override
+  void initState() {
+    super.initState();
+    args = Get.arguments;
+    if (args != null) {
+      providerName = args!['providerName'];
+      providerImage = args!['providerImage'];
+      providerAddress = args!['providerAddress'];
+      // For standard booking, basePrice or first slot price
+      // In ProviderServiceDetailsScreen we pass servicePrice if appointmentEnabled is false
+      servicePrice = args!['servicePrice']; 
+    }
+  }
 
   @override
   void dispose() {
@@ -23,50 +53,9 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(title: "Booking"),
       backgroundColor: Colors.grey[50],
-      body: Column(
-        children: [
-
-          Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFF2D6F5C),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Book',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // Content
-          Expanded(
-            child: SingleChildScrollView(
+      body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -83,22 +72,22 @@ class _BookingScreenState extends State<BookingScreen> {
                             color: Colors.grey[300],
                           ),
                           child: ClipOval(
-                            child: Image.network(
-                              'https://api.dicebear.com/7.x/avataaars/svg?seed=Tamim',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.person, size: 28);
-                              },
-                            ),
+                            child: (providerImage != null && providerImage!.isNotEmpty)
+                                ? Image.network(
+                                    providerImage!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 28),
+                                  )
+                                : const Icon(Icons.person, size: 28),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Tamim Sarkar',
-                              style: TextStyle(
+                            Text(
+                              providerName ?? 'Provider Name',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87,
@@ -106,7 +95,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Dhanmondi, Dhaka 1209',
+                              providerAddress ?? 'Address not available',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey[600],
@@ -116,9 +105,76 @@ class _BookingScreenState extends State<BookingScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 20),
 
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Date',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: () async {
+                              final DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(const Duration(days: 365)),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: const ColorScheme.light(
+                                        primary: Color(0xFF2D6F5C),
+                                        onPrimary: Colors.white,
+                                        onSurface: Colors.black,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+
+                                if (pickedDate != null) {
+                                  setState(() {
+                                    selectedDateTime = pickedDate;
+                                    selectedDateDisplay = DateFormat('dd/MM/yyyy').format(pickedDate);
+                                  });
+                                }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.grey.shade300),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    selectedDateDisplay.isEmpty ? "Select Date" : selectedDateDisplay,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black
+                                    ),
+                                  ),
+                                  Icon(Icons.calendar_today, color: Colors.grey.shade400, size: 18),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
 
                     const Text(
                       'Down Payment',
@@ -133,7 +189,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       controller: downPaymentController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: '100',
+                        hintText: 'Down payment',
                         prefixIcon: Icon(Icons.attach_money, size: 18, color: Colors.grey[400]),
                         filled: true,
                         fillColor: Colors.white,
@@ -152,6 +208,15 @@ class _BookingScreenState extends State<BookingScreen> {
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       ),
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      "Down payment must be at least of 20 or 30% of the total payment.",
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red
+                      ),
                     ),
 
                     const SizedBox(height: 20),
@@ -195,10 +260,52 @@ class _BookingScreenState extends State<BookingScreen> {
 
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/booking/paid');
-                        },
+                      child: Obx(() => ElevatedButton(
+                        onPressed: bookingController.isLoading.value 
+                          ? null 
+                          : () async {
+                              if (selectedDateTime == null) {
+                                Get.snackbar("Validation Error", "Please select a booking date");
+                                return;
+                              }
+                              if (downPaymentController.text.isEmpty) {
+                                Get.snackbar("Validation Error", "Please enter down payment amount");
+                                return;
+                              }
+
+                              final double downPayment = double.tryParse(downPaymentController.text) ?? 0.0;
+                              if (servicePrice != null && downPayment > servicePrice!) {
+                                Get.snackbar(
+                                  "Validation Error", 
+                                  "Down payment cannot exceed the total service price (\$${servicePrice})",
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
+
+                              final String? serviceId = args?['serviceId'];
+                              if (serviceId == null) {
+                                Get.snackbar("Error", "Service ID not found");
+                                return;
+                              }
+
+                              final dynamic result = await bookingController.createBooking(
+                                serviceId: serviceId,
+                                bookingDate: DateFormat('yyyy-MM-dd').format(selectedDateTime!),
+                                downPayment: downPayment,
+                                userNotes: notesController.text,
+                              );
+
+                              if (result != null) {
+                                // If API returns booking data, pass it to payment screen
+                                Get.toNamed(AppRoutes.userPayment, arguments: {
+                                  'bookingId': result['data']?['_id'] ?? result['_id'],
+                                  'amount': downPayment,
+                                  'serviceName': providerName ?? "Service",
+                                });
+                              }
+                            },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D6F5C),
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -207,23 +314,26 @@ class _BookingScreenState extends State<BookingScreen> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Book Now',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                        child: bookingController.isLoading.value 
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Text(
+                              'Book Now',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                      )),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }

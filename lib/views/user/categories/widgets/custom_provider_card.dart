@@ -13,6 +13,11 @@ class CustomProviderCard extends StatefulWidget {
   final String reviews;
   final double? appointmentPrice;
   final double? servicePrice;
+  final String? serviceImage;
+  final String? providerImage;
+  final String? serviceId;
+  final String? providerId;
+  final bool? appointmentEnabled;
 
   const CustomProviderCard({
     super.key,
@@ -24,6 +29,11 @@ class CustomProviderCard extends StatefulWidget {
     required this.reviews,
     this.appointmentPrice,
     this.servicePrice,
+    this.serviceImage,
+    this.providerImage,
+    this.serviceId,
+    this.providerId,
+    this.appointmentEnabled,
   });
 
   @override
@@ -37,7 +47,6 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //Get.toNamed(AppRoutes.userProviders);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
@@ -60,12 +69,15 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.network(
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                  child: (widget.serviceImage != null && widget.serviceImage!.isNotEmpty)
+                      ? Image.network(
+                          widget.serviceImage!,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                        )
+                      : _buildPlaceholder(),
                 ),
                 Positioned(
                   top: 12,
@@ -96,9 +108,13 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
                     children: [
                       CircleAvatar(
                         radius: 25.r,
-                        backgroundImage: const NetworkImage(
-                          'https://randomuser.me/api/portraits/men/32.jpg',
-                        ),
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: (widget.providerImage != null && widget.providerImage!.isNotEmpty)
+                            ? NetworkImage(widget.providerImage!)
+                            : null,
+                        child: (widget.providerImage == null || widget.providerImage!.isEmpty)
+                            ? Icon(Icons.person, color: Colors.grey, size: 25.sp)
+                            : null,
                       ),
                       SizedBox(width: 10.w),
                       Column(
@@ -181,22 +197,32 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (widget.servicePrice != null)
+                          if (widget.appointmentEnabled == true)
                             Text(
-                              'Service Price: \$${widget.servicePrice}',
-                              style: GoogleFonts.inter(fontSize: 14),
-                            ),
-                          SizedBox(height: 5.h),
-                          if (widget.appointmentPrice != null)
+                              'Appointment Price: \$${widget.appointmentPrice ?? 0}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1B5E4E),
+                              ),
+                            )
+                          else
                             Text(
-                              'Appointment Price: \$${widget.appointmentPrice}',
-                              style: GoogleFonts.inter(fontSize: 14),
+                              'Service Price: \$${widget.servicePrice ?? 0}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1B5E4E),
+                              ),
                             ),
                         ],
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.providerServiceDetailsScreen);
+                          Get.toNamed(AppRoutes.providerServiceDetailsScreen, arguments: {
+                            'serviceId': widget.serviceId,
+                            'providerId': widget.providerId,
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2D6A4F),
@@ -216,6 +242,15 @@ class _CustomProviderCardState extends State<CustomProviderCard> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: Colors.grey[200],
+      child: Icon(Icons.image, size: 50.sp, color: Colors.grey),
     );
   }
 }

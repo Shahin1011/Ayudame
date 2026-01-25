@@ -1,9 +1,15 @@
+import 'dart:convert';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/auth/LoginProviderScreen.dart';
 import '../../../../core/routes/app_routes.dart';
+import 'package:middle_ware/views/provider/auth/provider_new_password_screen.dart';
+import '../../../utils/constants.dart' hide AppColors;
+import '../../../widgets/custom_loading_button.dart';
 
 class ProviderVerificationCodeScreen extends StatefulWidget {
   const ProviderVerificationCodeScreen({super.key});
@@ -18,6 +24,94 @@ class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCod
     (_) => TextEditingController(),
   );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  bool _isLoading = false;
+  late String _email;
+
+  final String _verifyOtpUrl =
+      "${AppConstants.BASE_URL}/api/providers/verify-otp";
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments ?? {};
+    _email = args["email"] ?? "";
+  }
+
+  Future<void> _verifyOtp() async {
+    final otp = _controllers.map((c) => c.text).join().trim();
+    if (otp.length != 6) {
+      Get.snackbar("Invalid Code", "Please enter the 6-digit code.");
+      return;
+    }
+
+    if (!await _hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(_verifyOtpUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": _email,
+          "otp": otp,
+        }),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final resetToken =
+            data['data']?['resetToken'] ??
+            data['resetToken'] ??
+            data['data']?['token'] ??
+            data['token'];
+        if (resetToken is! String || resetToken.isEmpty) {
+          Get.snackbar(
+            "Error",
+            "Reset token missing from response.",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "OTP verified.",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        Get.to(
+          () => const ProviderNewPasswordScreen(),
+          arguments: {"resetToken": resetToken},
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          data["message"] ?? "Verification failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<bool> _hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
 
   @override
   void dispose() {
@@ -89,9 +183,11 @@ class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCod
             const SizedBox(height: 12),
 
             // Description
-            const Text(
-              'We\'ve sent a 6-digit code to i***@gmail.com',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+            Text(
+              _email.isEmpty
+                  ? 'We\'ve sent a 6-digit code to your email.'
+                  : 'We\'ve sent a 6-digit code to $_email',
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
 
@@ -173,26 +269,10 @@ class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCod
             const SizedBox(height: 24),
 
             // Verify Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-          Get.to(() => LoginProviderScreen());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Verify',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
+            CustomLoadingButton(
+              title: "Verify",
+              isLoading: _isLoading,
+              onTap: _verifyOtp,
             ),
 
             const SizedBox(height: 20),
@@ -229,7 +309,7 @@ class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCod
             // Back to Login
             TextButton(
               onPressed: () {
-                Get.to(() => LoginProviderScreen());
+                Get.toNamed(AppRoutes.providerLogin);
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/routes/app_routes.dart';
 
-class CustomRecentProviderCard extends StatefulWidget {
+class CustomFeaturedProviderCard extends StatefulWidget {
   final String providerName;
   final String location;
   final String activeStatus;
@@ -17,8 +17,9 @@ class CustomRecentProviderCard extends StatefulWidget {
   final String? providerImage;
   final String? serviceId;
   final String? providerId;
+  final bool? appointmentEnabled;
 
-  const CustomRecentProviderCard.custom_provider_card({
+  const CustomFeaturedProviderCard({
     super.key,
     required this.providerName,
     required this.location,
@@ -32,13 +33,14 @@ class CustomRecentProviderCard extends StatefulWidget {
     this.providerImage,
     this.serviceId,
     this.providerId,
+    this.appointmentEnabled,
   });
 
   @override
-  State<CustomRecentProviderCard> createState() => _CustomRecentProviderCardState();
+  State<CustomFeaturedProviderCard> createState() => _CustomFeaturedProviderCardState();
 }
 
-class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
+class _CustomFeaturedProviderCardState extends State<CustomFeaturedProviderCard> {
   bool _isFavorite = false;
 
   @override
@@ -68,12 +70,15 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
               children: [
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.network(
-                    widget.serviceImage ?? 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                  child: (widget.serviceImage != null && widget.serviceImage!.isNotEmpty)
+                      ? Image.network(
+                          widget.serviceImage!,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildImagePlaceholder(),
+                        )
+                      : _buildImagePlaceholder(),
                 ),
                 Positioned(
                   top: 12,
@@ -104,9 +109,13 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                     children: [
                       CircleAvatar(
                         radius: 25.r,
-                        backgroundImage: NetworkImage(
-                          widget.providerImage ?? 'https://randomuser.me/api/portraits/men/32.jpg',
-                        ),
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: (widget.providerImage != null && widget.providerImage!.isNotEmpty)
+                            ? NetworkImage(widget.providerImage!)
+                            : null,
+                        child: (widget.providerImage == null || widget.providerImage!.isEmpty)
+                            ? Icon(Icons.person, color: Colors.grey, size: 25.sp)
+                            : null,
                       ),
                       SizedBox(width: 10.w),
                       Column(
@@ -186,19 +195,26 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (widget.servicePrice != null)
+                          if (widget.appointmentEnabled == true)
                             Text(
-                              'Service Price: \$${widget.servicePrice}',
-                              style: GoogleFonts.inter(fontSize: 14),
-                            ),
-                          SizedBox(height: 5.h),
-                          if (widget.appointmentPrice != null)
+                              'Appointment Price: \$${widget.appointmentPrice ?? 0}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1B5E4E),
+                              ),
+                            )
+                          else
                             Text(
-                              'Appointment Price: \$${widget.appointmentPrice}',
-                              style: GoogleFonts.inter(fontSize: 14),
+                              'Service Price: \$${widget.servicePrice ?? 0}',
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1B5E4E),
+                              ),
                             ),
                         ],
                       ),
@@ -227,6 +243,15 @@ class _CustomRecentProviderCardState extends State<CustomRecentProviderCard> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: Colors.grey[200],
+      child: Icon(Icons.image, size: 50.sp, color: Colors.grey),
     );
   }
 }

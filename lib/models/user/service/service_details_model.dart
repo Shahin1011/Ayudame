@@ -44,8 +44,9 @@ class ServiceProvider {
   final String? name;
   final String? image;
   final String? address;
+  final String? availableTime;
 
-  ServiceProvider({this.id, this.name, this.image, this.address});
+  ServiceProvider({this.id, this.name, this.image, this.address, this.availableTime});
 
   factory ServiceProvider.fromJson(Map<String, dynamic> json) {
     return ServiceProvider(
@@ -53,6 +54,7 @@ class ServiceProvider {
       name: json['name'],
       image: json['image'],
       address: json['address'],
+      availableTime: json['availableTime'],
     );
   }
 }
@@ -126,14 +128,16 @@ class WhyChooseUs {
 }
 
 class AppointmentSlot {
+  final String? id;
   final int? duration;
   final String? durationUnit;
   final num? price;
 
-  AppointmentSlot({this.duration, this.durationUnit, this.price});
+  AppointmentSlot({this.id, this.duration, this.durationUnit, this.price});
 
   factory AppointmentSlot.fromJson(Map<String, dynamic> json) {
     return AppointmentSlot(
+      id: json['_id'],
       duration: json['duration'],
       durationUnit: json['durationUnit'],
       price: json['price'],

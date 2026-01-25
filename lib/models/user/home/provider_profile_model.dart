@@ -40,8 +40,9 @@ class ProviderInfo {
   final String? address;
   final num? rating;
   final int? totalReviews;
+  final String? availableTime;
 
-  ProviderInfo({this.name, this.image, this.address, this.rating, this.totalReviews});
+  ProviderInfo({this.name, this.image, this.address, this.rating, this.totalReviews, this.availableTime});
 
   factory ProviderInfo.fromJson(Map<String, dynamic> json) {
     return ProviderInfo(
@@ -50,6 +51,7 @@ class ProviderInfo {
       address: json['address'],
       rating: json['rating'],
       totalReviews: json['totalReviews'],
+      availableTime: json['availableTime'],
     );
   }
 }
@@ -82,6 +84,7 @@ class ProfileService {
   final num? minAppointmentPrice;
   final int? daysAgo;
   final int? totalReviews;
+  final WhyChooseUs? whyChooseUs;
 
   ProfileService({
     this.serviceId,
@@ -95,6 +98,7 @@ class ProfileService {
     this.minAppointmentPrice,
     this.daysAgo,
     this.totalReviews,
+    this.whyChooseUs,
   });
 
   factory ProfileService.fromJson(Map<String, dynamic> json) {
@@ -112,6 +116,30 @@ class ProfileService {
       minAppointmentPrice: json['minAppointmentPrice'],
       daysAgo: json['daysAgo'],
       totalReviews: json['totalReviews'],
+      whyChooseUs: json['whyChooseUs'] != null ? WhyChooseUs.fromJson(json['whyChooseUs']) : null,
+    );
+  }
+}
+
+class WhyChooseUs {
+  final String? twentyFourSeven;
+  final String? efficientAndFast;
+  final String? affordablePrices;
+  final String? expertTeam;
+
+  WhyChooseUs({
+    this.twentyFourSeven,
+    this.efficientAndFast,
+    this.affordablePrices,
+    this.expertTeam,
+  });
+
+  factory WhyChooseUs.fromJson(Map<String, dynamic> json) {
+    return WhyChooseUs(
+      twentyFourSeven: json['twentyFourSeven'],
+      efficientAndFast: json['efficientAndFast'],
+      affordablePrices: json['affordablePrices'],
+      expertTeam: json['expertTeam'],
     );
   }
 }
