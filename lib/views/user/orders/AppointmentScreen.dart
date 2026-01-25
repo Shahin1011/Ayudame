@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:get/get.dart';
+import 'package:middle_ware/widgets/custom_appbar.dart';
+import '../../../controller/user/orders/appointment_controller.dart';
+import '../../../core/routes/app_routes.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({Key? key}) : super(key: key);
@@ -10,99 +13,64 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  String selectedService = 'House cleaning service';
-  String selectedDate = '01/09/2025';
-  int selectedHourIndex = 1;
-  final TextEditingController notesController = TextEditingController();
-
-  final List<Map<String, dynamic>> hourOptions = [
-    {'value': 1, 'label': '1\nhour'},
-    {'value': 2, 'label': '2\nhour'},
-    {'value': 2.5, 'label': '2.5\nhour'},
-    {'value': 3, 'label': '3\nhour'},
-    {'value': 3.5, 'label': '3.5\nhour'},
-    {'value': 4, 'label': '4\nhour'},
-    {'value': 4.5, 'label': '4.5\nhour'},
-  ];
+  String selectedService = 'Select Service';
+  String selectedDate = '';
+  int? selectedHourIndex;
   int? selectedTimeSlotIndex;
-  final List<String> services = [
-    'House Cleaning',
-    'Deep Cleaning',
-    'Office Cleaning',
-    'Carpet Cleaning',
-    'Window Cleaning',
-    'Move In/Out Cleaning',
+  DateTime? selectedDateTime; // For API
+  final TextEditingController notesController = TextEditingController();
+  final AppointmentController appointmentController = Get.put(AppointmentController());
 
-  ];
+  Map<String, dynamic>? args;
+  List<Map<String, dynamic>> hourOptions = [];
+  String? providerName;
+  String? providerImage;
+  String? providerAddress;
+  String? availableTime;
+  List<String> services = [];
 
-  void _showServiceBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Select Service',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: services.length,
-                itemBuilder: (context, index) {
-                  final service = services[index];
-                  final isSelected = selectedService == service;
-                  return ListTile(
-                    onTap: () {
-                      setState(() {
-                        selectedService = service;
-                      });
-                      Navigator.pop(context);
-                    },
-                    title: Text(
-                      service,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isSelected ? const Color(0xFF2D6F5C) : Colors.black87,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? const Icon(
-                      Icons.check_circle,
-                      color: Color(0xFF2D6F5C),
-                    )
-                        : null,
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    args = Get.arguments;
+    if (args != null) {
+      providerName = args!['providerName'];
+      providerImage = args!['providerImage'];
+      providerAddress = args!['providerAddress'];
+      selectedService = args!['serviceTitle'] ?? 'Select Service';
+      services = [selectedService]; // Initialize with the passed service
+      availableTime = args!['availableTime'];
+      
+      final slots = args!['appointmentSlots'] as List?;
+      if (slots != null && slots.isNotEmpty) {
+        hourOptions = slots.map((e) => {
+          'id': e['id'],
+          'value': e['duration'],
+          'label': "${e['duration']}\n${e['durationUnit']}",
+          'price': e['price'],
+        }).toList();
+
+        // Auto-select the slot with the lowest price
+        int minPriceIndex = 0;
+        num minPrice = hourOptions[0]['price'];
+        for (int i = 1; i < hourOptions.length; i++) {
+          if (hourOptions[i]['price'] < minPrice) {
+            minPrice = hourOptions[i]['price'];
+            minPriceIndex = i;
+          }
+        }
+        selectedHourIndex = minPriceIndex;
+      }
+      
+      // Auto-select first time slot if availableTime is present
+      if (availableTime != null && availableTime!.isNotEmpty) {
+        selectedTimeSlotIndex = 0;
+      }
+    }
+    selectedDateTime = DateTime.now();
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
   }
+
   Widget _buildTimeSlot(String time, int index) {
     final isSelected = selectedTimeSlotIndex == index;
     return GestureDetector(
@@ -135,25 +103,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2D6F5C),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-            onPressed: () {
-              Navigator.pushNamed(context, '/booking/paid');
-            },
-        ),
-        title: const Text(
-          'Appointment',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: CustomAppBar(title: "Appointment"),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,31 +127,34 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 children: [
                   Stack(
                     children: [
-                      const CircleAvatar(
+                       CircleAvatar(
                         radius: 24,
-                        backgroundImage: NetworkImage(
-                          'https://i.pravatar.cc/150?img=5',
-                        ),
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: (providerImage != null && providerImage!.isNotEmpty)
+                            ? NetworkImage(providerImage!)
+                            : null,
+                        child: (providerImage == null || providerImage!.isEmpty)
+                            ? const Icon(Icons.person, color: Colors.grey)
+                            : null,
                       ),
-
                     ],
                   ),
                   const SizedBox(width: 12),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tamim Sarkar',
-                        style: TextStyle(
+                        providerName ?? 'Provider Name',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
-                        'Dhanmond, Dhaka 1209',
-                        style: TextStyle(
+                        providerAddress ?? 'Address not available',
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
                         ),
@@ -221,36 +174,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   const Text(
                     'Services',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {
-                      _showServiceBottomSheet(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedService,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                            ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          selectedService,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
                           ),
-                          Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade600),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -268,7 +215,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   const Text(
                     'Date',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -297,8 +244,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                       if (pickedDate != null) {
                         setState(() {
-                          selectedDate = DateFormat('EEEE, MMMM d, yyyy').format(pickedDate);
-
+                          selectedDateTime = pickedDate;
+                          selectedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
                         });
                       }
                     },
@@ -316,7 +263,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             selectedDate,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey.shade600,
+                              color: Colors.black
                             ),
                           ),
                           Icon(Icons.calendar_today, color: Colors.grey.shade400, size: 18),
@@ -339,7 +286,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   const Text(
                     'Provider available time',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -349,8 +296,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     spacing: 10,
                     runSpacing: 10,
                     children: [
-                      _buildTimeSlot('9:00am to 11:00am', 0),
-
+                      if (availableTime != null && availableTime!.isNotEmpty)
+                        _buildTimeSlot(availableTime!, 0)
+                      else
+                         const Text("No specific time available", style: TextStyle(color: Colors.black, fontSize: 13)),
                     ],
                   ),
                 ],
@@ -364,7 +313,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
                 height: 70,
-                child: ListView.builder(
+                child: hourOptions.isEmpty 
+                  ? const Center(child: Text("No duration options available"))
+                  : ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: hourOptions.length,
                   itemBuilder: (context, index) {
@@ -416,15 +367,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '02 hour',
+                    selectedHourIndex != null 
+                        ? "${hourOptions[selectedHourIndex!]['value']} ${hourOptions[selectedHourIndex!]['label'].split('\n').last}" 
+                        : 'Select duration',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
                     ),
                   ),
-                  const Text(
-                    '\$120',
-                    style: TextStyle(
+                  Text(
+                    selectedHourIndex != null 
+                        ? '\$${hourOptions[selectedHourIndex!]['price']}'
+                        : '\$0',
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -445,7 +400,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   const Text(
                     'Notes for User',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -484,8 +439,89 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/booking');
+                  onPressed: appointmentController.isLoading.value 
+                      ? null 
+                      : () async {
+                    if (selectedDateTime == null) {
+                      Get.snackbar("Validation Error", "Please select a date");
+                      return;
+                    }
+                    if (selectedHourIndex == null) {
+                      Get.snackbar("Validation Error", "Please select a duration slot");
+                      return;
+                    }
+                    if (availableTime == null || availableTime!.isEmpty) {
+                      Get.snackbar("Validation Error", "Provider available time not found");
+                      return;
+                    }
+
+                    // Parse available time "09:00 - 17:00" or "9:00 AM - 5:00 PM"
+                    String start = "09:00";
+                    String end = "17:00";
+                    
+                    try {
+                      List<String> parts = availableTime!.split(RegExp(r'[\-\–\—]'));
+                      if (parts.length >= 2) {
+                        String rawStart = parts[0].trim();
+                        String rawEnd = parts[1].trim();
+
+                        // Helper to convert "9:00 AM" or "09:00" to "09:00"
+                        String formatToHHMM(String time) {
+                          time = time.toUpperCase();
+                          bool isPM = time.contains('PM');
+                          bool isAM = time.contains('AM');
+                          
+                          // Remove AM/PM and extra spaces
+                          String cleanTime = time.replaceAll(RegExp(r'[AP]M'), '').trim();
+                          List<String> timeParts = cleanTime.split(':');
+                          
+                          int hour = int.parse(timeParts[0]);
+                          int minute = timeParts.length > 1 ? int.parse(timeParts[1]) : 0;
+
+                          if (isPM && hour < 12) hour += 12;
+                          if (isAM && hour == 12) hour = 0;
+
+                          return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}";
+                        }
+
+                        start = formatToHHMM(rawStart);
+                        end = formatToHHMM(rawEnd);
+                      }
+                    } catch (e) {
+                      print("Error parsing available time: $e");
+                    }
+
+                    final String? serviceId = args?['serviceId'];
+                    if (serviceId == null) {
+                      Get.snackbar("Error", "Service ID not found");
+                      return;
+                    }
+
+                    final String? slotId = hourOptions[selectedHourIndex!]['id'];
+                    if (slotId == null) {
+                      Get.snackbar("Error", "Slot ID not found");
+                      return;
+                    }
+
+                    final dynamic result = await appointmentController.createAppointment(
+                      serviceId: serviceId,
+                      appointmentDate: DateFormat('yyyy-MM-dd').format(selectedDateTime!),
+                      timeSlot: {
+                        "startTime": start,
+                        "endTime": end,
+                      },
+                      slotId: slotId,
+                      userNotes: notesController.text,
+                    );
+
+                    if (result != null) {
+                      // Navigate to payment screen
+                      Get.toNamed(AppRoutes.userPayment, arguments: {
+                        'bookingId': result['data']?['_id'] ?? result['_id'],
+                        'amount': (hourOptions[selectedHourIndex!]['price'] as num).toDouble(),
+                        'serviceName': providerName ?? "Appointment",
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2D6F5C),
@@ -494,14 +530,20 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Create Appointment',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: appointmentController.isLoading.value 
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Text(
+                        'Create Appointment',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                 ),
               ),
             ),

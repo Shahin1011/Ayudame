@@ -1,6 +1,14 @@
+import 'dart:convert';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/token_service.dart';
+import '../../../widgets/custom_loading_button.dart';
 
 class LoginProviderScreen extends StatefulWidget {
   const LoginProviderScreen({super.key});
@@ -12,6 +20,93 @@ class LoginProviderScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginProviderScreen> {
   bool _rememberMe = false;
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailOrPhoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final String _loginApiUrl = "${AppConstants.BASE_URL}/api/providers/login";
+
+  Future<void> _loginProvider(String email, String password) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!await _hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    final body = {
+      'email': email,
+      'password': password,
+    };
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(_loginApiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          'Success',
+          data["message"] ?? "Login successfully!",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        final accessToken = data['data']?['accessToken'];
+        if (accessToken is String && accessToken.isNotEmpty) {
+          await TokenService().saveToken(accessToken);
+        }
+
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', true);
+
+        if (_rememberMe) {
+          await prefs.setString("email", email);
+          await prefs.setString("password", password);
+        } else {
+          await prefs.remove("email");
+          await prefs.remove("password");
+        }
+
+        Get.offNamed(AppRoutes.providerBottomNavScreen);
+      } else {
+        Get.snackbar(
+          "Error",
+          data['message'] ?? "Login failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<bool> _hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  @override
+  void dispose() {
+    _emailOrPhoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +116,11 @@ class _LoginScreenState extends State<LoginProviderScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 const SizedBox(height: 40),
 
                 // Welcome Back Title
@@ -49,7 +146,8 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                 ),
                 const SizedBox(height: 8),
 
-                TextField(
+                TextFormField(
+                  controller: _emailOrPhoneController,
                   decoration: InputDecoration(
                     hintText: 'E-mail address or phone number',
                     hintStyle: const TextStyle(
@@ -80,6 +178,12 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                       vertical: 14,
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter your email or phone number";
+                    }
+                    return null;
+                  },
                 ),
 
                 const SizedBox(height: 20),
@@ -91,10 +195,11 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                 ),
                 const SizedBox(height: 8),
 
-                TextField(
+                TextFormField(
+                  controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    hintText: '••••••••••',
+                    hintText: 'Password',
                     hintStyle: const TextStyle(
                       fontSize: 14,
                       color: Colors.black38,
@@ -137,6 +242,12 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                       vertical: 14,
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter your password";
+                    }
+                    return null;
+                  },
                 ),
 
                 const SizedBox(height: 12),
@@ -188,30 +299,15 @@ class _LoginScreenState extends State<LoginProviderScreen> {
 
                 const SizedBox(height: 24),
 
-                // Login Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.offNamed(AppRoutes.providerBottomNavScreen);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                CustomLoadingButton(
+                  title: "Login",
+                  isLoading: _isLoading,
+                  onTap: () {
+                    _loginProvider(
+                      _emailOrPhoneController.text.trim(),
+                      _passwordController.text.trim(),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 24),
@@ -341,7 +437,8 @@ class _LoginScreenState extends State<LoginProviderScreen> {
                     ],
                   ),
                 ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

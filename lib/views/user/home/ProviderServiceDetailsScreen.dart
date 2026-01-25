@@ -248,7 +248,14 @@ class _ProviderServiceDetailsScreenState extends State<ProviderServiceDetailsScr
                           style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600, color: Colors.black87),
                         ),
                         Text(
-                          "\$${service?.basePrice ?? 0}",
+                          () {
+                            if (service?.appointmentEnabled == true && service?.appointmentSlots != null && service!.appointmentSlots!.isNotEmpty) {
+                              // Find lowest price from slots
+                              num minPrice = service.appointmentSlots!.map((e) => e.price ?? 0).reduce((a, b) => a < b ? a : b);
+                              return "\$$minPrice";
+                            }
+                            return "\$${service?.basePrice ?? 0}";
+                          }(),
                           style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.black),
                         ),
                       ],
@@ -258,10 +265,27 @@ class _ProviderServiceDetailsScreenState extends State<ProviderServiceDetailsScr
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                           final Map<String, dynamic> args = {
+                             'serviceId': service?.serviceId,
+                             'providerId': provider?.id,
+                             'providerName': provider?.name,
+                             'providerImage': provider?.image,
+                             'providerAddress': provider?.address,
+                             'serviceTitle': service?.title,
+                             'servicePrice': service?.basePrice,
+                             'availableTime': provider?.availableTime,
+                                'appointmentSlots': service?.appointmentSlots?.map((e) => {
+                                'id': e.id,
+                                'duration': e.duration,
+                                'durationUnit': e.durationUnit,
+                                'price': e.price,
+                              }).toList(),
+                           };
+
                            if (service?.appointmentEnabled == true) {
-                              Get.toNamed(AppRoutes.userAppointment, arguments: service?.serviceId);
+                              Get.toNamed(AppRoutes.userAppointment, arguments: args);
                            } else {
-                              Get.toNamed(AppRoutes.userBooking, arguments: service?.serviceId);
+                              Get.toNamed(AppRoutes.userBooking, arguments: args);
                            }
                         },
                         style: ElevatedButton.styleFrom(

@@ -31,41 +31,18 @@ class CategoriesPage extends StatefulWidget {
                   bottomRight: Radius.circular(30),
                 ),
               ),
-              padding: EdgeInsets.fromLTRB(20, 35, 20, 24),
+              padding: EdgeInsets.fromLTRB(20, 45, 20, 24),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: SvgPicture.asset(
-                          "assets/icons/backIcon.svg",
-                          color: AppColors.white,
-                        ),
+                  Center(
+                    child: Text(
+                      'Categories',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Categories',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Opacity(
-                        opacity: 0,
-                        child: SvgPicture.asset(
-                          "assets/icons/backIcon.svg",
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   SizedBox(height: 16),
 
@@ -119,6 +96,7 @@ class CategoriesPage extends StatefulWidget {
                     ),
                     itemBuilder: (context, index) {
                       final category = controller.categories[index];
+                      print("Building CategoryCard: ${category.name} (ID: ${category.id})");
 
                       return CategoryCard(
                         title: category.name,
@@ -126,6 +104,7 @@ class CategoriesPage extends StatefulWidget {
                             ? category.icon
                             : "https://via.placeholder.com/150",
                         onTap: () {
+                          print("Tapped Category: ${category.id}");
                           Get.to(() => ProvidersScreen(),
                               arguments: category.id);
                         },

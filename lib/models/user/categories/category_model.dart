@@ -14,8 +14,20 @@ class CategoryModel {
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    print("CategoryModel JSON: $json");
+    
+    // Prioritize categoryId as seen in Postman, then fall back to id/_id
+    String parsedId = '';
+    if (json['categoryId'] != null && json['categoryId'].toString().isNotEmpty) {
+      parsedId = json['categoryId'].toString();
+    } else if (json['id'] != null && json['id'].toString().isNotEmpty) {
+      parsedId = json['id'].toString();
+    } else if (json['_id'] != null && json['_id'].toString().isNotEmpty) {
+      parsedId = json['_id'].toString();
+    }
+
     return CategoryModel(
-      id: json['id'] ?? json['_id'] ?? '',
+      id: parsedId,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       icon: json['icon'] ?? '',

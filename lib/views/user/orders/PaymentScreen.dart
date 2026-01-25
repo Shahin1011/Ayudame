@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 
 class PaymentScreen extends StatefulWidget {
@@ -18,6 +19,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _cvvController = TextEditingController();
   bool _rememberMe = false;
   String _selectedPaymentMethod = 'visa';
+  Map<String, dynamic>? args;
+  double amount = 0.0;
+  String? bookingId;
+  String? serviceName;
+
+  @override
+  void initState() {
+    super.initState();
+    args = Get.arguments;
+    if (args != null) {
+      bookingId = args!['bookingId'];
+      amount = args!['amount'] ?? 0.0;
+      serviceName = args!['serviceName'];
+    }
+  }
 
   @override
   void dispose() {
@@ -212,12 +228,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.lock, size: 18, color: Colors.white),
-                        SizedBox(width: 8),
+                      children: [
+                        const Icon(Icons.lock, size: 18, color: Colors.white),
+                        const SizedBox(width: 8),
                         Text(
-                          'PAY \$50.00',
-                          style: TextStyle(
+                          'PAY \$${amount.toStringAsFixed(2)}',
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,

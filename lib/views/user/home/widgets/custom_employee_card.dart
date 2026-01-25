@@ -193,18 +193,18 @@ class _CustomEmployeeCardState extends State<CustomEmployeeCard> {
                     Column(
                        crossAxisAlignment: CrossAxisAlignment.end,
                        children: [
-                         if (widget.appointmentEnabled == true && widget.appointmentPrice != null)
+                         if (widget.appointmentEnabled == true)
                            Text(
-                             'Appointment: \$${widget.appointmentPrice}',
+                             'Appointment Price: \$${widget.appointmentPrice ?? 0}',
                              style: GoogleFonts.inter(
                                fontSize: 12.sp,
                                fontWeight: FontWeight.w600,
                                color: const Color(0xFF1B5E4E),
                              ),
-                           ),
-                         if (widget.servicePrice != null)
+                           )
+                         else
                            Text(
-                             'Service: \$${widget.servicePrice}',
+                             'Service Price: \$${widget.servicePrice ?? 0}',
                              style: GoogleFonts.inter(
                                fontSize: 12.sp,
                                fontWeight: FontWeight.w600,

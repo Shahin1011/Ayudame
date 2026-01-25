@@ -26,18 +26,42 @@ class OrderController extends GetxController {
       isLoading(true);
       orderList.clear();
 
-      String status = 'pending';
-      if (currentTab.value == 'On going') status = 'accepted'; // or 'ongoing' depending on backend
-      if (currentTab.value == 'Completed') status = 'completed';
-      if (currentTab.value == 'Rejected') status = 'cancelled';
-
       final token = await TokenService().getToken();
       if (token == null) {
+        isLoading(false);
         return;
       }
 
-      // Construct URL
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/my-bookings?status=$status&page=1&limit=50");
+      Uri uri;
+      if (currentTab.value == 'Appointment') {
+        uri = Uri.parse("${AppConstants.BASE_URL}/api/appointments/my-appointments");
+      } else {
+        String status = 'pending';
+        // Mapping tabs to API status
+        switch (currentTab.value) {
+          case 'Pending':
+            status = 'pending';
+            break;
+          case 'Confirmed':
+            status = 'confirmed';
+            break;
+          case 'In Progress':
+            status = 'ongoing'; // Assuming ongoing for In Progress
+            break;
+          case 'Completed':
+            status = 'completed';
+            break;
+          case 'Cancelled':
+            status = 'cancelled';
+            break;
+          case 'Rejected':
+            status = 'rejected';
+            break;
+          default:
+            status = 'pending';
+        }
+        uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/my-bookings?status=$status&page=1&limit=50");
+      }
 
       final response = await http.get(
         uri,
@@ -47,7 +71,8 @@ class OrderController extends GetxController {
         },
       );
 
-      print("Orders API [$status]: ${response.statusCode}");
+      print("Orders API [${currentTab.value}]: ${response.statusCode}");
+      print("Orders API Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);

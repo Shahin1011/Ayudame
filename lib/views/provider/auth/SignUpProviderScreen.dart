@@ -1,11 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/auth/LoginProviderScreen.dart';
+import 'package:middle_ware/views/provider/auth/provider_otp_verification_for_signup.dart';
+import 'package:middle_ware/widgets/custom_loading_button.dart';
+import '../../../utils/constants.dart' hide AppColors;
+import 'package:middle_ware/views/provider/auth/provider_otp_verification_for_signup.dart';
 
 class SignUpProviderScreen extends StatefulWidget {
   const SignUpProviderScreen({Key? key}) : super(key: key);
@@ -17,7 +25,8 @@ class SignUpProviderScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpProviderScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
-  final _emailPhoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _occupationController = TextEditingController();
@@ -27,8 +36,25 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
   File? _idCardBack;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
 
   final ImagePicker _picker = ImagePicker();
+  final String _registerApiUrl = "${AppConstants.BASE_URL}/api/providers/register";
+
+  String? _imageSubtypeForPath(String path) {
+    final ext = path.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'jpeg';
+      case 'png':
+        return 'png';
+      case 'webp':
+        return 'webp';
+      default:
+        return null;
+    }
+  }
 
   Future<void> _pickImage(bool isFront) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -46,12 +72,132 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
   @override
   void dispose() {
     _fullNameController.dispose();
-    _emailPhoneController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _occupationController.dispose();
     _referenceIdController.dispose();
     super.dispose();
+  }
+
+  Future<void> _registerProvider() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (_idCardFront == null || _idCardBack == null) {
+      Get.snackbar(
+        "Missing ID",
+        "Please upload both front and back of your ID card.",
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (!await _hasInternetConnection()) {
+      Get.snackbar("No Internet", "Please check your internet connection.");
+      return;
+    }
+
+    final frontSubtype = _imageSubtypeForPath(_idCardFront!.path);
+    final backSubtype = _imageSubtypeForPath(_idCardBack!.path);
+    if (frontSubtype == null || backSubtype == null) {
+      Get.snackbar(
+        "Invalid Format",
+        "Only JPG, JPEG, PNG, or WEBP files are allowed.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(_registerApiUrl),
+      );
+
+      request.fields['fullName'] = _fullNameController.text.trim();
+      request.fields['email'] = _emailController.text.trim();
+      request.fields['phoneNumber'] = _phoneController.text.trim();
+      request.fields['password'] = _passwordController.text.trim();
+      request.fields['confirmPassword'] = _confirmPasswordController.text.trim();
+
+      final occupation = _occupationController.text.trim();
+      if (occupation.isNotEmpty) {
+        request.fields['occupation'] = occupation;
+      }
+
+      final referenceId = _referenceIdController.text.trim();
+      if (referenceId.isNotEmpty) {
+        request.fields['referenceId'] = referenceId;
+      }
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'idCardFront',
+          _idCardFront!.path,
+          filename: "id_card_front.$frontSubtype",
+          contentType: MediaType('image', frontSubtype),
+        ),
+      );
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'idCardBack',
+          _idCardBack!.path,
+          filename: "id_card_back.$backSubtype",
+          contentType: MediaType('image', backSubtype),
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final responseBody = await streamedResponse.stream.bytesToString();
+      final data = json.decode(responseBody);
+
+      if (streamedResponse.statusCode == 200 ||
+          streamedResponse.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          data["message"] ?? "OTP has been sent to your email.",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        Get.to(
+          () => const ProviderOtpVerificationScreen(),
+          arguments: {
+            "email": _emailController.text.trim(),
+          },
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          data["message"] ?? "Signup failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Something went wrong: $e",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<bool> _hasInternetConnection() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
   }
 
   @override
@@ -118,6 +264,12 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                       ),
                     ),
                     style: const TextStyle(fontSize: 14),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter your full name";
+                      }
+                      return null;
+                    },
                   ),
                 ),
 
@@ -134,9 +286,9 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                     ),
                   ),
                   child: TextFormField(
-                    controller: _emailPhoneController,
+                    controller: _emailController,
                     decoration: const InputDecoration(
-                      hintText: 'E-mail address or phone number',
+                      hintText: 'E-mail address',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 14,
@@ -144,6 +296,42 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                       ),
                     ),
                     style: const TextStyle(fontSize: 14),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter your email";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFFE8E8E8),
+                      width: 1,
+                    ),
+                  ),
+                  child: TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      hintText: 'Phone number',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                    ),
+                    style: const TextStyle(fontSize: 14),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter your phone number";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -229,6 +417,15 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                       ),
                     ),
                     style: const TextStyle(fontSize: 14),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter a password";
+                      }
+                      if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -270,6 +467,15 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                       ),
                     ),
                     style: const TextStyle(fontSize: 14),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please confirm your password";
+                      }
+                      if (value != _passwordController.text) {
+                        return "Passwords do not match";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -347,31 +553,10 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Sign Up Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.to(() => LoginProviderScreen () );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Sign UP',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ),
+                CustomLoadingButton(
+                  title: "Sign Up",
+                  isLoading: _isLoading,
+                  onTap: _registerProvider,
                 ),
                 const SizedBox(height: 24),
               ],
