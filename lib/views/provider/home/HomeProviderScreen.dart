@@ -4,6 +4,10 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
+import '../../../models/provider/provider_appointment_model.dart';
+import '../../../models/provider/provider_booking_model.dart';
+import '../orders/OrderProvider.dart';
+import 'package:intl/intl.dart';
 import '../../../controller/provider/profile/provider_profile_controller.dart';
 import '../../../controller/provider/home_provider_controller.dart';
 
@@ -148,7 +152,12 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (context) => const OrderHistoryProviderScreen())
+                          );
+                        },
                         child: const Text(
                           'See all',
                           style: TextStyle(
@@ -166,34 +175,30 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                 // Booking Cards
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      _buildBookingCard(
-                        name: 'Seam Rahman',
-                        rating: 4.8,
-                        reviews: 448,
-                        address: '123 Oak Street Spring,ILB 64558',
-                        date: '29 October,2025',
-                        problemNote:
-                            'Please ensure all windows are securely locked after cleaning.',
-                        totalPrice: 500,
-                        downPayment: 200,
-                        showReschedule: false,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildBookingCard(
-                        name: 'Seam Rahman',
-                        rating: 4.8,
-                        reviews: 448,
-                        address: '123 Oak Street Spring,ILB 64558',
-                        date: '29 October,2025',
-                        problemNote:
-                            'Please ensure all windows are securely locked after cleaning.',
-                        price: 120,
-                        showReschedule: true,
-                      ),
-                    ],
-                  ),
+                  child: Obx(() {
+                    if (controller.pendingItems.isEmpty) {
+                      return const SizedBox(
+                        height: 100,
+                        child: Center(child: Text("No pending bookings", style: TextStyle(color: Colors.grey))),
+                      );
+                    }
+                    return Column(
+                      children: controller.pendingItems.map((item) {
+                        if (item is ProviderBooking) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildBookingCard(item: item),
+                          );
+                        } else if (item is ProviderAppointment) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildAppointmentCard(item: item),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }).toList(),
+                    );
+                  }),
                 ),
                 const SizedBox(height: 20),
               ],
@@ -242,94 +247,163 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
     );
   }
 
-  Widget _buildBookingCard({
-    required String name,
-    required double rating,
-    required int reviews,
-    required String address,
-    required String date,
-    required String problemNote,
-    int? totalPrice,
-    int? downPayment,
-    int? price,
-    required bool showReschedule,
+  Widget _buildAppointmentCard({required ProviderAppointment item}) {
+    String status = item.appointmentStatus?.toLowerCase() ?? 'pending';
+    String dateStr = item.appointmentDate ?? '';
+    try {
+      if (dateStr.isNotEmpty) {
+        dateStr = DateFormat('dd MMMM, yyyy').format(DateTime.parse(dateStr));
+      }
+    } catch (_) {}
+
+    String timeStr = item.timeSlot?.startTime ?? '';
+    if (timeStr.isNotEmpty) {
+      try {
+        final dt = DateFormat('HH:mm').parse(timeStr);
+        timeStr = DateFormat('h:mm a').format(dt);
+      } catch (_) {}
+    }
+
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => OrderDetailsScreen(item: item, initialStatus: status));
+      },
+      child: _cardContainer(
+        userImage: item.user?.profilePicture,
+        userName: item.user?.fullName,
+        dateStr: dateStr,
+        timeStr: timeStr,
+        note: item.userNotes,
+        content: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  "Appointment Price: \$${item.totalAmount ?? 0}",
+                  style: const TextStyle(
+                    color: Color(0xFF2C5F4F),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildCardButtons(status, appointmentEnabled: true),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookingCard({required ProviderBooking item}) {
+    String status = item.bookingStatus?.toLowerCase() ?? 'pending';
+    String dateStr = item.bookingDate ?? '';
+    try {
+      if (dateStr.isNotEmpty) {
+        dateStr = DateFormat('dd MMMM, yyyy').format(DateTime.parse(dateStr));
+      }
+    } catch (_) {}
+    
+    String timeStr = ""; 
+
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => OrderDetailsScreen(item: item, initialStatus: status));
+      },
+      child: _cardContainer(
+        userImage: item.user?.profilePicture,
+        userName: item.user?.fullName,
+        dateStr: dateStr,
+        timeStr: timeStr,
+        note: item.userNotes,
+        content: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total Price: \$${item.totalAmount ?? 0}",
+                  style: const TextStyle(
+                    color: Color(0xFF2C5F4F),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (item.downPayment != null && item.downPayment! > 0)
+                  Text(
+                    "Down payment: \$${item.downPayment}",
+                    style: const TextStyle(
+                      color: Color(0xFF2C5F4F),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildCardButtons(status, appointmentEnabled: false),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _cardContainer({
+    String? userImage,
+    String? userName,
+    String? dateStr,
+    String? timeStr,
+    String? note,
+    required Widget content,
   }) {
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
         ],
       ),
-      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Provider Info
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 20,
-                backgroundColor: Color(0xFFFFE4CC),
-                backgroundImage: AssetImage('assets/images/men.png'),
+                backgroundImage: (userImage != null && userImage.isNotEmpty)
+                    ? NetworkImage(userImage)
+                    : const AssetImage('assets/images/emptyUser.png') as ImageProvider,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      userName ?? "User",
                       style: const TextStyle(
                         fontFamily: "Inter",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        SvgPicture.asset(AppIcons.star, width: 12, height: 12),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$rating($reviews reviews)',
-                          style: const TextStyle(
-                            fontFamily: "Inter",
-                            fontSize: 14,
-                            color: Color(0xFF666666),
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
               ),
-              const Text(
-                '12:25 pm',
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF666666),
+              if (timeStr != null && timeStr.isNotEmpty)
+                Text(
+                  timeStr,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
-          // Address
           RichText(
             text: TextSpan(
               children: [
                 const TextSpan(
                   text: 'Address: ',
                   style: TextStyle(
-
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -337,7 +411,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                   ),
                 ),
                 TextSpan(
-                  text: address,
+                  text: 'Address not available', // Real data not available yet in model
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -349,7 +423,6 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          // Date
           RichText(
             text: TextSpan(
               children: [
@@ -363,7 +436,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                   ),
                 ),
                 TextSpan(
-                  text: date,
+                  text: dateStr ?? '',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -375,7 +448,6 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          // Problem Note
           const Text(
             'Problem Note:',
             style: TextStyle(
@@ -387,7 +459,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            problemNote,
+            note ?? "No notes provided",
             style: const TextStyle(
               fontFamily: "Inter",
               fontSize: 12,
@@ -396,180 +468,245 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          // Price Info
-          if (totalPrice != null && downPayment != null) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total Price: \$$totalPrice',
-                  style: const TextStyle(
-                     fontFamily: "Inter",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.mainAppColor,
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Down payment: ',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.mainAppColor,
-                          fontFamily: "Inter",
-                        ),
-                      ),
-                      TextSpan(
-                        text: '\$$downPayment',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.mainAppColor,
-                          fontFamily: "Inter",
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ] else if (price != null) ...[
-            Text(
-              'Price: \$$price',
-              style: const TextStyle(
-                fontFamily: "Inter",
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.mainAppColor,
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCardButtons(String status, {bool appointmentEnabled = false}) {
+    status = status.toLowerCase();
+
+    if (appointmentEnabled) {
+      if (status == "confirmed") {
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2C5F4F),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-          ],
-          const SizedBox(height: 12),
-          // Action Buttons
-          if (showReschedule)
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFF2D6A4F)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        child: const Text(
-                          'Reschedule',
-                          style: TextStyle(
-                            fontFamily: "Inter",
-                            color: Color(0xFF2D6A4F),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
+            child: const Text(
+              "Confirmed",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFamily: "Inter",
+              ),
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.white,
+                    side: const BorderSide(color: AppColors.mainAppColor),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2D6A4F),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'Accept',
-                          style: TextStyle(
-                            fontFamily: "Inter",
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        color: Color(0xFFE74C3C),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                  ),
+                  child: const Text(
+                    "Reschedule",
+                    style: TextStyle(
+                      color: AppColors.mainAppColor,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Inter",
                     ),
                   ),
                 ),
-              ],
-            )
-          else
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2C5F4F),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Accept",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          TextButton(
+            onPressed: () => _showConfirmationDialog(context, "cancel the appointment"),
+            child: const Text(
+              "Cancel",
+              style: TextStyle(
+                color: Color(0xFFE74C3C),
+                fontWeight: FontWeight.w600,
+                fontFamily: "Inter",
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (status == "pending") {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.white,
+                    side: const BorderSide(color: AppColors.mainAppColor),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Reschedule",
+                    style: TextStyle(
+                      color: AppColors.mainAppColor,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2C5F4F),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Accept",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "Inter",
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          TextButton(
+            onPressed: () => _showConfirmationDialog(context, "cancel the Order"),
+            child: const Text(
+              "Cancel",
+              style: TextStyle(
+                color: Color(0xFFE74C3C),
+                fontWeight: FontWeight.w600,
+                fontFamily: "Inter",
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (status == "cancelled" || status == "rejected") {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            status.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+              fontFamily: "Inter",
+            ),
+          ),
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2C5F4F),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: Text(
+            status.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontFamily: "Inter",
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showConfirmationDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 40),
+            const SizedBox(height: 16),
+            Text(
+              "Are you sure you want to $message?",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w500, fontFamily: "Inter"),
+            ),
+            const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFE74C3C)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      side: const BorderSide(color: Color(0xFF2C5F4F)),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        color: Color(0xFFE74C3C),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
+                    child: const Text("No", style: TextStyle(color: Color(0xFF2C5F4F))),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2D6A4F),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Accept',
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Handle cancellation logic here
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2C5F4F)),
+                    child: const Text("Yes", style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

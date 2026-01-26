@@ -56,8 +56,9 @@ class BookingUser {
   String? email;
   String? profilePicture;
   String? phoneNumber;
+  String? address;
 
-  BookingUser({this.id, this.fullName, this.email, this.profilePicture, this.phoneNumber});
+  BookingUser({this.id, this.fullName, this.email, this.profilePicture, this.phoneNumber, this.address});
 
   BookingUser.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
@@ -65,6 +66,7 @@ class BookingUser {
     email = json['email'];
     profilePicture = json['profilePicture'];
     phoneNumber = json['phoneNumber'];
+    address = json['address'];
   }
 }
 

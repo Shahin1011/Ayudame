@@ -62,8 +62,9 @@ class AppointmentUser {
   String? email;
   String? profilePicture;
   String? phoneNumber;
+  String? address;
 
-  AppointmentUser({this.id, this.fullName, this.email, this.profilePicture, this.phoneNumber});
+  AppointmentUser({this.id, this.fullName, this.email, this.profilePicture, this.phoneNumber, this.address});
 
   AppointmentUser.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
@@ -71,6 +72,7 @@ class AppointmentUser {
     email = json['email'];
     profilePicture = json['profilePicture'];
     phoneNumber = json['phoneNumber'];
+    address = json['address'];
   }
 }
 

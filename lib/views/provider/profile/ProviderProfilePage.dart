@@ -12,13 +12,13 @@ import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.
 import 'package:middle_ware/views/provider/profile/all_services_page.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
-import 'package:middle_ware/views/provider/profile/provider_history.dart';
 import 'package:middle_ware/views/provider/profile/provider_payment.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../controller/provider/profile/provider_profile_controller.dart';
 import '../../../controller/provider/home_provider_controller.dart';
 import '../../../utils/token_service.dart';
+import '../orders/OrderProvider.dart';
 
 class ProviderProfilePage extends StatefulWidget {
   const ProviderProfilePage({Key? key}) : super(key: key);
@@ -313,7 +313,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.oder_history,
                           title: 'Order History',
                           onTap: () {
-                            Get.to(() => ProviderHistoryProviderScreen());
+                            Get.to(() => OrderHistoryProviderScreen());
                           },
                         ),
                         _buildMenuItem(

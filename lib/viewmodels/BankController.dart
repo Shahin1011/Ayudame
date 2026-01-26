@@ -46,6 +46,7 @@ class BankController extends GetxController {
       bankName: bankNameCtrl.text,
       accountNumber: accountNumberCtrl.text,
       routingNumber: routingNumberCtrl.text,
+      accountHolderType: accountHolderCtrl.text,
     );
 
     isLoading.value = false;
