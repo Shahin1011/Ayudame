@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 class providerBankInformationPayoutScreen extends StatelessWidget {
-  const providerBankInformationPayoutScreen({Key? key}) : super(key: key);
+  const providerBankInformationPayoutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

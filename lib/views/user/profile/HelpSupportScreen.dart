@@ -6,7 +6,7 @@ import 'package:middle_ware/views/user/profile/ContactUsScreen.dart';
 import 'package:middle_ware/views/user/profile/FaqScreen.dart';
 
 class HelpSupportScreen extends StatelessWidget {
-  const HelpSupportScreen({Key? key}) : super(key: key);
+  const HelpSupportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

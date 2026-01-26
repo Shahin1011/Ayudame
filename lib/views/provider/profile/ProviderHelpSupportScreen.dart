@@ -7,7 +7,7 @@ import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'ProviderContactUsScreen.dart';
 
 class ProviderHelpSupportScreen extends StatelessWidget {
-  const ProviderHelpSupportScreen({Key? key}) : super(key: key);
+  const ProviderHelpSupportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

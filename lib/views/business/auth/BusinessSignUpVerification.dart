@@ -5,32 +5,37 @@ import '../../../../core/routes/app_routes.dart';
 
 import '../../../../viewmodels/business_auth_viewmodel.dart';
 
-class BusinessVerificationCodeScreen extends StatefulWidget {
-  const BusinessVerificationCodeScreen({super.key});
+class BusinessSignUpVerification extends StatefulWidget {
+  const BusinessSignUpVerification({super.key});
 
   @override
-  State<BusinessVerificationCodeScreen> createState() =>
-      _BusinessVerificationCodeScreenState();
+  State<BusinessSignUpVerification> createState() =>
+      _BusinessSignUpVerificationState();
 }
 
-class _BusinessVerificationCodeScreenState
-    extends State<BusinessVerificationCodeScreen> {
-  final BusinessAuthViewModel _authViewModel =
-      Get.find<BusinessAuthViewModel>();
+class _BusinessSignUpVerificationState
+    extends State<BusinessSignUpVerification> {
+  final BusinessAuthViewModel _authViewModel = Get.find<BusinessAuthViewModel>();
   final List<TextEditingController> _controllers = List.generate(
     6,
-    (_) => TextEditingController(),
+        (_) => TextEditingController(),
   );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  bool isRegistration = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.arguments != null && Get.arguments is Map) {
+      isRegistration = Get.arguments['isRegistration'] ?? false;
+    }
+  }
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
+    // Note: Manual disposal here can sometimes conflict with GetX navigation 
+    // if a rebuild is triggered during the transition frame.
+    // Flutter will clean these up when the State is destroyed.
     super.dispose();
   }
 
@@ -95,7 +100,7 @@ class _BusinessVerificationCodeScreenState
 
               // Description
               Text(
-                'We\'ve sent a 6-digit code to ${_authViewModel.forgotEmailController.text.isNotEmpty ? _authViewModel.forgotEmailController.text : "your email/phone"}',
+                'We\'ve sent a 6-digit code to ${isRegistration ? (_authViewModel.tempRegistrationPhone.isNotEmpty ? _authViewModel.tempRegistrationPhone : _authViewModel.tempRegistrationEmail) : (_authViewModel.forgotEmailController.text.isNotEmpty ? _authViewModel.forgotEmailController.text : "your email/phone")}',
                 style: const TextStyle(fontSize: 14, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
@@ -190,9 +195,12 @@ class _BusinessVerificationCodeScreenState
                         : () {
                             String otp = _controllers.map((c) => c.text).join();
                             if (otp.length == 6) {
-                              _authViewModel.verificationCodeController.text =
-                                  otp;
-                              _authViewModel.verifyOtp();
+                              if (isRegistration) {
+                                _authViewModel.verifyRegistrationOtp(otp);
+                              } else {
+                                _authViewModel.verificationCodeController.text = otp;
+                                _authViewModel.verifyOtp();
+                              }
                             } else {
                               Get.snackbar(
                                 "Error",

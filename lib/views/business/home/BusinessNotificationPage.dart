@@ -47,7 +47,7 @@ class BusinessNotificationController extends GetxController {
 }
 
 class BusinessNotificationPage extends StatelessWidget {
-  const BusinessNotificationPage({Key? key}) : super(key: key);
+  const BusinessNotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {

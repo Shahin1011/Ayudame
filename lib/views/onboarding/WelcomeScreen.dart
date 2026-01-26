@@ -33,7 +33,7 @@ class WelcomeScreen extends StatelessWidget {
           Positioned(
             bottom: 280,
             left: 0,
-            child: Container(
+            child: SizedBox(
               height: 150,
               child: Center(
                 child: Image.asset(
@@ -47,7 +47,7 @@ class WelcomeScreen extends StatelessWidget {
           Positioned(
             bottom: 280,
             left: 0,
-            child: Container(
+            child: SizedBox(
               height: 110, // Fixed height
 
               child: Center(
@@ -63,7 +63,7 @@ class WelcomeScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
 
-            child: Container(
+            child: SizedBox(
               // Top illustration section
               height: MediaQuery.of(context).size.height * 0.58,
               child: Stack(

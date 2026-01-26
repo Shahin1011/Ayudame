@@ -4,7 +4,7 @@ import 'package:middle_ware/views/components/custom_app_bar.dart';
 
 
 class TermsConditionScreen extends StatelessWidget {
-  const TermsConditionScreen({Key? key}) : super(key: key);
+  const TermsConditionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
