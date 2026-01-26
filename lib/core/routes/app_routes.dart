@@ -24,7 +24,8 @@ import '../../views/onboarding/splash_screen.dart';
 import '../../views/business/employee/BusinessEmployeeScreen.dart';
 import '../../views/event_manager/home/EditEventPage.dart';
 import '../../views/provider/bottom_nav/provider_bottom_nav.dart';
-import '../../views/provider/profile/ProviderPortfolioPage.dart';
+import '../../views/provider/profile/portfolio/PortfolioListScreen.dart';
+import '../../views/provider/profile/portfolio/AddPortfolioScreen.dart';
 import '../../views/user/auth/otp_verification_for_sigup.dart';
 import '../../views/user/bottom_nav/bottom_nav.dart';
 import '../../views/user/home/NearYouProvidersScreen.dart';
@@ -222,7 +223,7 @@ class AppRoutes {
     GetPage(name: providerProfile, page: () => ProviderProfilePage()),
     GetPage(name: providerCreateService, page: () => ProviderCreateServicePage()),
     GetPage(name: providerOrders, page: () => OrderHistoryProviderScreen()),
-    GetPage(name: providerPortfolio, page: () => const PortfolioListScreen()),
+    GetPage(name: providerPortfolio, page: () => PortfolioListScreen()),
     GetPage(name: providerAddPortfolio, page: () => const AddPortfolioScreen()),
     GetPage(name: providerBottomNavScreen, page: () => ProviderBottomNavScreen()),
     GetPage(

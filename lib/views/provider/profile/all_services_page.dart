@@ -22,6 +22,9 @@ class ProviderService {
   final bool appointmentEnabled;
   final Map<String, dynamic> whyChooseUs;
   final List<dynamic> appointmentSlots;
+  final String providerName;
+  final String providerLocation;
+  final String? providerProfilePicture;
 
   ProviderService({
     required this.id,
@@ -36,10 +39,16 @@ class ProviderService {
     required this.appointmentEnabled,
     required this.whyChooseUs,
     required this.appointmentSlots,
+    required this.providerName,
+    required this.providerLocation,
+    this.providerProfilePicture,
   });
 
   factory ProviderService.fromJson(Map<String, dynamic> json) {
     final category = json['category'] ?? {};
+    final location = json['providerLocation'] ?? {};
+    final address = location['address'] ?? '';
+    
     return ProviderService(
       id: json['id'] ?? json['_id'] ?? '',
       headline: json['headline'] ?? '',
@@ -53,6 +62,9 @@ class ProviderService {
       appointmentEnabled: json['appointmentEnabled'] ?? false,
       whyChooseUs: (json['whyChooseUs'] ?? {}) as Map<String, dynamic>,
       appointmentSlots: (json['appointmentSlots'] ?? []) as List<dynamic>,
+      providerName: json['providerName'] ?? '',
+      providerLocation: address,
+      providerProfilePicture: json['providerProfilePicture'],
     );
   }
 
@@ -148,14 +160,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                       itemCount: _services.length,
                       itemBuilder: (context, index) {
                         final service = _services[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(
-                              () => const SaveServicePage(),
-                              arguments: service.toArgs(),
-                            );
-                          },
-                          child: Container(
+                        return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -200,21 +205,26 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                     Positioned(
                                       top: 10,
                                       right: 10,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: const Text(
-                                          "Edit",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
+                                      child: GestureDetector(
+                                        onTap: (){
+                                          Get.to(() =>  EditServicePage(), arguments: service.toArgs());
+                                        },
+                                        child: Container(
+                                          padding:  EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            "Edit Service",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -229,11 +239,14 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                     children: [
                                       Row(
                                         children: [
-                                          const CircleAvatar(
+                                          CircleAvatar(
                                             radius: 20,
-                                            backgroundImage: AssetImage(
-                                              "assets/images/profile.png",
-                                            ),
+                                            backgroundImage: service.providerProfilePicture != null &&
+                                                    service.providerProfilePicture!.isNotEmpty
+                                                ? NetworkImage(service.providerProfilePicture!)
+                                                : const AssetImage(
+                                                    "assets/images/emptyUser.png",
+                                                  ) as ImageProvider,
                                           ),
                                           const SizedBox(width: 12),
                                           Expanded(
@@ -242,11 +255,11 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  service.headline,
+                                                  service.providerName,
                                                   style: const TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: 14,
                                                     fontWeight:
-                                                        FontWeight.bold,
+                                                        FontWeight.w600,
                                                     color: Color(0xFF2D2D2D),
                                                   ),
                                                 ),
@@ -254,16 +267,20 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                 Row(
                                                   children: [
                                                     const Icon(
-                                                      Icons.category_outlined,
+                                                      Icons.location_on,
                                                       size: 14,
                                                       color: Colors.grey,
                                                     ),
                                                     const SizedBox(width: 4),
-                                                    Text(
-                                                      service.categoryName,
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.grey,
+                                                    Expanded(
+                                                      child: Text(
+                                                        service.providerLocation,
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                   ],
@@ -273,6 +290,16 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        service.headline,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF2D2D2D),
+                                        ),
+                                      ),
+
                                       const SizedBox(height: 12),
                                       Text(
                                         service.description,
@@ -313,16 +340,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                               ),
                                             ],
                                           ),
-                                          Text(
-                                            service.appointmentEnabled
-                                                ? "Appointment"
-                                                : "Price: \$${service.basePrice}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF2C5F4F),
-                                            ),
-                                          ),
+                                          // Price Display
+                                          _buildPriceDisplay(service),
                                         ],
                                       ),
                                     ],
@@ -330,10 +349,50 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                 )
                               ],
                             ),
-                          ),
                         );
                       },
                     ),
     );
+  }
+
+  Widget _buildPriceDisplay(ProviderService service) {
+    if (service.appointmentEnabled && service.appointmentSlots.isNotEmpty) {
+      // Get price range from appointment slots
+      final prices = service.appointmentSlots
+          .map((slot) => slot['price'] as num)
+          .toList();
+      
+      if (prices.isEmpty) {
+        return const Text(
+          "Appointment price: N/A",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2C5F4F),
+          ),
+        );
+      }
+
+      final minPrice = prices.reduce((a, b) => a < b ? a : b);
+
+      return Text(
+        "Appointment price: \$${minPrice.toStringAsFixed(0)}",
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF2C5F4F),
+        ),
+      );
+    } else {
+      // Show base price
+      return Text(
+        "Service price: \$${service.basePrice.toStringAsFixed(0)}",
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF2C5F4F),
+        ),
+      );
+    }
   }
 }

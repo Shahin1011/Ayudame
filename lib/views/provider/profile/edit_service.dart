@@ -16,14 +16,14 @@ import 'package:middle_ware/utils/constants.dart' hide AppColors;
 import 'package:middle_ware/utils/token_service.dart';
 import 'package:middle_ware/models/user/categories/category_model.dart';
 
-class SaveServicePage extends StatefulWidget {
-  const SaveServicePage({Key? key}) : super(key: key);
+class EditServicePage extends StatefulWidget {
+  const EditServicePage({Key? key}) : super(key: key);
 
   @override
-  State<SaveServicePage> createState() => _SaveServicePageState();
+  State<EditServicePage> createState() => _EditServicePageState();
 }
 
-class _SaveServicePageState extends State<SaveServicePage> {
+class _EditServicePageState extends State<EditServicePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _headlineController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
@@ -287,8 +287,7 @@ class _SaveServicePageState extends State<SaveServicePage> {
     });
 
     try {
-      final request = http.MultipartRequest(
-        'PUT',
+      final request = http.MultipartRequest('PUT',
         Uri.parse("${AppConstants.BASE_URL}/api/providers/services/$_serviceId"),
       );
       request.headers['Authorization'] = 'Bearer $token';
@@ -329,13 +328,18 @@ class _SaveServicePageState extends State<SaveServicePage> {
       final data = json.decode(responseBody);
 
       if (streamed.statusCode == 200 || streamed.statusCode == 201) {
+        // Navigate back first
+        Get.back();
+        
+        // Show success snackbar after navigation
         Get.snackbar(
           'Success',
           data['message'] ?? 'Service updated successfully!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
         );
-        Get.back();
       } else {
         Get.snackbar(
           'Error',
