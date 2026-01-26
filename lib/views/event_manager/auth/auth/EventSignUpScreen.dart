@@ -7,7 +7,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventSignUpScreen extends StatefulWidget {
-  const EventSignUpScreen({Key? key}) : super(key: key);
+  const EventSignUpScreen({super.key});
 
   @override
   State<EventSignUpScreen> createState() => _EventSignUpScreenState();
@@ -391,7 +391,7 @@ class _EventSignUpScreenState extends State<EventSignUpScreen> {
         border: Border.all(color: const Color(0xFFE8E8E8)),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedIdType,
+        initialValue: _selectedIdType,
         hint: Text(
           "Select ID Type",
           style: TextStyle(

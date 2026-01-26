@@ -5,6 +5,8 @@ import 'package:middle_ware/views/components/custom_app_bar.dart';
 import '../home/widgets/custom_events_card.dart';
 
 class MyEvents extends StatelessWidget{
+  const MyEvents({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

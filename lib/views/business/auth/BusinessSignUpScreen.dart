@@ -6,7 +6,7 @@ import 'dart:io';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class BusinessSignUpScreen extends StatefulWidget {
-  const BusinessSignUpScreen({Key? key}) : super(key: key);
+  const BusinessSignUpScreen({super.key});
 
   @override
   State<BusinessSignUpScreen> createState() => _BusinessSignUpScreenState();
@@ -126,8 +126,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   _fullNameController,
                   'Full name',
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter full name';
+                    }
                     return null;
                   },
                 ),
@@ -139,8 +140,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   'E-mail address or phone number',
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter email or phone';
+                    }
                     return null;
                   },
                 ),
@@ -160,8 +162,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                       'dd/mm/yy',
                       suffixIcon: Icons.calendar_month_outlined,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please select date of birth';
+                        }
                         return null;
                       },
                     ),
@@ -175,8 +178,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   _businessNameController,
                   'Enter your business name',
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter business name';
+                    }
                     return null;
                   },
                 ),
@@ -185,8 +189,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   _businessCategoryController,
                   'Enter business category',
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter business category';
+                    }
                     return null;
                   },
                 ),
@@ -195,8 +200,9 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                   _businessAddressController,
                   'Enter business address',
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter business address';
+                    }
                     return null;
                   },
                 ),
@@ -255,10 +261,12 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                     setState(() => _obscurePassword = !_obscurePassword);
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please enter password';
-                    if (value.length < 6)
+                    }
+                    if (value.length < 6) {
                       return 'Password must be at least 6 characters';
+                    }
                     return null;
                   },
                 ),
@@ -273,10 +281,12 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                     );
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Please confirm password';
-                    if (value != _passwordController.text)
+                    }
+                    if (value != _passwordController.text) {
                       return 'Passwords do not match';
+                    }
                     return null;
                   },
                 ),
@@ -330,7 +340,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                                   return;
                                 }
 
-                                _authViewModel.registerFromUI(
+                                _authViewModel.signUp(
                                   fullName: _fullNameController.text.trim(),
                                   contact: _emailPhoneController.text.trim(),
                                   businessName: _businessNameController.text

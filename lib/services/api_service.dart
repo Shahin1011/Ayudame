@@ -7,7 +7,7 @@ import 'storage_service.dart';
 class ApiService {
   // Lavellh Backend API
   static const String baseURL =
-      'https://cal-intensity-achieved-neo.trycloudflare.com';
+      'https://libs-revolution-nomination-have.trycloudflare.com';
 
   /// Get default headers with authentication token
   static Future<Map<String, String>> _getDefaultHeaders({
@@ -275,6 +275,19 @@ class ApiService {
 
       debugPrint("✅ Response Status: ${response.statusCode}");
       debugPrint("📥 Response Body: ${response.body}");
+
+      // Check for token expiration
+      if (response.statusCode == 401) {
+        try {
+          final errorData = jsonDecode(response.body);
+          if (errorData['code'] == 'TOKEN_EXPIRED') {
+            debugPrint("🔒 Token has expired - user needs to re-login");
+            throw Exception('TOKEN_EXPIRED');
+          }
+        } catch (e) {
+          if (e.toString().contains('TOKEN_EXPIRED')) rethrow;
+        }
+      }
 
       // We need to return a StreamedResponse because the service expects it,
       // or we can change the service to expect a Response.

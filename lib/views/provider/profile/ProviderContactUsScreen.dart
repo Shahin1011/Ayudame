@@ -3,7 +3,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderContactUsScreen extends StatelessWidget {
-  const ProviderContactUsScreen({Key? key}) : super(key: key);
+  const ProviderContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

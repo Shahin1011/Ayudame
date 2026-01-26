@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dashed_rect/dashed_rect.dart';
 
 class BankAddInformationPage extends StatefulWidget {
-  const BankAddInformationPage({Key? key}) : super(key: key);
+  const BankAddInformationPage({super.key});
 
   @override
   State<BankAddInformationPage> createState() => _BankInformationPageState();

@@ -3,7 +3,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderFaqScreen extends StatefulWidget {
-  const ProviderFaqScreen({Key? key}) : super(key: key);
+  const ProviderFaqScreen({super.key});
 
   @override
   State<ProviderFaqScreen> createState() => _ProviderFaqScreenState();

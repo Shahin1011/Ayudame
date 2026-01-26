@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import '../../../viewmodels/BankController.dart';
+import '../../../viewmodels/bank_payout_controller.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class AddBankInfoScreen extends StatelessWidget {
@@ -10,7 +10,7 @@ class AddBankInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<BankController>();
+    final controller = Get.find<BankPayoutController>();
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,

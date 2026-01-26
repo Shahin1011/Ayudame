@@ -5,6 +5,7 @@ import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 
 import '../../../widgets/custom_appbar.dart';
 import 'EventHelpSupportScreen.dart';
@@ -14,7 +15,7 @@ import 'EventAboutUsScreen.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventProfilePage extends StatefulWidget {
-  const EventProfilePage({Key? key}) : super(key: key);
+  const EventProfilePage({super.key});
 
   @override
   State<EventProfilePage> createState() => _EventProfilePageState();
@@ -131,6 +132,13 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           title: 'Notifications',
                           onTap: () =>
                               Get.to(() => const EventNotificationPage()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.bank,
+                          title: 'Bank Information',
+                          onTap: () {
+                            Get.toNamed(AppRoutes.bankInfo);
+                          },
                           showDivider: false,
                         ),
                       ],

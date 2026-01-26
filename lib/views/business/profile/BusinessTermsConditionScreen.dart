@@ -5,7 +5,7 @@ import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class BusinessTermsConditionScreen extends StatefulWidget {
-  const BusinessTermsConditionScreen({Key? key}) : super(key: key);
+  const BusinessTermsConditionScreen({super.key});
 
   @override
   State<BusinessTermsConditionScreen> createState() =>

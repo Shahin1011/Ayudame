@@ -8,15 +8,16 @@ import '../../views/business/auth/BusinessForgotPasswordScreen.dart';
 import '../../views/business/auth/BusinessResetPasswordScreen.dart';
 import '../../views/business/auth/BusinessLoginScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
-import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
+import '../../views/business/auth/BusinessSignUpVerification.dart';
 import '../../views/business/home/BusinessNotificationPage.dart';
 import '../../views/business/profile/BusinessProfile.dart';
+import '../../views/business/profile/bank_information.dart';
 import '../../views/business/profile/BusinessTermsConditionScreen.dart';
 import '../../views/business/profile/PrivacyPolicyScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
-import '../../views/event_manager/auth/auth/EventVerificationCodeScreen.dart';
+import '../../views/event_manager/auth/auth/EventSignUpVerification.dart';
 import '../../views/event_manager/auth/auth/EventResetPasswordScreen.dart';
 import '../../views/event_manager/event/CreateEventPage.dart';
 import '../../views/event_manager/profile/EventProfile.dart';
@@ -65,8 +66,6 @@ import '../../views/user/home/ProvidersScreen.dart';
 import '../../views/user/orders/AppointmentScreen.dart';
 import '../../views/user/orders/BookingPaidScreen.dart';
 import '../../views/user/orders/BookingScreen.dart';
-import '../../views/user/orders/OrderDetailsScreen.dart';
-import '../../views/user/orders/OrderHistoryScreen.dart';
 import '../../views/user/orders/PaymentScreen.dart';
 import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
@@ -155,6 +154,7 @@ class AppRoutes {
   static const String eventCreate = '/EventListScreen';
   static const String eventEdit = '/EditEventPage';
   static const String eventProfile = '/EventProfile';
+  static const String bankInfo = '/bank-info';
 
   // ============================================
   // GET PAGES DEFINITION
@@ -172,6 +172,7 @@ class AppRoutes {
     GetPage(name: terms, page: () => const BusinessTermsConditionScreen()),
     GetPage(name: privacy, page: () => const BusinessPrivacyPolicyScreen()),
     GetPage(name: notifications, page: () => const BusinessNotificationPage()),
+    GetPage(name: bankInfo, page: () => const BankInformationScreen()),
 
     // User Auth & Features
     GetPage(name: userlogin, page: () => const LoginScreen()),
@@ -246,7 +247,7 @@ class AppRoutes {
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(
       name: businessOtp,
-      page: () => const BusinessVerificationCodeScreen(),
+      page: () => const BusinessSignUpVerification(),
     ),
     GetPage(
       name: businessForgotPass,
@@ -274,7 +275,7 @@ class AppRoutes {
       name: eventForgotPass,
       page: () => const EventForgotPasswordScreen(),
     ),
-    GetPage(name: eventOtp, page: () => const EventVerificationCodeScreen()),
+    GetPage(name: eventOtp, page: () => const EventSignUpVerification()),
     GetPage(
       name: eventResetPassword,
       page: () => const EventResetPasswordScreen(),

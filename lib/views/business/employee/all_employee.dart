@@ -105,8 +105,8 @@ class BusinessEmployeeListScreen extends StatelessWidget {
                             'Service',
                         description:
                             employee.about ?? 'No description available',
-                        rating: 4.5, // Placeholder rating
-                        reviewCount: 0, // Placeholder
+                        rating: employee.rating ?? 0.0,
+                        reviewCount: employee.totalReviews ?? 0,
                         price: _getDisplayPrice(employee),
                         onViewDetails: () {
                           Get.toNamed(
@@ -126,6 +126,7 @@ class BusinessEmployeeListScreen extends StatelessWidget {
                             : 'assets/images/profile.png',
                         postedTime: employee.availableTime ?? 'Available',
                         showOnlineIndicator: true,
+                        showFavorite: false,
                       ),
                     );
                   },

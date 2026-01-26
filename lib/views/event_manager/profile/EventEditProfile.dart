@@ -416,7 +416,7 @@ class _EventEditProfileScreenState extends State<EventEditProfileScreen> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
-          value: _selectedIdType,
+          initialValue: _selectedIdType,
           hint: Text(
             "Select ID Type",
             style: TextStyle(

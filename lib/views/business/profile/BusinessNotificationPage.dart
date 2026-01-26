@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class BusinessNotificationPage extends StatelessWidget {
-  const BusinessNotificationPage({Key? key}) : super(key: key);
+  const BusinessNotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,8 @@ import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:middle_ware/views/user/home/widgets/custom_provider_card.dart';
 
 class ProvidersScreen extends StatelessWidget{
+  const ProvidersScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {

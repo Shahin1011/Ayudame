@@ -3,13 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/orders/OrderProvider.dart';
 import 'package:middle_ware/views/provider/profile/ProviderHelpSupportScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
 import 'package:middle_ware/views/provider/profile/ProviderPortfolioPage.dart';
 import 'package:middle_ware/views/provider/profile/ProviderPrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.dart';
-import 'package:middle_ware/views/provider/profile/all_service.dart';
 import 'package:middle_ware/views/provider/profile/all_services_page.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
@@ -18,7 +16,7 @@ import 'package:middle_ware/views/provider/profile/provider_payment.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderProfilePage extends StatefulWidget {
-  const ProviderProfilePage({Key? key}) : super(key: key);
+  const ProviderProfilePage({super.key});
 
   @override
   State<ProviderProfilePage> createState() => _ProviderProfilePageState();
@@ -326,7 +324,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.bank,
                           title: 'Bank Information',
                           onTap: () {
-                            Get.to(() => BankInformationScreen());
+                            // Get.to(() => BankInformationScreen());
                           },
                           showDivider: false,
                         ),
@@ -637,6 +635,8 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
+                          // In a real app, this would call a deletion API
+                          Get.offAllNamed('/provider-login'); // AppRoutes.providerLogin
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Account deleted successfully'),
