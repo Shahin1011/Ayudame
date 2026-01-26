@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
 import '../../../models/user/profile/bank_information_model.dart';
-import '../../../models/card_model.dart';
+import '../../../models/user/profile/card_model.dart';
 
 class BankController extends GetxController {
   Rxn<CardModel> defaultCard = Rxn<CardModel>();

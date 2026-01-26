@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
-import '../../../core/routes/app_routes.dart';
+import '../../../controller/provider/profile/provider_profile_controller.dart';
+import '../../../controller/provider/home_provider_controller.dart';
 
 class HomeProviderScreen extends StatefulWidget {
   const HomeProviderScreen({Key? key}) : super(key: key);
@@ -14,6 +15,8 @@ class HomeProviderScreen extends StatefulWidget {
 }
 
 class _HomeProviderScreenState extends State<HomeProviderScreen> {
+  final HomeProviderController controller = Get.put(HomeProviderController());
+  final ProviderProfileController profileController = Get.put(ProviderProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -32,161 +35,169 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           ),
           flexibleSpace: Padding(
             padding: const EdgeInsets.fromLTRB(20, 40, 20, 16),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Color(0xFFD4B896),
-                  backgroundImage: AssetImage('assets/images/men.png'),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Welcome Back',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Seam Rahman',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+            child: Obx(() {
+              var user = profileController.providerProfile.value?.userId;
+              return Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: const Color(0xFFD4B896),
+                    backgroundImage: user?.profilePicture != null && user!.profilePicture!.isNotEmpty
+                        ? NetworkImage(user.profilePicture!)
+                        : const AssetImage('assets/images/emptyUser.png') as ImageProvider,
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>  ProviderNotificationPage(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      AppIcons.notification,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF2D6A4F),
-                        BlendMode.srcIn,
-                      ),
-                      width: 20,
-                      height: 20,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Welcome Back',
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          user?.fullName ?? 'Seam Rahman',
+                          style: const TextStyle(
+                            fontFamily: "Inter",
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-
-              ],
-            ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProviderNotificationPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: SvgPicture.asset(
+                        AppIcons.notification,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF2D6A4F),
+                          BlendMode.srcIn,
+                        ),
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
           ),
         ),
       ),
 
       backgroundColor: AppColors.bgColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //  <----- end of appbar  ------>
-              const SizedBox(height: 16),
-              // Stats Cards
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    _buildStatCard('Total Bookings', '800'),
-                    const SizedBox(width: 8),
-                    _buildStatCard('Completes', '720'),
-                    const SizedBox(width: 8),
-                    _buildStatCard('Cancelled', '420'),
-                  ],
+        child: RefreshIndicator(
+          onRefresh: () => controller.fetchBookingStats(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //  <----- end of appbar  ------>
+                const SizedBox(height: 16),
+                // Stats Cards
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Obx(() => Row(
+                    children: [
+                      _buildStatCard('Total Bookings', '${controller.totalBookings.value}'),
+                      const SizedBox(width: 8),
+                      _buildStatCard('Completed', '${controller.completedBookings.value}'),
+                      const SizedBox(width: 8),
+                      _buildStatCard('Cancelled', '${controller.cancelledBookings.value}'),
+                    ],
+                  )),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Recent Bookings Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Recent Bookings',
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: const Text(
-                        'See all',
+                const SizedBox(height: 20),
+                // Recent Bookings Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Recent Bookings',
                         style: TextStyle(
                           fontFamily: "Inter",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.mainAppColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
                       ),
-                    ),
-                  ],
+                      GestureDetector(
+                        onTap: () {},
+                        child: const Text(
+                          'See all',
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.mainAppColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              // Booking Cards
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    _buildBookingCard(
-                      name: 'Seam Rahman',
-                      rating: 4.8,
-                      reviews: 448,
-                      address: '123 Oak Street Spring,ILB 64558',
-                      date: '29 October,2025',
-                      problemNote:
-                          'Please ensure all windows are securely locked after cleaning.',
-                      totalPrice: 500,
-                      downPayment: 200,
-                      showReschedule: false,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildBookingCard(
-                      name: 'Seam Rahman',
-                      rating: 4.8,
-                      reviews: 448,
-                      address: '123 Oak Street Spring,ILB 64558',
-                      date: '29 October,2025',
-                      problemNote:
-                          'Please ensure all windows are securely locked after cleaning.',
-                      price: 120,
-                      showReschedule: true,
-                    ),
-                  ],
+                const SizedBox(height: 12),
+                // Booking Cards
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      _buildBookingCard(
+                        name: 'Seam Rahman',
+                        rating: 4.8,
+                        reviews: 448,
+                        address: '123 Oak Street Spring,ILB 64558',
+                        date: '29 October,2025',
+                        problemNote:
+                            'Please ensure all windows are securely locked after cleaning.',
+                        totalPrice: 500,
+                        downPayment: 200,
+                        showReschedule: false,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildBookingCard(
+                        name: 'Seam Rahman',
+                        rating: 4.8,
+                        reviews: 448,
+                        address: '123 Oak Street Spring,ILB 64558',
+                        date: '29 October,2025',
+                        problemNote:
+                            'Please ensure all windows are securely locked after cleaning.',
+                        price: 120,
+                        showReschedule: true,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

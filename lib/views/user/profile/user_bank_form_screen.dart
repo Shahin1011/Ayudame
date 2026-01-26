@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../models/card_model.dart';
+import '../../../models/user/profile/card_model.dart';
 import '../../../controller/user/profile/bank_controller.dart';
 import '../../components/custom_app_bar.dart';
 import 'package:get/get.dart';

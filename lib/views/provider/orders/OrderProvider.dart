@@ -6,6 +6,9 @@ import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/inbox/chat_screen.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+import '../../../../controller/provider/order/order_provider_controller.dart';
+import '../../../../models/provider/provider_booking_model.dart';
+import '../../../../models/provider/provider_appointment_model.dart';
 
 class OrderHistoryProviderScreen extends StatefulWidget {
   const OrderHistoryProviderScreen({Key? key}) : super(key: key);
@@ -17,6 +20,7 @@ class OrderHistoryProviderScreen extends StatefulWidget {
 
 class _OrderHistoryProviderScreenState
     extends State<OrderHistoryProviderScreen> {
+  final OrderProviderController controller = Get.put(OrderProviderController());
   int _selectedTab = 0;
   int _selectedIndex = 2;
 
@@ -35,7 +39,7 @@ class _OrderHistoryProviderScreenState
   }
 
   Widget _buildFilterTabs() {
-    final tabs = ['Appointment', 'Accepted', 'Cancelled', 'Pending'];
+    final tabs = ['Appointment', 'Pending', 'Confirmed', 'In Progress', "Completed", "Cancelled", "Rejected"];
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -74,68 +78,51 @@ class _OrderHistoryProviderScreenState
   }
 
   Widget _buildCurrentTabContent() {
-    switch (_selectedTab) {
-      case 0:
-        return _buildAppointmentList();
-      case 1:
-        return _buildAcceptedList();
-      case 2:
-        return _buildCancelledList();
-      case 3:
-        return _buildPendingList();
-      default:
-        return const Center(child: Text("No Data Found"));
-    }
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      switch (_selectedTab) {
+        case 0: return _buildAppointmentList(controller.appointmentList);
+        case 1: return _buildBookingList(controller.pendingList, "Pending");
+        case 2: return _buildBookingList(controller.confirmedList, "Confirmed");
+        case 3: return _buildBookingList(controller.inProgressList, "In Progress");
+        case 4: return _buildBookingList(controller.completedList, "Completed");
+        case 5: return _buildBookingList(controller.cancelledList, "Cancelled");
+        case 6: return _buildBookingList(controller.rejectedList, "Rejected");
+        default: return const Center(child: Text("No Data Found"));
+      }
+    });
   }
 
-  Widget _buildAppointmentList() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 2,
-      itemBuilder: (context, index) => _buildOrderCard(
-        status: "Appointment",
-        onTap: () => _navigateToDetails("Appointment"),
+  Widget _emptyState(String label) {
+    return Center(
+      child: Text(
+        "No $label found",
+        style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
       ),
     );
   }
 
-  Widget _buildAcceptedList() {
-    return ListView(
+  Widget _buildAppointmentList(List<ProviderAppointment> list) {
+    if (list.isEmpty) return _emptyState("appointments");
+    return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        _buildOrderCard(
-          status: " Accepted appointment ",
-          onTap: () => _navigateToDetails("Accepted"),
-        ),
-        const SizedBox(height: 12),
-        _buildOrderCard(
-          status: "On Going",
-          isOngoing: true,
-          onTap: () => _navigateToDetails("On Going"),
-        ),
-      ],
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        return _buildAppointmentCard(item: list[index]);
+      },
     );
   }
 
-  Widget _buildCancelledList() {
+  Widget _buildBookingList(List<ProviderBooking> list, String label) {
+    if (list.isEmpty) return _emptyState("$label bookings");
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 2,
-      itemBuilder: (context, index) => _buildOrderCard(
-        status: "Cancelled",
-        onTap: () => _navigateToDetails("Cancelled"),
-      ),
-    );
-  }
-
-  Widget _buildPendingList() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 2,
-      itemBuilder: (context, index) => _buildOrderCard(
-        status: "Pending",
-        onTap: () => _navigateToDetails("Pending"),
-      ),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        return _buildBookingCard(item: list[index]);
+      },
     );
   }
 
@@ -148,166 +135,55 @@ class _OrderHistoryProviderScreenState
     );
   }
 
-  Widget _buildOrderCard({
-    required String status,
-    bool isOngoing = false,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildAppointmentCard({required ProviderAppointment item}) {
+    String status = item.appointmentStatus?.toLowerCase() ?? 'pending';
+    String dateStr = item.appointmentDate ?? '';
+    try {
+      if (dateStr.isNotEmpty) {
+        dateStr = DateFormat('dd MMMM, yyyy').format(DateTime.parse(dateStr));
+      }
+    } catch (_) {}
+
+    String timeStr = item.timeSlot?.startTime ?? '';
+    if (timeStr.isEmpty) {
+        // Fallback to parse from date if it has time
+        try {
+            if (item.appointmentDate != null) {
+                // If date has time, usually API provides it separate or ISO
+                // item.appointmentDate is 00:00:00Z usually
+            }
+        } catch (_) {}
+    }
+
+    // Convert 24h to 12h if needed, or keeping as is "09:00"
+    if (timeStr.isNotEmpty) {
+      try {
+         final dt = DateFormat('HH:mm').parse(timeStr);
+         timeStr = DateFormat('h:mm a').format(dt);
+      } catch (_) {}
+    }
+
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      onTap: () => _navigateToDetails(status),
+      child: _cardContainer(
+        userImage: item.user?.profilePicture,
+        userName: item.user?.fullName,
+        dateStr: dateStr,
+        timeStr: timeStr,
+        note: item.userNotes,
+        content: Column(
           children: [
             Row(
               children: [
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage('assets/images/men.png'),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Seam Rahman",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.amber, size: 14),
-                          Text(
-                            " 4.8(448 reviews)",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
+                Text(
+                  "Price: \$${item.totalAmount ?? 0}",
+                  style: const TextStyle(
+                    color: Color(0xFF2C5F4F),
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                const Text(
-                  "12:25 pm",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            // Address
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Address: ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                      fontFamily: "Inter",
-                    ),
-                  ),
-                  const TextSpan(
-                    text: '123 Oak Street Spring,ILB 64558',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF666666),
-                      fontFamily: "Inter",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            // Date
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Date: ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                      fontFamily: "Inter",
-                    ),
-                  ),
-                  const TextSpan(
-                    text: '29 October, 2025',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF666666),
-                      fontFamily: "Inter",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Problem Note
-            const Text(
-              'Problem Note:',
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              "Please ensure all windows are securely locked after cleaning.",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 12,
-                color: Color(0xFF666666),
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            if (status == " On Going " || status == " Pending ")
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total Price: \$500",
-                    style: TextStyle(
-                      color: Color(0xFF2C5F4F),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "Down payment: \$200",
-                    style: TextStyle(
-                      color: Color(0xFF2C5F4F),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              )
-            else
-              const Text(
-                "Price: \$120",
-                style: TextStyle(
-                  color: Color(0xFF2C5F4F),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
             const SizedBox(height: 16),
             _buildCardButtons(status),
           ],
@@ -316,8 +192,191 @@ class _OrderHistoryProviderScreenState
     );
   }
 
+  Widget _buildBookingCard({required ProviderBooking item}) {
+    String status = item.bookingStatus?.toLowerCase() ?? 'pending';
+    String dateStr = item.bookingDate ?? '';
+    try {
+      if (dateStr.isNotEmpty) {
+        dateStr = DateFormat('dd MMMM, yyyy').format(DateTime.parse(dateStr));
+      }
+    } catch (_) {}
+    
+    // Bookings might not have explicit timeSlot in generic booking model, 
+    // but try to see if we can derive anything or show status.
+    // For now we leave time empty or show 'Booking' label.
+    String timeStr = ""; 
+
+    return GestureDetector(
+      onTap: () => _navigateToDetails(status),
+      child: _cardContainer(
+        userImage: item.user?.profilePicture,
+        userName: item.user?.fullName,
+        dateStr: dateStr,
+        timeStr: timeStr,
+        note: item.userNotes,
+        content: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total Price: \$${item.totalAmount ?? 0}",
+                  style: const TextStyle(
+                    color: Color(0xFF2C5F4F),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (item.downPayment != null && item.downPayment! > 0)
+                  Text(
+                    "Down payment: \$${item.downPayment}",
+                    style: const TextStyle(
+                      color: Color(0xFF2C5F4F),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildCardButtons(status),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _cardContainer({
+    String? userImage,
+    String? userName,
+    String? dateStr,
+    String? timeStr,
+    String? note,
+    required Widget content,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: (userImage != null && userImage.isNotEmpty)
+                    ? NetworkImage(userImage)
+                    : const AssetImage('assets/images/emptyUser.png') as ImageProvider,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName ?? "User",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    // Removed static rating as per "real data" request
+                  ],
+                ),
+              ),
+              if (timeStr != null && timeStr.isNotEmpty)
+                Text(
+                  timeStr,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          RichText(
+            text: const TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Address: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: 'Address not available',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
+          RichText(
+            text: TextSpan(
+              children: [
+                const TextSpan(
+                  text: 'Date: ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: "Inter",
+                  ),
+                ),
+                TextSpan(
+                  text: dateStr ?? '',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF666666),
+                    fontFamily: "Inter",
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Problem Note:',
+            style: TextStyle(
+              fontFamily: "Inter",
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            note ?? "No notes provided",
+            style: const TextStyle(
+              fontFamily: "Inter",
+              fontSize: 12,
+              color: Color(0xFF666666),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          content,
+        ],
+      ),
+    );
+  }
+
   Widget _buildCardButtons(String status) {
-    if (status == "Appointment") {
+    status = status.toLowerCase();
+    
+    if (status == "confirmed" || status == "appointment") {
       return Column(
         children: [
           Row(
@@ -336,7 +395,6 @@ class _OrderHistoryProviderScreenState
                   ),
                 ),
               ),
-
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
@@ -353,19 +411,17 @@ class _OrderHistoryProviderScreenState
             ],
           ),
           TextButton(
-            onPressed: () =>
-                _showConfirmationDialog(context, "cancel the appointment"),
+            onPressed: () => _showConfirmationDialog(context, "cancel the appointment"),
             child: const Text("Cancel", style: TextStyle(color: Colors.red)),
           ),
         ],
       );
-    } else if (status == "Pending") {
+    } else if (status == "pending") {
       return Row(
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () =>
-                  _showConfirmationDialog(context, "cancel the order"),
+              onPressed: () => _showConfirmationDialog(context, "cancel the order"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.white,
                 side: const BorderSide(color: Colors.red),
@@ -389,7 +445,7 @@ class _OrderHistoryProviderScreenState
           ),
         ],
       );
-    } else if (status == "Cancelled") {
+    } else if (status == "cancelled" || status == "rejected") {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -397,11 +453,12 @@ class _OrderHistoryProviderScreenState
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Center(
-          child: Text("Cancelled", style: TextStyle(color: Colors.grey)),
+        child: Center(
+          child: Text(status.toUpperCase(), style: const TextStyle(color: Colors.grey)),
         ),
       );
     } else {
+      // Completed, In Progress, etc.
       return SizedBox(
         width: double.infinity,
         child: ElevatedButton(
@@ -409,7 +466,7 @@ class _OrderHistoryProviderScreenState
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2C5F4F),
           ),
-          child: Text(status, style: const TextStyle(color: Colors.white)),
+          child: Text(status.toUpperCase(), style: const TextStyle(color: Colors.white)),
         ),
       );
     }

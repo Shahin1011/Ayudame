@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/orders/OrderProvider.dart';
 import 'package:middle_ware/views/provider/profile/ProviderHelpSupportScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
-import 'package:middle_ware/views/provider/profile/ProviderPortfolioPage.dart';
+import 'package:middle_ware/views/provider/profile/portfolio/PortfolioListScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderPrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.dart';
-import 'package:middle_ware/views/provider/profile/all_service.dart';
 import 'package:middle_ware/views/provider/profile/all_services_page.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
 import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
 import 'package:middle_ware/views/provider/profile/provider_history.dart';
 import 'package:middle_ware/views/provider/profile/provider_payment.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../controller/provider/profile/provider_profile_controller.dart';
+import '../../../controller/provider/home_provider_controller.dart';
+import '../../../utils/token_service.dart';
 
 class ProviderProfilePage extends StatefulWidget {
   const ProviderProfilePage({Key? key}) : super(key: key);
@@ -25,25 +28,15 @@ class ProviderProfilePage extends StatefulWidget {
 }
 
 class _ProviderProfilePageState extends State<ProviderProfilePage> {
+  final ProviderProfileController controller = Get.put(
+      ProviderProfileController());
+  final HomeProviderController homeController = Get.put(HomeProviderController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         title: "Profile",
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Navigator.pushNamed(context, '/edit/profile');
-            },
-            icon: SvgPicture.asset(
-              AppIcons.profileIcon,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-        ],
       ),
       backgroundColor: AppColors.bgColor,
       body: Column(
@@ -54,59 +47,77 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                 children: [
                   const SizedBox(height: 24),
 
-                  // Profile Picture and Name
-                  Stack(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: const CircleAvatar(
-                          radius: 50,
-                          backgroundImage: AssetImage(
-                            "assets/images/profile.png",
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (controller.errorMessage.isNotEmpty) {
+                      return Center(
+                          child: Text(controller.errorMessage.value));
+                    }
+
+                    final profile = controller.providerProfile.value;
+                    if (profile == null) {
+                      return const Center(
+                          child: Text("No profile data found"));
+                    }
+                    return Column(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: profile.userId.profilePicture !=
+                                null &&
+                                profile.userId.profilePicture!.isNotEmpty
+                                ? NetworkImage(profile.userId.profilePicture!)
+                                : const AssetImage(
+                              "assets/images/emptyUser.png",
+                            ) as ImageProvider,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                  const Text(
-                    'Seam Rahman',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
+                        Text(
+                          profile.userId.fullName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
 
-                  const SizedBox(height: 4),
+                        const SizedBox(height: 4),
 
-                  const Text(
-                    'seamr7845@gmail.com',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Inter",
-                    ),
-                  ),
+                        Text(
+                          profile.userId.email,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: "Inter",
+                          ),
+                        ),
 
-                  const SizedBox(height: 20),
+                      ],
+                    );
+                  }),
 
-                  Padding(
+                  Obx(() => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
@@ -148,7 +159,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                 IntrinsicHeight(
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                     children: [
                                       // This Month Section
                                       Column(
@@ -160,9 +171,9 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                               color: Colors.grey.shade600,
                                             ),
                                           ),
-                                          const Text(
-                                            '05',
-                                            style: TextStyle(
+                                          Text(
+                                            homeController.myOrdersThisMonth.value.toString().padLeft(2, '0'),
+                                            style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -184,9 +195,9 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                               color: Colors.grey.shade600,
                                             ),
                                           ),
-                                          const Text(
-                                            '442',
-                                            style: TextStyle(
+                                          Text(
+                                            homeController.myOrdersTotal.value.toString().padLeft(2, '0'),
+                                            style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -239,9 +250,9 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                   ],
                                 ),
                                 const SizedBox(height: 10),
-                                const Text(
-                                  '\$2000',
-                                  style: TextStyle(
+                                Text(
+                                  '\$${homeController.incomeTotal.value}',
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
@@ -253,7 +264,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                         ),
                       ],
                     ),
-                  ),
+                  )),
                   const SizedBox(height: 20),
 
                   // Account Information Section
@@ -288,21 +299,21 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.profileIcon,
                           title: 'Edit Profile',
                           onTap: () {
-                        Get.to (() => const ProviderEditProfileScreen());
+                            Get.to(() => const ProviderEditProfileScreen());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.all_service,
                           title: 'All Services',
                           onTap: () {
-                           Get.to (()=> AllServicesPage());
+                            Get.to(() => AllServicesPage());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.oder_history,
                           title: 'Order History',
                           onTap: () {
-                           Get.to (()=> ProviderHistoryProviderScreen());
+                            Get.to(() => ProviderHistoryProviderScreen());
                           },
                         ),
                         _buildMenuItem(
@@ -310,7 +321,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           title: 'Portfolio',
                           onTap: () {
                             // Get.to(() => PortfolioPage());
-                                  Get.to(() => PortfolioListScreen());
+                            Get.to(() => PortfolioListScreen());
                           },
                         ),
                         _buildMenuItem(
@@ -318,8 +329,6 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           title: 'Payment History',
                           onTap: () {
                             Get.to(() => const provider_PaymentHistoryScreen());
-
-
                           },
                         ),
                         _buildMenuItem(
@@ -368,14 +377,14 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.privacy,
                           title: 'Privacy Policy',
                           onTap: () {
-                           Get.to (()=> const ProviderPrivacyPolicyScreen());
+                            Get.to(() => const ProviderPrivacyPolicyScreen());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.terms,
                           title: 'Terms & Condition',
                           onTap: () {
-                        Get.to (()=> const ProviderTermsConditionScreen());
+                            Get.to(() => const ProviderTermsConditionScreen());
                           },
                           showDivider: false,
                         ),
@@ -417,14 +426,14 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           iconPath: AppIcons.notification,
                           title: 'Notification',
                           onTap: () {
-                       Get.to  (()=> const ProviderNotificationPage());
+                            Get.to(() => const ProviderNotificationPage());
                           },
                         ),
                         _buildMenuItem(
                           iconPath: AppIcons.help,
                           title: 'Help & Support',
                           onTap: () {
-                           Get.to (()=> ProviderHelpSupportScreen());
+                            Get.to(() => ProviderHelpSupportScreen());
                           },
                         ),
                         _buildMenuItem(
@@ -454,6 +463,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
       ),
     );
   }
+
 
   void _showLogoutDialog() {
     showDialog(
@@ -526,14 +536,26 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          // Clear the token
+                          await TokenService().clearToken();
+
+                          // Clear the isLoggedIn flag
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.remove('isLoggedIn');
+
+                          // Close dialog
                           Navigator.of(context).pop();
-                          // Add your logout logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Logged out successfully'),
-                              backgroundColor: Colors.green,
-                            ),
+
+                          // Navigate to login screen and clear all previous routes
+                          Get.offAllNamed(AppRoutes.providerLogin);
+
+                          // Show success message
+                          Get.snackbar(
+                            'Success',
+                            'Logged out successfully',
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -671,6 +693,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
       },
     );
   }
+
 
   Widget _buildMenuItem({
     required String iconPath,
