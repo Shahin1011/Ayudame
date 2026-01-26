@@ -12,14 +12,14 @@ class CustomEventCard extends StatelessWidget {
   final int attendingCount;
 
   const CustomEventCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.eventName,
     required this.date,
     required this.timeRange,
     required this.location,
     required this.attendingCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

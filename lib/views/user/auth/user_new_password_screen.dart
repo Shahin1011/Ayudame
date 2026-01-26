@@ -6,6 +6,8 @@ import '../../../core/routes/app_routes.dart';
 
 
 class UserNewPasswordScreen extends StatefulWidget{
+  const UserNewPasswordScreen({super.key});
+
 
   @override
   State<UserNewPasswordScreen> createState() => _UserNewPasswordScreenState();

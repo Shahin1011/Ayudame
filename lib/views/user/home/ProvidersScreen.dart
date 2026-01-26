@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class ProvidersScreen extends StatelessWidget {
-  const ProvidersScreen({Key? key}) : super(key: key);
+  const ProvidersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class ProviderCard extends StatelessWidget {
   final bool showOnlineIndicator;
 
   const ProviderCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.profileUrl,
     required this.name,
@@ -113,7 +113,7 @@ class ProviderCard extends StatelessWidget {
     required this.reviewCount,
     required this.price,
     required this.showOnlineIndicator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

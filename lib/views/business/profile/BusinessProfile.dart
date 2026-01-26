@@ -15,7 +15,7 @@ import 'PrivacyPolicyScreen.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class Businessprofile extends StatefulWidget {
-  const Businessprofile({Key? key}) : super(key: key);
+  const Businessprofile({super.key});
 
   @override
   State<Businessprofile> createState() => _BusinessprofileState();
@@ -464,12 +464,7 @@ class _BusinessprofileState extends State<Businessprofile> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account deleted successfully'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          _viewModel.deleteAccount();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
-  const ProviderProfileScreen({Key? key}) : super(key: key);
+  const ProviderProfileScreen({super.key});
 
   @override
   State<ProviderProfileScreen> createState() => _ProviderProfileScreenState();
@@ -418,7 +418,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
                 const SizedBox(height: 4),
               ],
             ),

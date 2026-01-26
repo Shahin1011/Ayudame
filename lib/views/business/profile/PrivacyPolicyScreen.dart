@@ -5,7 +5,7 @@ import '../../../viewmodels/business_auth_viewmodel.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class BusinessPrivacyPolicyScreen extends StatefulWidget {
-  const BusinessPrivacyPolicyScreen({Key? key}) : super(key: key);
+  const BusinessPrivacyPolicyScreen({super.key});
 
   @override
   State<BusinessPrivacyPolicyScreen> createState() =>

@@ -30,9 +30,16 @@ class BusinessAuthResponse {
 /// Business Auth Data (contains token and business info)
 class BusinessAuthData {
   final String token;
+  final String? refreshToken;
+  final int? expiresIn;
   final BusinessModel business;
 
-  BusinessAuthData({required this.token, required this.business});
+  BusinessAuthData({
+    required this.token,
+    this.refreshToken,
+    this.expiresIn,
+    required this.business,
+  });
 
   factory BusinessAuthData.fromJson(Map<String, dynamic> json) {
     // Try to find business data in different possible locations
@@ -43,15 +50,18 @@ class BusinessAuthData {
       mergedData.addAll(json['user'] as Map<String, dynamic>);
     }
 
-    // 2. If 'businessOwner' or 'business' exists, merge it (contains business-specific info)
-    final businessObj =
-        json['businessOwner'] ?? json['business'] ?? json['owner'];
+    // 2. If 'businessOwner' exists, merge it
+    // Note: In the new API, user contains common auth info, businessOwner contains business specifics
+    final businessObj = json['businessOwner'] ?? json['business'] ?? json['owner'];
     if (businessObj != null && businessObj is Map) {
+      // Store user ID separately if needed before overwriting with businessOwner ID
+      if (mergedData['id'] != null) {
+        mergedData['userId'] = mergedData['id'];
+      }
       mergedData.addAll(businessObj as Map<String, dynamic>);
-      // Ensure we keep the user object if it was nested inside businessOwner (for 'me' endpoint compatibility)
+      
+      // If businessOwner has a nested user object (like in profile updates)
       if (businessObj['user'] != null) mergedData['user'] = businessObj['user'];
-      if (businessObj['userId'] != null)
-        mergedData['userId'] = businessObj['userId'];
     }
 
     // 3. If nothing was found yet, use the root json
@@ -61,15 +71,22 @@ class BusinessAuthData {
 
     return BusinessAuthData(
       token:
-          json['token']?.toString() ??
           json['accessToken']?.toString() ??
+          json['token']?.toString() ??
           json['access_token']?.toString() ??
           '',
+      refreshToken: json['refreshToken']?.toString() ?? json['refresh_token']?.toString(),
+      expiresIn: json['expiresIn'] is int ? json['expiresIn'] : int.tryParse(json['expiresIn']?.toString() ?? ''),
       business: BusinessModel.fromJson(mergedData),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'token': token, 'business': business.toJson()};
+    return {
+      'token': token,
+      'refreshToken': refreshToken,
+      'expiresIn': expiresIn,
+      'business': business.toJson(),
+    };
   }
 }

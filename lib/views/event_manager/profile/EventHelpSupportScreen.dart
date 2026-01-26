@@ -7,7 +7,7 @@ import 'EventContactUsScreen.dart';
 import 'EventFaqScreen.dart';
 
 class EventHelpSupportScreen extends StatelessWidget {
-  const EventHelpSupportScreen({Key? key}) : super(key: key);
+  const EventHelpSupportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

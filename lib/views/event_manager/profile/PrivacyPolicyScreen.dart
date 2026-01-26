@@ -5,7 +5,7 @@ import '../../../../widgets/custom_appbar.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventPrivacyPolicyScreen extends StatefulWidget {
-  const EventPrivacyPolicyScreen({Key? key}) : super(key: key);
+  const EventPrivacyPolicyScreen({super.key});
 
   @override
   State<EventPrivacyPolicyScreen> createState() =>

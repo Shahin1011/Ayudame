@@ -17,10 +17,6 @@ class EventViewModel extends GetxController {
   var hasNextPage = true.obs;
   var currentStatus = 'draft'.obs; // Default filter
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void _handleError(dynamic e) {
     String errorMsg = e.toString().replaceAll('Exception: ', '');

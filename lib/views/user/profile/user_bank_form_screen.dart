@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/card_model.dart';
-import '../../../viewmodels/bank_controller.dart';
+import '../../../viewmodels/user_card_controller.dart';
 import '../../components/custom_app_bar.dart';
 import 'package:get/get.dart';
 import '../../components/custom_text_field.dart';
@@ -25,7 +25,7 @@ class UserAddBankInformation extends StatelessWidget{
   final TextEditingController cityCtrl = TextEditingController();
   final TextEditingController postcodeCtrl = TextEditingController();
 
-  final BankController bankController = Get.put(BankController());
+  final UserCardController bankController = Get.put(UserCardController());
 
 
 

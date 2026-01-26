@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../models/business_employee_model.dart';
 import '../services/business_employee_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'business_auth_viewmodel.dart';
 
 class BusinessEmployeeViewModel extends GetxController {
   final BusinessEmployeeService _service = BusinessEmployeeService();
@@ -131,6 +132,20 @@ class BusinessEmployeeViewModel extends GetxController {
       );
       return true;
     } catch (e) {
+      // Handle token expiration
+      if (e.toString().contains('TOKEN_EXPIRED')) {
+        Get.snackbar(
+          "Session Expired",
+          "Your session has expired. Please login again.",
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+        );
+        // Clear stored data and redirect to login
+        await Get.find<BusinessAuthViewModel>().signOut();
+        return false;
+      }
+      
       Get.snackbar(
         "Error",
         e.toString().replaceAll("Exception: ", ""),

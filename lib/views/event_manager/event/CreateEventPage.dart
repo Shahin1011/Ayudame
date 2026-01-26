@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -223,10 +222,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       hintText: 'Ticket Price (\$)',
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Price is required';
-                        if (double.tryParse(value) == null)
+                        }
+                        if (double.tryParse(value) == null) {
                           return 'Enter a valid number';
+                        }
                         return null;
                       },
                     ),
@@ -237,8 +238,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
-                        if (int.tryParse(value) == null)
+                        if (int.tryParse(value) == null) {
                           return 'Enter a valid number';
+                        }
                         return null;
                       },
                     ),
@@ -405,7 +407,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: controller.text.isEmpty ? null : controller.text,
+        initialValue: controller.text.isEmpty ? null : controller.text,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return '$hintText is required';
@@ -522,7 +524,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           );
           if (picked != null) {
             final isoDate =
-                picked.toIso8601String().split('T')[0] + 'T00:00:00.000Z';
+                '${picked.toIso8601String().split('T')[0]}T00:00:00.000Z';
             controller.text = isoDate;
           }
         },
@@ -623,7 +625,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 pickedTime.hour,
                 pickedTime.minute,
               );
-              controller.text = finalDateTime.toIso8601String() + 'Z';
+              controller.text = '${finalDateTime.toIso8601String()}Z';
             }
           }
         },

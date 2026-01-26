@@ -13,9 +13,13 @@ class EventManagerViewModel extends GetxController {
   var currentManager = Rxn<EventManagerModel>();
   var isLoggedIn = false.obs;
 
-  // For forgot password flow
+  // For forgot password/registration flow
+  final forgotEmailController = TextEditingController();
+  final verificationCodeController = TextEditingController();
+  
   var forgotPasswordEmail = ''.obs;
   var recoveryOtp = ''.obs;
+  var tempRegistrationEmail = ''.obs;
   var privacyPolicyContent = ''.obs;
   var termsContent = ''.obs;
   var aboutUsContent = ''.obs;
@@ -58,7 +62,47 @@ class EventManagerViewModel extends GetxController {
     }
   }
 
-  /// Verify OTP
+  /// Verify Registration OTP
+  Future<void> verifyRegistrationOtp(String otp) async {
+    if (otp.length != 6) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid 6-digit OTP",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await _authService.verifyRegistrationOtp(
+        email: tempRegistrationEmail.value,
+        otp: otp,
+      );
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Account verified successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Navigate to Login as requested
+      Get.offAllNamed(AppRoutes.eventLogin);
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Verify OTP (Forgot Password)
   Future<void> verifyOtp(String otp) async {
     if (otp.length != 6) {
       Get.snackbar(
@@ -193,17 +237,19 @@ class EventManagerViewModel extends GetxController {
         idCardBackPath: idCardBackPath,
       );
 
+      // Store email for verification
+      tempRegistrationEmail.value = email;
+
       Get.snackbar(
         "Success",
-        response['message'] ?? "Registration successful!",
+        response['message'] ?? "Registration successful! please verify OTP",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
 
-      // Navigate to login or home depending on backend behavior
-      // Usually after registration, we might need to verify OTP or just login
-      Get.offNamed(AppRoutes.eventLogin);
+      // Navigate to OTP verification instead of login
+      Get.toNamed(AppRoutes.eventOtp, arguments: {'isRegistration': true});
     } catch (e) {
       Get.snackbar(
         "Error",

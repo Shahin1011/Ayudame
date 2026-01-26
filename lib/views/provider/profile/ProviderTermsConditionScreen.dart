@@ -3,7 +3,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderTermsConditionScreen extends StatelessWidget {
-  const ProviderTermsConditionScreen({Key? key}) : super(key: key);
+  const ProviderTermsConditionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

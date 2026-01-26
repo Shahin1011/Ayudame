@@ -18,6 +18,10 @@ class BusinessEmployeeModel {
   final List<AppointmentOption>? appointmentOptions;
   final String? businessId;
   final bool? isActive;
+  final String? serviceId;
+  final double? rating;
+  final int? totalReviews;
+
 
   BusinessEmployeeModel({
     this.id,
@@ -37,6 +41,9 @@ class BusinessEmployeeModel {
     this.appointmentOptions,
     this.businessId,
     this.isActive,
+    this.serviceId,
+    this.rating,
+    this.totalReviews,
   });
 
   // Aliases for UI compatibility with robust formatting
@@ -220,6 +227,24 @@ class BusinessEmployeeModel {
                   employeeData['businessOwnerId'])
               ?.toString(),
       isActive: employeeData['isActive'] ?? employeeData['active'] ?? true,
+      serviceId:
+          (serviceData?['id'] ??
+                  serviceData?['_id'] ??
+                  employeeData['serviceId'] ??
+                  employeeData['employeeServiceId'])
+              ?.toString(),
+      rating: (serviceData?['rating'] ?? employeeData['rating']) != null
+          ? double.tryParse(
+              (serviceData?['rating'] ?? employeeData['rating']).toString(),
+            )
+          : null,
+      totalReviews:
+          (serviceData?['totalReviews'] ?? employeeData['totalReviews']) != null
+              ? int.tryParse(
+                  (serviceData?['totalReviews'] ?? employeeData['totalReviews'])
+                      .toString(),
+                )
+              : null,
     );
   }
 
@@ -256,6 +281,9 @@ class BusinessEmployeeModel {
       'appointmentSlots': appointmentOptions?.map((e) => e.toJson()).toList(),
       'businessId': businessId,
       'isActive': isActive,
+      'serviceId': serviceId,
+      'rating': rating,
+      'totalReviews': totalReviews,
     };
   }
 }

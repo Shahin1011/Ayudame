@@ -181,8 +181,8 @@ class BusinessAuthViewModel extends GetxController {
     }
   }
 
-  /// Register from UI (Custom implementation for BusinessSignUpScreen)
-  Future<void> registerFromUI({
+  /// Business Sign Up (Consolidated)
+  Future<void> signUp({
     required String fullName,
     required String contact, // Email or Phone
     required String businessName,
@@ -240,16 +240,20 @@ class BusinessAuthViewModel extends GetxController {
         currentBusiness.value = response.data!.business;
         isLoggedIn.value = true;
 
+        // Set temp contact for verification
+        tempRegistrationEmail = email ?? (phone != null ? "$phone@tempmail.com" : '');
+        tempRegistrationPhone = phone ?? '';
+
         Get.snackbar(
           "Success",
-          "Account created successfully!",
+          "Account created! Please verify your account.",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
 
-        // Navigate to business home
-        Get.offNamed(AppRoutes.businessHome);
+        // Navigate to OTP Verification
+        Get.toNamed(AppRoutes.businessOtp, arguments: {'isRegistration': true});
       } else {
         Get.snackbar(
           "Error",
@@ -273,80 +277,7 @@ class BusinessAuthViewModel extends GetxController {
     }
   }
 
-  /// Business Sign Up (Default)
-  Future<void> signUp() async {
-    // ... existing implementation ...
-    if (businessNameController.text.isEmpty ||
-        ownerNameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        passwordController.text.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please fill in all required fields",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
 
-    isLoading.value = true;
-
-    try {
-      final response = await _authService.signUp(
-        businessName: businessNameController.text.trim(),
-        ownerName: ownerNameController.text.trim(),
-        email: emailController.text.trim(),
-        phone: phoneController.text.trim(),
-        password: passwordController.text,
-        address: addressController.text.trim().isNotEmpty
-            ? addressController.text.trim()
-            : null,
-        businessType: businessTypeController.text.trim().isNotEmpty
-            ? businessTypeController.text.trim()
-            : null,
-      );
-
-      if (response.success && response.data != null) {
-        await StorageService.saveToken(response.data!.token);
-        await StorageService.saveUserId(response.data!.business.id ?? '');
-        await StorageService.saveUserEmail(response.data!.business.email ?? '');
-        await StorageService.saveUserName(
-          response.data!.business.businessName ?? '',
-        );
-        await StorageService.saveUserRole('business');
-        await StorageService.saveBusinessId(response.data!.business.id ?? '');
-
-        currentBusiness.value = response.data!.business;
-        isLoggedIn.value = true;
-
-        Get.snackbar(
-          "Success",
-          response.message,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-        Get.offNamed(AppRoutes.businessHome);
-      } else {
-        Get.snackbar(
-          "Error",
-          response.message,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        e.toString().replaceAll('Exception: ', ''),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
 
   /// Send OTP
   Future<void> sendOtp() async {
@@ -399,7 +330,61 @@ class BusinessAuthViewModel extends GetxController {
     }
   }
 
-  /// Verify OTP
+  // Temp storage for registration verification
+  var tempRegistrationEmail = '';
+  var tempRegistrationPhone = '';
+
+  /// Verify Registration OTP
+  Future<void> verifyRegistrationOtp(String otp) async {
+    if (otp.isEmpty || otp.length != 6) {
+      Get.snackbar(
+        "Error",
+        "Please enter a complete 6-digit code",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      final response = await _authService.verifyRegistrationOtp(
+        email: tempRegistrationEmail.isNotEmpty ? tempRegistrationEmail : null,
+        phone: tempRegistrationPhone.isNotEmpty ? tempRegistrationPhone : null,
+        otp: otp,
+      );
+
+      Get.snackbar(
+        "Success",
+        response['message'] ?? "Account verified successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Navigate to Home or Login
+      // Since registration already stored token and session, we can go to Home
+      // But usually after OTP verification we might want to ensure session is fresh
+      // Based on previous flow, we are already logged in locally in registerFromUI
+      // So we can just go Home.
+      // Navigate to Login screen as requested
+      Get.offAllNamed(AppRoutes.businessLogin);
+
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Verify OTP (Forgot Password)
   Future<void> verifyOtp() async {
     if (verificationCodeController.text.isEmpty) {
       Get.snackbar(
@@ -776,20 +761,9 @@ class BusinessAuthViewModel extends GetxController {
 
   /// Delete Account
   Future<void> deleteAccount() async {
-    final businessId = currentBusiness.value?.id;
-    if (businessId == null) {
-      Get.snackbar(
-        "Error",
-        "Business ID not found",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
     isLoading.value = true;
     try {
-      final response = await _authService.deleteAccount(businessId);
+      final response = await _authService.deleteAccount();
 
       // Clear data and storage
       await StorageService.clearAll();
@@ -822,17 +796,10 @@ class BusinessAuthViewModel extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
-    businessNameController.dispose();
-    ownerNameController.dispose();
-    phoneController.dispose();
-    addressController.dispose();
-    businessTypeController.dispose();
-    forgotEmailController.dispose();
-    verificationCodeController.dispose();
-    newPasswordController.dispose();
-    confirmNewPasswordController.dispose();
+    // Note: Manual disposal of TextEditingControllers here can cause 
+    // "used after disposed" errors when navigating between screens 
+    // due to GetX's navigation life-cycle. 
+    // Flutter will garbage collect these when the controller is destroyed.
     super.onClose();
   }
 }

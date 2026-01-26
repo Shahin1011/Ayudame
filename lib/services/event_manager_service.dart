@@ -12,8 +12,37 @@ class EventManagerService {
   static const String _forgotPasswordEndpoint =
       '/api/event-managers/forgot-password';
   static const String _verifyOtpEndpoint = '/api/event-managers/verify-otp';
+  static const String _verifyRegistrationOtpEndpoint =
+      '/api/event-managers/register/verify-otp';
   static const String _resetPasswordEndpoint =
       '/api/event-managers/reset-password';
+
+  /// Verify Registration OTP
+  Future<Map<String, dynamic>> verifyRegistrationOtp({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final response = await ApiService.post(
+        endpoint: _verifyRegistrationOtpEndpoint,
+        body: {'email': email, 'otp': otp},
+        requireAuth: false,
+      );
+
+      final decodedResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decodedResponse;
+      } else {
+        throw Exception(
+          decodedResponse['message'] ?? 'Registration verification failed',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error in EventManagerService.verifyRegistrationOtp: $e');
+      rethrow;
+    }
+  }
   static const String _meEndpoint = '/api/event-managers/me';
 
   /// Register a new event manager
@@ -250,24 +279,31 @@ class EventManagerService {
         'phoneNumber': phoneNumber,
       };
 
-      if (category != null && category.isNotEmpty)
+      if (category != null && category.isNotEmpty) {
         fields['category'] = category;
+      }
       if (address != null && address.isNotEmpty) fields['address'] = address;
-      if (businessAddress != null && businessAddress.isNotEmpty)
+      if (businessAddress != null && businessAddress.isNotEmpty) {
         fields['businessAddress'] = businessAddress;
+      }
       if (idType != null && idType.isNotEmpty) fields['idType'] = idType;
-      if (identificationNumber != null && identificationNumber.isNotEmpty)
+      if (identificationNumber != null && identificationNumber.isNotEmpty) {
         fields['identificationNumber'] = identificationNumber;
+      }
       if (dateOfBirth != null) fields['dateOfBirth'] = dateOfBirth;
       if (birthdate != null) fields['birthdate'] = birthdate;
-      if (currentPassword != null && currentPassword.isNotEmpty)
+      if (currentPassword != null && currentPassword.isNotEmpty) {
         fields['currentPassword'] = currentPassword;
-      if (newPassword != null && newPassword.isNotEmpty)
+      }
+      if (newPassword != null && newPassword.isNotEmpty) {
         fields['newPassword'] = newPassword;
-      if (confirmPassword != null && confirmPassword.isNotEmpty)
+      }
+      if (confirmPassword != null && confirmPassword.isNotEmpty) {
         fields['confirmPassword'] = confirmPassword;
-      if (newConfirmPassword != null && newConfirmPassword.isNotEmpty)
+      }
+      if (newConfirmPassword != null && newConfirmPassword.isNotEmpty) {
         fields['newConfirmPassword'] = newConfirmPassword;
+      }
 
       http.Response response;
       if (profilePicturePath != null && profilePicturePath.isNotEmpty) {

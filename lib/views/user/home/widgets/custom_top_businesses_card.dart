@@ -12,13 +12,13 @@ class CustomTopbusinessesCard extends StatelessWidget {
   final int numberOfServices;
 
   const CustomTopbusinessesCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.review,
     required this.location,
     required this.numberEmployees,
     required this.numberOfServices,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

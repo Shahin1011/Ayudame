@@ -4,7 +4,7 @@ import 'dart:io';
 
 
 class AddPortfolioScreen extends StatefulWidget {
-  const AddPortfolioScreen({Key? key}) : super(key: key);
+  const AddPortfolioScreen({super.key});
 
   @override
   State<AddPortfolioScreen> createState() => _AddPortfolioScreenState();

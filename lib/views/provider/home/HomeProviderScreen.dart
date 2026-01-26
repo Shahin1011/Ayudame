@@ -7,7 +7,7 @@ import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart
 import '../../../core/routes/app_routes.dart';
 
 class HomeProviderScreen extends StatefulWidget {
-  const HomeProviderScreen({Key? key}) : super(key: key);
+  const HomeProviderScreen({super.key});
 
   @override
   State<HomeProviderScreen> createState() => _HomeProviderScreenState();
