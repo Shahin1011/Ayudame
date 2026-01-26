@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/business/employee/create_employee.dart';
 import 'package:middle_ware/views/business/employee/save_employee.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../core/theme/app_colors.dart';
@@ -360,7 +359,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                         const Divider(height: 1),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

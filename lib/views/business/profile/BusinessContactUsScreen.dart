@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BusinessContactUsScreen extends StatelessWidget {
-  const BusinessContactUsScreen({Key? key}) : super(key: key);
+  const BusinessContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,13 +4,12 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/inbox/inbox_screen.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../inbox/chat_screen.dart';
 
 class ProviderHistoryProviderScreen extends StatefulWidget {
-  const ProviderHistoryProviderScreen({Key? key}) : super(key: key);
+  const ProviderHistoryProviderScreen({super.key});
 
   @override
   State<ProviderHistoryProviderScreen> createState() =>
@@ -20,7 +19,7 @@ class ProviderHistoryProviderScreen extends StatefulWidget {
 class _ProviderHistoryProviderScreenState
     extends State<ProviderHistoryProviderScreen> {
   int _selectedTab = 0;
-  int _selectedIndex = 2;
+  final int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {

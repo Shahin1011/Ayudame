@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 
 class BusinessFaqScreen extends StatefulWidget {
-  const BusinessFaqScreen({Key? key}) : super(key: key);
+  const BusinessFaqScreen({super.key});
 
   @override
   State<BusinessFaqScreen> createState() => _BusinessFaqScreenState();

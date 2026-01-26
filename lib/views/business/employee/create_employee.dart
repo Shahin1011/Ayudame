@@ -10,7 +10,7 @@ import '../../../../viewmodels/business_employee_viewmodel.dart';
 
 class CreateEmployee extends StatefulWidget {
   final BusinessEmployeeModel? employee;
-  const CreateEmployee({Key? key, this.employee}) : super(key: key);
+  const CreateEmployee({super.key, this.employee});
 
   @override
   State<CreateEmployee> createState() => _CreateEmployeeState();
@@ -758,7 +758,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 20),
 
                     // Service pricing
@@ -847,7 +847,7 @@ class _CreateEmployeeState extends State<CreateEmployee> {
                                 _makeAppointment = value;
                               });
                             },
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: AppColors.mainAppColor,
                             inactiveThumbColor: Colors.white,
                             inactiveTrackColor: const Color(0xFFE0E0E0),

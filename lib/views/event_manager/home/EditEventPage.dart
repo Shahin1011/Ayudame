@@ -402,7 +402,7 @@ class _EditEventPageState extends State<EditEventPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: items.contains(controller.text) ? controller.text : null,
+        initialValue: items.contains(controller.text) ? controller.text : null,
         validator: (value) =>
             (value == null || value.isEmpty) ? '$hintText is required' : null,
         decoration: InputDecoration(
@@ -507,7 +507,7 @@ class _EditEventPageState extends State<EditEventPage> {
           if (picked != null) {
             setState(() {
               final isoDate =
-                  picked.toIso8601String().split('T')[0] + 'T00:00:00.000Z';
+                  '${picked.toIso8601String().split('T')[0]}T00:00:00.000Z';
               controller.text = isoDate;
             });
           }
@@ -579,7 +579,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   pickedTime.hour,
                   pickedTime.minute,
                 );
-                controller.text = finalDateTime.toIso8601String() + 'Z';
+                controller.text = '${finalDateTime.toIso8601String()}Z';
               });
             }
           }

@@ -643,11 +643,12 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                 employee.serviceCategory ??
                 'Service Provider',
             description: employee.about ?? 'No description available.',
-            rating: 4.5, // Static or add to model
-            reviewCount: 120, // Static
+            rating: employee.rating ?? 0.0,
+            reviewCount: employee.totalReviews ?? 0,
             price:
                 '\$${employee.pricing}', // Using getter that returns non-null string
             showOnlineIndicator: true,
+            showFavorite: false,
             onViewDetails: () {
               Get.toNamed(AppRoutes.businessEmployee, arguments: employee);
             },

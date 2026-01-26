@@ -87,7 +87,7 @@ class BusinessAuthService {
 
       // If one is missing, only then apply workarounds if the backend requires both
       if (fields['email'] == null && phone != null) {
-        fields['email'] = "${phone}@tempmail.com";
+        fields['email'] = "$phone@tempmail.com";
       }
       if (fields['phoneNumber'] == null && email != null) {
         String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
@@ -240,7 +240,50 @@ class BusinessAuthService {
     }
   }
 
-  /// Verify OTP
+  /// Verify Registration OTP
+  Future<Map<String, dynamic>> verifyRegistrationOtp({
+    String? email,
+    String? phone,
+    required String otp,
+  }) async {
+    try {
+      final body = <String, String>{'otp': otp};
+      if (email != null && email.isNotEmpty) body['email'] = email;
+      if (phone != null && phone.isNotEmpty) body['phoneNumber'] = phone;
+
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/register/verify-otp',
+        body: body,
+        requireAuth: false,
+        baseUrl: ApiService.baseURL,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+        return jsonResponse;
+      } else {
+        try {
+          final errorResponse =
+              jsonDecode(response.body) as Map<String, dynamic>;
+          throw Exception(errorResponse['message'] ?? 'Verification failed');
+        } catch (e) {
+          if (e.toString().contains('Exception:')) {
+            rethrow;
+          }
+          throw Exception(
+            'Verification failed with status ${response.statusCode}',
+          );
+        }
+      }
+    } catch (e) {
+      if (e is Exception) {
+        rethrow;
+      }
+      throw Exception('An error occurred: $e');
+    }
+  }
+
+  /// Verify OTP (Forgot Password)
   Future<Map<String, dynamic>> verifyOtp({
     String? email,
     String? phone,
@@ -358,8 +401,9 @@ class BusinessAuthService {
       if (newPassword != null) fields['newPassword'] = newPassword;
       if (confirmPassword != null) fields['confirmPassword'] = confirmPassword;
       if (businessName != null) fields['businessName'] = businessName;
-      if (businessCategory != null)
+      if (businessCategory != null) {
         fields['businessCategory'] = businessCategory;
+      }
       if (businessAddress != null) fields['businessAddress'] = businessAddress;
       if (description != null) fields['description'] = description;
 
@@ -775,10 +819,12 @@ class BusinessAuthService {
   }
 
   /// Delete Account
-  Future<Map<String, dynamic>> deleteAccount(String id) async {
+  Future<Map<String, dynamic>> deleteAccount() async {
     try {
-      final response = await ApiService.delete(
-        endpoint: '/api/admin/business-owners/$id',
+      // Using POST with _method=DELETE spoofing for better compatibility with tunnels/proxies
+      final response = await ApiService.post(
+        endpoint: '/api/business-owners/me?_method=DELETE',
+        body: {},
         requireAuth: true,
       );
 

@@ -8,7 +8,7 @@ import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class CreateServicePage extends StatefulWidget {
-  const CreateServicePage({Key? key}) : super(key: key);
+  const CreateServicePage({super.key});
 
   @override
   State<CreateServicePage> createState() => _CreateServicePageState();
@@ -293,7 +293,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                             color: Color(0xFF999999),
                           ),
                         ),
-                        value: _selectedCategory,
+                        initialValue: _selectedCategory,
                         icon: const Icon(
                           Icons.keyboard_arrow_down,
                           color: Color(0xFF2D6A4F),
@@ -498,7 +498,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 20),
 
                     // Service pricing
@@ -587,7 +587,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                                 _makeAppointment = value;
                               });
                             },
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: AppColors.mainAppColor,
                             inactiveThumbColor: Colors.white,
                             inactiveTrackColor: const Color(0xFFE0E0E0),
@@ -837,7 +837,7 @@ class _CreateServicePageState extends State<CreateServicePage> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
 
                     const SizedBox(height: 15),

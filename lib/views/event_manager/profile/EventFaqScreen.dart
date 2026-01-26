@@ -5,7 +5,7 @@ import '../../../../widgets/custom_appbar.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventFaqScreen extends StatefulWidget {
-  const EventFaqScreen({Key? key}) : super(key: key);
+  const EventFaqScreen({super.key});
 
   @override
   State<EventFaqScreen> createState() => _EventFaqScreenState();

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/home/CreateServiceProvider.dart';
 import 'package:middle_ware/views/provider/profile/edit_service.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 

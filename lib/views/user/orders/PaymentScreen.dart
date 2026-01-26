@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  const PaymentScreen({super.key});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -76,7 +76,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   'assets/visa_logo.png',
                   height: 30,
                   errorBuilder: (context, error, stackTrace) {
-                    return Container(
+                    return SizedBox(
                       height: 30,
                       child: const Text(
                         'VISA',
@@ -272,7 +272,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               )
             else
-              Container(
+              SizedBox(
                 width: 40,
                 height: 25,
                 child: Stack(

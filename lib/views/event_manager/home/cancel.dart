@@ -11,7 +11,7 @@ void showCancelEventDialog({
   required EventViewModel eventViewModel,
 }) {
   final TextEditingController reasonController = TextEditingController();
-  final _dialogFormKey = GlobalKey<FormState>();
+  final dialogFormKey = GlobalKey<FormState>();
 
   showDialog(
     context: context,
@@ -26,7 +26,7 @@ void showCancelEventDialog({
           child: Container(
             padding: const EdgeInsets.all(24.0),
             child: Form(
-              key: _dialogFormKey,
+              key: dialogFormKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -114,7 +114,7 @@ void showCancelEventDialog({
                         onPressed: eventViewModel.isLoading.value
                             ? null
                             : () {
-                                if (_dialogFormKey.currentState!.validate()) {
+                                if (dialogFormKey.currentState!.validate()) {
                                   eventViewModel
                                       .cancelEvent(
                                         event.id!,

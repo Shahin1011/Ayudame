@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class BankInformationScreen extends StatefulWidget {
-  const BankInformationScreen({Key? key}) : super(key: key);
+  const BankInformationScreen({super.key});
 
   @override
   State<BankInformationScreen> createState() => _BankInformationScreenState();
@@ -184,7 +184,7 @@ class _BankInformationScreenState extends State<BankInformationScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: selectedBank,
+                          initialValue: selectedBank,
                           hint: const Text(
                             'Choose your bank',
                             style: TextStyle(

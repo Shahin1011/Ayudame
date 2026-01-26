@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/business/Activities/cancelled.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
+import 'Bookings.dart';
+import 'complate.dart';
 
 class ActivitiesPage extends StatefulWidget {
   const ActivitiesPage({super.key});
@@ -54,9 +57,9 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
 
       // Determine display type string
       String displayType = title;
-      if (status == 'cancelled')
+      if (status == 'cancelled') {
         displayType = 'Order cancelled';
-      else if (type == 'booking')
+      } else if (type == 'booking')
         displayType = 'New booking received';
       else if (status == 'completed')
         displayType = 'Order completed';
@@ -71,6 +74,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
         orderId: orderId.length > 6
             ? "#${orderId.substring(0, 5)}"
             : "#$orderId",
+        fullId: orderId,
         amount: '\$$price',
         time: '$hoursAgo hours ago',
         isPositive: isPositive,
@@ -247,21 +251,35 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   Widget _buildActivityCard(ActivityItem activity) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
+    return GestureDetector(
+      onTap: () {
+        // Navigate based on activity category/type
+        if (activity.category == 'Completed' ||
+            activity.type == 'Order completed') {
+          Get.to(() => complatedScreen(bookingId: activity.fullId));
+        } else if (activity.category == 'Cancelled' ||
+            activity.type == 'Order cancelled') {
+          Get.to(() => CancelledScreen(bookingId: activity.fullId));
+        } else {
+          // Default to BookingsScreen
+          Get.to(() => BookingsScreen(bookingId: activity.fullId));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
         children: [
           // Avatar
           CircleAvatar(
@@ -329,6 +347,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -338,6 +357,7 @@ class ActivityItem {
   final String category;
   final String name;
   final String orderId;
+  final String fullId;
   final String amount;
   final String time;
   final bool isPositive;
@@ -349,6 +369,7 @@ class ActivityItem {
     required this.category,
     required this.name,
     required this.orderId,
+    required this.fullId,
     required this.amount,
     required this.time,
     required this.isPositive,

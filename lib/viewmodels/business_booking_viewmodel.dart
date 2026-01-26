@@ -25,6 +25,18 @@ class BusinessBookingViewModel extends GetxController {
     }
   }
 
+  final Rxn<BusinessBookingModel> currentBooking = Rxn<BusinessBookingModel>();
+
+  Future<void> fetchBookingDetails(String id) async {
+    isLoading.value = true;
+    try {
+      final booking = await _service.getBookingById(id);
+      currentBooking.value = booking;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<bool> acceptBooking(String id) async {
     try {
       isLoading.value = true;

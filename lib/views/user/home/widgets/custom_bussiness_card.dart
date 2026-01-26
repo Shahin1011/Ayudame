@@ -82,7 +82,7 @@ class BusinessCard extends StatelessWidget {
                   size: 16, color: Colors.green),
               const SizedBox(width: 4),
               Text(
-                '${distance} Km',
+                '$distance Km',
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.green,

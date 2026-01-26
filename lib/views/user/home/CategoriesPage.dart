@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
+  const CategoriesPage({super.key});
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
 }
   class _CategoriesPageState extends State<CategoriesPage> {
   int _selectedIndex = 1; // Set to 1 since this is the Categories page
-  bool _isFavorite = false;
+  final bool _isFavorite = false;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -161,7 +161,7 @@ class CategoriesPage extends StatefulWidget {
 
   }
 
-  Widget _buildCategoryCard(String title, String imageUrl,{VoidCallback? onTap}) {
+  Widget _buildCategoryCard(String title, String imageUrl) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class ProviderNotificationPage extends StatelessWidget {
-  const ProviderNotificationPage({Key? key}) : super(key: key);
+  const ProviderNotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
