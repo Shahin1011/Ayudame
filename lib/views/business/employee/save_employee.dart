@@ -10,7 +10,7 @@ import '../../../../viewmodels/business_employee_viewmodel.dart';
 
 class SaveEmployee extends StatefulWidget {
   final BusinessEmployeeModel? employee;
-  const SaveEmployee({Key? key, this.employee}) : super(key: key);
+  const SaveEmployee({super.key, this.employee});
 
   @override
   State<SaveEmployee> createState() => _SaveEmployeeState();
@@ -168,8 +168,13 @@ class _SaveEmployeeState extends State<SaveEmployee> {
                   ),
                 )
                 .toList()
+                .toList()
           : null,
+      serviceId: widget.employee?.serviceId,
     );
+
+    debugPrint("🔍 Original employee serviceId: ${widget.employee?.serviceId}");
+    debugPrint("🔍 New model serviceId: ${employeeModel.serviceId}");
 
     if (widget.employee?.id != null) {
       // Update Mode
@@ -737,7 +742,7 @@ class _SaveEmployeeState extends State<SaveEmployee> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 20),
 
                     // Service pricing
@@ -826,7 +831,7 @@ class _SaveEmployeeState extends State<SaveEmployee> {
                                 _makeAppointment = value;
                               });
                             },
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: AppColors.mainAppColor,
                             inactiveThumbColor: Colors.white,
                             inactiveTrackColor: const Color(0xFFE0E0E0),
@@ -1098,7 +1103,7 @@ class _SaveEmployeeState extends State<SaveEmployee> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
 
                     const SizedBox(height: 15),

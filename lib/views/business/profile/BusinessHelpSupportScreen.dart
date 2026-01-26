@@ -7,7 +7,7 @@ import 'BusinessContactUsScreen.dart';
 import 'BusinessFaqScreen.dart';
 
 class BusinessHelpSupportScreen extends StatelessWidget {
-  const BusinessHelpSupportScreen({Key? key}) : super(key: key);
+  const BusinessHelpSupportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

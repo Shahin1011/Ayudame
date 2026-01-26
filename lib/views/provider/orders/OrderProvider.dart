@@ -8,7 +8,7 @@ import 'package:middle_ware/views/provider/inbox/chat_screen.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class OrderHistoryProviderScreen extends StatefulWidget {
-  const OrderHistoryProviderScreen({Key? key}) : super(key: key);
+  const OrderHistoryProviderScreen({super.key});
 
   @override
   State<OrderHistoryProviderScreen> createState() =>
@@ -18,7 +18,7 @@ class OrderHistoryProviderScreen extends StatefulWidget {
 class _OrderHistoryProviderScreenState
     extends State<OrderHistoryProviderScreen> {
   int _selectedTab = 0;
-  int _selectedIndex = 2;
+  final int _selectedIndex = 2;
 
   @override
   Widget build(BuildContext context) {

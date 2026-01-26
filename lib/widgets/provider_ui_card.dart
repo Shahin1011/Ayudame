@@ -12,6 +12,7 @@ class ProviderUICard extends StatelessWidget {
   final int reviewCount;
   final String price;
   final bool showOnlineIndicator;
+  final bool showFavorite;
   final VoidCallback onViewDetails;
 
   final double? borderRadius;
@@ -33,6 +34,7 @@ class ProviderUICard extends StatelessWidget {
     required this.price,
     required this.showOnlineIndicator,
     required this.onViewDetails,
+    this.showFavorite = true,
     this.borderRadius,
     this.margin,
     this.boxShadow,
@@ -85,14 +87,15 @@ class ProviderUICard extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
               ),
-              const Positioned(
-                top: 15,
-                right: 15,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white60,
-                  child: Icon(Icons.favorite_border, color: Colors.red),
+              if (showFavorite)
+                const Positioned(
+                  top: 15,
+                  right: 15,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white60,
+                    child: Icon(Icons.favorite_border, color: Colors.red),
+                  ),
                 ),
-              ),
             ],
           ),
 
@@ -188,10 +191,15 @@ class ProviderUICard extends StatelessWidget {
                 // রেটিং সেকশন
                 Row(
                   children: [
-                    const Icon(Icons.star, color: Colors.orange, size: 22),
-                    const Icon(Icons.star, color: Colors.orange, size: 22),
-                    const Icon(Icons.star, color: Colors.orange, size: 22),
-                    const Icon(Icons.star, color: Colors.orange, size: 22),
+                    ...List.generate(5, (index) {
+                      if (index < rating.floor()) {
+                        return const Icon(Icons.star, color: Colors.orange, size: 22);
+                      } else if (index < rating) {
+                         return const Icon(Icons.star_half, color: Colors.orange, size: 22);
+                      } else {
+                        return const Icon(Icons.star_border, color: Colors.orange, size: 22);
+                      }
+                    }),
                     const SizedBox(width: 8),
                     Text(
                       rating.toStringAsFixed(2),
@@ -232,33 +240,35 @@ class ProviderUICard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: onViewDetails,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF1E5631,
-                        ), // ডার্ক গ্রিন কালার
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
+                      ElevatedButton(
+                        onPressed: onViewDetails,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(
+                            0xFF1E5631,
+                          ), // Dark Green Color
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          minimumSize: Size.zero, // Removes default minimum size constraints
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removes extra tap target spacing
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        child: const Text(
+                          "View Details",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                       ),
-                      child: const Text(
-                        "View Details",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
   }
-}

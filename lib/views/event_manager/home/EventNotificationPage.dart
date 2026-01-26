@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class EventNotificationPage extends StatelessWidget {
-  const EventNotificationPage({Key? key}) : super(key: key);
+  const EventNotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {

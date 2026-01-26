@@ -322,6 +322,15 @@ class BusinessEmployeeService {
           '_method': 'PUT', // Method override for backends that need it
         };
 
+        // Add employeeServiceId if available
+        debugPrint("🔍 Employee serviceId: ${employee.serviceId}");
+        if (employee.serviceId != null) {
+          fields['employeeServiceId'] = employee.serviceId!;
+          debugPrint("✅ Added employeeServiceId to fields");
+        } else {
+          debugPrint("⚠️ serviceId is null - cannot add employeeServiceId");
+        }
+
         // Add basePrice (required by backend)
         if (employee.price != null) {
           fields['basePrice'] = employee.price.toString();
@@ -407,7 +416,15 @@ class BusinessEmployeeService {
             return BusinessEmployeeModel.fromJson(data);
           }
         }
-        throw Exception('Failed to update employee with images');
+        
+        // Parse error message from response
+        try {
+          final errorResponse = jsonDecode(responseBody) as Map<String, dynamic>;
+          throw Exception(errorResponse['message'] ?? 'Failed to update employee with images');
+        } catch (e) {
+          if (e.toString().contains('Exception:')) rethrow;
+          throw Exception('Failed to update employee with images');
+        }
       }
 
       // Standard JSON update if no images
@@ -419,6 +436,11 @@ class BusinessEmployeeService {
         'description': employee.about,
         'appointmentEnabled': employee.isAppointmentBased,
       };
+
+      // Add employeeServiceId
+      if (employee.serviceId != null) {
+        body['employeeServiceId'] = employee.serviceId;
+      }
 
       // Add basePrice
       if (employee.price != null) {

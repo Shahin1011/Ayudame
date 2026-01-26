@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/viewmodels/bank_controller.dart';
+import 'package:middle_ware/viewmodels/user_card_controller.dart';
 import 'package:middle_ware/views/user/profile/user_bank_form_screen.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../components/custom_app_bar.dart';
@@ -10,7 +10,7 @@ import '../../components/custom_app_bar.dart';
 class userBankInformation extends StatelessWidget{
   userBankInformation({super.key});
 
-  final BankController bankController = Get.put(BankController());
+  final UserCardController bankController = Get.put(UserCardController());
 
 
   @override

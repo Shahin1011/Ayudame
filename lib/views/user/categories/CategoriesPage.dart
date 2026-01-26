@@ -5,7 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import 'package:get/get.dart';
 
 class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
+  const CategoriesPage({super.key});
 
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();

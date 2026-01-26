@@ -5,7 +5,7 @@ import '../../../../widgets/custom_appbar.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventTermsConditionScreen extends StatefulWidget {
-  const EventTermsConditionScreen({Key? key}) : super(key: key);
+  const EventTermsConditionScreen({super.key});
 
   @override
   State<EventTermsConditionScreen> createState() =>

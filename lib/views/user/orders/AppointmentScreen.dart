@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 
 class AppointmentScreen extends StatefulWidget {
-  const AppointmentScreen({Key? key}) : super(key: key);
+  const AppointmentScreen({super.key});
 
   @override
   State<AppointmentScreen> createState() => _AppointmentScreenState();

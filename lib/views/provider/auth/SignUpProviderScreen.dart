@@ -8,7 +8,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/auth/LoginProviderScreen.dart';
 
 class SignUpProviderScreen extends StatefulWidget {
-  const SignUpProviderScreen({Key? key}) : super(key: key);
+  const SignUpProviderScreen({super.key});
 
   @override
   State<SignUpProviderScreen> createState() => _SignUpScreenState();
