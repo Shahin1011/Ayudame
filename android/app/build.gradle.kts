@@ -13,6 +13,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -44,19 +45,18 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-    // ... other dependencies
-
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    
     // Force specific versions to work with AGP 8.7.3
-    implementation('androidx.browser:browser:1.6.0') {
-        force = true
-    }
+    implementation("androidx.browser:browser:1.6.0")
+    implementation("androidx.core:core:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
+}
 
-    implementation('androidx.core:core:1.12.0') {
-        force = true
-    }
-
-    implementation('androidx.core:core-ktx:1.12.0') {
-        force = true
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core-ktx:1.13.01")
+        force("androidx.core:core:1.12.0")
+        force("androidx.browser:browser:1.6.0")
     }
 }

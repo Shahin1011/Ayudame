@@ -17,6 +17,7 @@ import '../../../controller/user/home/top_businesses_controller.dart';
 import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
+import 'UserNotificationPage.dart';
 
 
 
@@ -118,10 +119,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Get.toNamed(AppRoutes.notifications);
+                              Get.to(() => userNotificationPage());
                             },
                             child: SvgPicture.asset(
-                              "assets/icons/NotificationICon.svg",
+                              "assets/icons/NotificationIcon.svg",
                               width: 34.w,
                               height: 34.h,
                             ),

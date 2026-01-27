@@ -21,7 +21,7 @@ class AppConstants {
   static const String userIdKey = 'user_id';
   static const String userTypeKey = 'user_type';
   static const String isLoggedInKey = 'is_logged_in';
-
+  static const String fcmToken = '';
   // User Types
   static const String userTypeUser = 'user';
   static const String userTypeProvider = 'provider';

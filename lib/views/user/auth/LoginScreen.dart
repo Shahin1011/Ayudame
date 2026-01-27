@@ -32,9 +32,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final loginApiUrl = "${ApiService.BASE_URL}/api/auth/login";
 
-  Future<void> _loginUser(String email, String password) async {
 
+  Future<void> _loginUser(String email, String password) async {
+    SharedPreferences PrefsHelper = await SharedPreferences.getInstance();
     if (!_formKey.currentState!.validate()) return;
+
+    final savedToken = await PrefsHelper.getString(AppConstants.fcmToken);
 
     if (!await hasInternetConnection()) {
       Get.snackbar("No Internet", "Please check your internet connection.");
@@ -44,6 +47,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     final body = {
       'email': email,
       'password': password,
+      'fcmToken': savedToken
     };
 
     setState(() { isLoading = true; });
