@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/constants.dart';
 
 
@@ -37,7 +38,7 @@ class EditProfile extends GetxController {
     File? imageFile,
     required String token,
   }) async {
-    final url = Uri.parse("${AppConstants.BASE_URL}/api/providers/me");
+    final url = Uri.parse("${ApiService.BASE_URL}/api/providers/me");
 
     var request = http.MultipartRequest("PUT", url);
     request.headers["Authorization"] = "Bearer $token";

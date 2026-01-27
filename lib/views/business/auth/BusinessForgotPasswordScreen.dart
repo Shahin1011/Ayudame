@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../viewmodels/business_auth_viewmodel.dart';
 
 class BusinessForgotPasswordScreen extends StatelessWidget {
-  const BusinessForgotPasswordScreen({super.key});
+  BusinessForgotPasswordScreen({super.key});
+
+  final BusinessAuthViewModel _authViewModel = Get.put(BusinessAuthViewModel());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
@@ -49,7 +53,7 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             // Description
             const Text(
-              'Don\'t worry! Enter your registered email\nor phone number.',
+              'Don\'t worry! Enter your registered email\nto receive a reset code.',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
@@ -59,17 +63,18 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // Email or Phone Label
+            // Email Label
             const Text(
-              'Enter your email or phone number',
+              'Enter your email',
               style: TextStyle(fontSize: 13, color: Colors.black87),
             ),
 
             const SizedBox(height: 8),
 
             TextField(
+              controller: _authViewModel.forgotEmailController,
               decoration: InputDecoration(
-                hintText: 'Enter your email or phone',
+                hintText: 'Enter your email',
                 hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
                 prefixIcon: const Icon(
                   Icons.email_outlined,
@@ -99,24 +104,40 @@ class BusinessForgotPasswordScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.businessOtp);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _authViewModel.isLoading.value
+                      ? null
+                      : () {
+                          _authViewModel.sendOtp();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C5941),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Send Reset Code',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: _authViewModel.isLoading.value
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'Send Reset Code',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),

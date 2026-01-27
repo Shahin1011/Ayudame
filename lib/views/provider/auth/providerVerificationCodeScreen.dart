@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:middle_ware/services/api_service.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
 import 'package:middle_ware/views/provider/auth/provider_new_password_screen.dart';
@@ -28,7 +29,7 @@ class _ProviderVerificationCodeScreenState extends State<ProviderVerificationCod
   late String _email;
 
   final String _verifyOtpUrl =
-      "${AppConstants.BASE_URL}/api/providers/verify-otp";
+      "${ApiService.BASE_URL}/api/providers/verify-otp";
 
   @override
   void initState() {

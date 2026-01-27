@@ -11,6 +11,7 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import '../../../widgets/user_custom_text_field.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class UserNewPasswordScreen extends StatefulWidget{
@@ -30,7 +31,7 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
     final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
   }
-  final updatePassUrl = "${AppConstants.BASE_URL}/api/auth/set-new-password";
+  final updatePassUrl = "${ApiService.BASE_URL}/api/auth/set-new-password";
 
   Future<void> _setNewPassword ( String newPassword, String confirmPassword) async {
     if (!_formKey.currentState!.validate()) return;

@@ -7,6 +7,7 @@ import '../../../core/routes/app_routes.dart';
 import '../../../models/user/profile/profile_model.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 
@@ -14,7 +15,7 @@ class ProfileController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var user = Rxn<UserModel>();
-  final String profileUrl = "${AppConstants.BASE_URL}/api/auth/me";
+  final String profileUrl = "${ApiService.BASE_URL}/api/auth/me";
 
   @override
   void onInit() {

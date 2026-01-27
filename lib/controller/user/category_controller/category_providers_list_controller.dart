@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import '../../../services/api_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
 import '../../../models/user/categories/category_providers_list_model.dart';
@@ -29,7 +30,7 @@ class CategoryProvidersListController extends GetxController {
         return;
       }
 
-      final url = Uri.parse("${AppConstants.BASE_URL}/api/home/providers/category/$categoryId");
+      final url = Uri.parse("${ApiService.BASE_URL}/api/home/providers/category/$categoryId");
       print("Fetching providers by category from: $url");
 
       final response = await http.get(

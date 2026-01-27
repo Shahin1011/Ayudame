@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 
@@ -19,7 +20,7 @@ class BookingDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/$id");
+      final uri = Uri.parse("${ApiService.BASE_URL}/api/bookings/$id");
       
       final response = await http.get(
         uri,
@@ -54,7 +55,7 @@ class BookingDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/$id/cancel");
+      final uri = Uri.parse("${ApiService.BASE_URL}/api/bookings/$id/cancel");
       
       final response = await http.patch(
         uri,
@@ -105,7 +106,7 @@ class BookingDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/$id/review");
+      final uri = Uri.parse("${ApiService.BASE_URL}/api/bookings/$id/review");
       
       final response = await http.post(
         uri,

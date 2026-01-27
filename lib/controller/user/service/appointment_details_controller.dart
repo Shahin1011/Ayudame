@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class AppointmentDetailsController extends GetxController {
   var isLoading = false.obs;
@@ -16,7 +17,7 @@ class AppointmentDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/appointments/$id");
+      final uri = Uri.parse("${ApiService.BASE_URL}/api/appointments/$id");
       
       final response = await http.get(
         uri,

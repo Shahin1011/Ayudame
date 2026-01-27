@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/models/event_model.dart';
+import 'package:middle_ware/viewmodels/event_viewmodel.dart';
+import 'package:middle_ware/viewmodels/event_manager_viewmodel.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
-
-import '../../../core/routes/app_routes.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({super.key});
@@ -23,7 +27,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   // Controllers
   final TextEditingController _eventNameController = TextEditingController();
   final TextEditingController _eventTypeController = TextEditingController();
-  final TextEditingController _eventManagerController = TextEditingController();
+  final TextEditingController _eventManagerController =
+      TextEditingController(); // Should be auto-filled or removed if inferred
   final TextEditingController _eventLocationController =
       TextEditingController();
   final TextEditingController _ticketStartDateController =
@@ -41,17 +46,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
       TextEditingController();
 
   String? _selectedImagePath;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     _generateConfirmationCode();
+
+    // Auto-fill manager name if available
+    final managerVM = Get.find<EventManagerViewModel>();
+    if (managerVM.currentManager.value != null) {
+      _eventManagerController.text =
+          managerVM.currentManager.value!.fullName ?? "";
+    }
   }
 
   void _generateConfirmationCode() {
     final random = Random();
     final code = List.generate(10, (index) => random.nextInt(10)).join();
     _confirmationCodeController.text = code;
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImagePath = image.path;
+      });
+    }
   }
 
   @override
@@ -73,19 +95,35 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   void _handleNext() {
     if (_formKey.currentState!.validate()) {
-      // Navigate to preview page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EventPreviewPage(
-            eventName: _eventNameController.text,
-            location: _eventLocationController.text,
-            ticketPrice: _ticketPriceController.text,
-            confirmationCode: _confirmationCodeController.text,
-            imagePath: _selectedImagePath,
-          ),
-        ),
+      if (_selectedImagePath == null) {
+        Get.snackbar(
+          "Required",
+          "Please select an event flier",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      final event = EventModel(
+        eventName: _eventNameController.text,
+        eventType: _eventTypeController.text,
+        eventManagerName: _eventManagerController.text,
+        eventLocation: _eventLocationController.text,
+        ticketSalesStartDate: _ticketStartDateController.text,
+        ticketSalesEndDate: _ticketEndDateController.text,
+        eventStartDateTime: _eventStartDateController.text,
+        eventEndDateTime: _eventEndDateController.text,
+        ticketPrice: double.tryParse(_ticketPriceController.text),
+        maximumNumberOfTickets: int.tryParse(_maxTicketsController.text),
+        confirmationCodePrefix: _confirmationCodeController.text,
+        eventDescription: _eventDescriptionController.text,
+        eventImage: _selectedImagePath,
+        status: 'draft',
       );
+
+      // Navigate to preview page using Get
+      Get.to(() => EventPreviewPage(event: event));
     }
   }
 
@@ -122,11 +160,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       controller: _eventTypeController,
                       hintText: 'Event Type',
                       items: [
-                        'Concert / Music Show',
+                        'Concert/Music Show',
                         'Cultural Program',
-                        'Seminar / Conference',
+                        'Seminar/Conference',
                         'Sports Event',
-                        'Festival / Fair',
+                        'Festival/Fair',
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -183,18 +221,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       controller: _ticketPriceController,
                       hintText: 'Ticket Price (\$)',
                       keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Price is required';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildTextField(
                       controller: _maxTicketsController,
                       hintText: 'Maximum Number of Tickets',
                       keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        if (int.tryParse(value) == null) {
+                          return 'Enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     _buildTextField(
                       controller: _confirmationCodeController,
                       hintText: 'Confirmation Code Prefix',
-                      keyboardType: TextInputType.numberWithOptions(),
+                      keyboardType: TextInputType.text,
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -206,9 +260,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               const SizedBox(height: 16),
 
-              // ৫. Description Card
               _buildSectionCard(
-                title: 'Ticket Information',
+                title: 'Event Description',
                 child: _buildTextField(
                   controller: _eventDescriptionController,
                   hintText: 'Event Description',
@@ -249,11 +302,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   Widget _buildImageUploadBox() {
     return GestureDetector(
-      onTap: () {
-        // Handle image upload
-      },
+      onTap: _pickImage,
       child: Container(
-        height: 120,
+        height: 180,
         width: double.infinity,
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
@@ -263,22 +314,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
             style: BorderStyle.solid,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              AppIcons.create,
-              width: 32,
-              height: 32,
-              colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Upload your event flier or promotional image',
-              style: TextStyle(fontSize: 12, color: AppColors.grey),
-            ),
-          ],
-        ),
+        child: _selectedImagePath != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  File(_selectedImagePath!),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    AppIcons.create,
+                    width: 32,
+                    height: 32,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.grey,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Upload your event flier or promotional image',
+                    style: TextStyle(fontSize: 12, color: AppColors.grey),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -289,22 +352,44 @@ class _CreateEventPageState extends State<CreateEventPage> {
     int maxLines = 1,
     TextInputType? keyboardType,
     bool readOnly = false,
+    String? Function(String?)? validator,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
         readOnly: readOnly,
+        validator:
+            validator ??
+            (value) {
+              if (value == null || value.trim().isEmpty) {
+                return '$hintText is required';
+              }
+              return null;
+            },
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -320,31 +405,37 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required List<String> items,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: controller.text.isEmpty ? null : controller.text,
+        initialValue: controller.text.isEmpty ? null : controller.text,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$hintText is required';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 4,
           ),
         ),
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: AppColors.grey,
-        ), // Dropdown usually uses a built-in arrow but keeping consistency if possible
-        // Actually DropdownButtonFormField has its own icon property.
-        // We can use a custom widget if we really want SVG here, but let's keep it simple or use a rotated arrow.
-        // For now, let's just leave it or use a default if we don't have a clear small arrow svg.
-        // Actually, let's keep the Material arrow for dropdown for now or use a generic one if we have it.
-        // There is no small down arrow in assets/icons list except maybe "Clean" or others which don't fit.
         items: items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
@@ -365,13 +456,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return '$hintText is required';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: AppColors.grey, fontSize: 14),
@@ -384,7 +477,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
               colorFilter: ColorFilter.mode(AppColors.grey, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -399,14 +505,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$hintText is required';
+          }
+          return null;
+        },
         onTap: () async {
           final DateTime? picked = await showDatePicker(
             context: context,
@@ -415,7 +523,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
             lastDate: DateTime(2030),
           );
           if (picked != null) {
-            controller.text = '${picked.day}/${picked.month}/${picked.year}';
+            final isoDate =
+                '${picked.toIso8601String().split('T')[0]}T00:00:00.000Z';
+            controller.text = isoDate;
           }
         },
         decoration: InputDecoration(
@@ -430,7 +540,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
               colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -472,14 +595,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required String hintText,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      margin: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$hintText is required';
+          }
+          return null;
+        },
         onTap: () async {
           final DateTime? pickedDate = await showDatePicker(
             context: context,
@@ -493,8 +618,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
               initialTime: TimeOfDay.now(),
             );
             if (pickedTime != null) {
-              controller.text =
-                  '${pickedDate.day}/${pickedDate.month}/${pickedDate.year} ${pickedTime.format(context)}';
+              final finalDateTime = DateTime(
+                pickedDate.year,
+                pickedDate.month,
+                pickedDate.day,
+                pickedTime.hour,
+                pickedTime.minute,
+              );
+              controller.text = '${finalDateTime.toIso8601String()}Z';
             }
           }
         },
@@ -510,7 +641,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
               colorFilter: ColorFilter.mode(Colors.grey[600]!, BlendMode.srcIn),
             ),
           ),
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFF1C5941)),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
             vertical: 12,
@@ -523,26 +667,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
 // Event Preview Page
 class EventPreviewPage extends StatelessWidget {
-  final String eventName;
-  final String location;
-  final String ticketPrice;
-  final String confirmationCode;
-  final String? imagePath;
+  final EventModel event;
 
-  const EventPreviewPage({
-    super.key,
-    required this.eventName,
-    required this.location,
-    required this.ticketPrice,
-    required this.confirmationCode,
-    this.imagePath,
-  });
+  const EventPreviewPage({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
+    final EventViewModel eventViewModel = Get.find<EventViewModel>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
-      appBar: CustomAppBar(title: "Event Create"),
+      appBar: CustomAppBar(title: "Event Preview"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -566,33 +701,31 @@ class EventPreviewPage extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      imagePath ?? 'assets/images/event_detail.png',
-                      width: double.infinity,
-                      height: 180,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          height: 180,
-                          color: Colors.grey[300],
-                          child: SvgPicture.asset(
-                            AppIcons.create,
-                            width: 50,
-                            height: 50,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.srcIn,
+                    child:
+                        event.eventImage != null && event.eventImage!.isNotEmpty
+                        ? Image.file(
+                            File(event.eventImage!),
+                            width: double.infinity,
+                            height: 180,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: Icon(
+                                Icons.image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
-                        );
-                      },
-                    ),
                   ),
                   const SizedBox(height: 20),
 
                   Text(
-                    eventName,
+                    event.eventName ?? 'N/A',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -604,15 +737,19 @@ class EventPreviewPage extends StatelessWidget {
                   _buildInfoRow(
                     AppIcons.date,
                     'Date & Time',
-                    'August 15, 2023 at 08:30 PM - August 15, 2026 at 11:00 PM',
+                    '${_formatDateTime(event.eventStartDateTime)} - ${_formatDateTime(event.eventEndDateTime)}',
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow(AppIcons.location, 'Location', location),
+                  _buildInfoRow(
+                    AppIcons.location,
+                    'Location',
+                    event.eventLocation ?? 'N/A',
+                  ),
                   const SizedBox(height: 16),
                   _buildInfoRow(
                     AppIcons.ticket,
                     'Ticket Price',
-                    '\$${ticketPrice} per ticket',
+                    '\$${event.ticketPrice} per ticket',
                   ),
                   const SizedBox(height: 20),
 
@@ -626,7 +763,7 @@ class EventPreviewPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Join us for an unforgettable night of music under the stars! Featuring top artists and bands from around the world.',
+                    event.eventDescription ?? 'No description provided.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -648,7 +785,7 @@ class EventPreviewPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    confirmationCode,
+                    event.confirmationCodePrefix ?? 'N/A',
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 24),
@@ -671,20 +808,67 @@ class EventPreviewPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.eventHome);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1C5941),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        child: Obx(
+                          () => ElevatedButton(
+                            onPressed: eventViewModel.isLoading.value
+                                ? null
+                                : () {
+                                    eventViewModel.createEvent(
+                                      fields: {
+                                        'eventName': event.eventName ?? '',
+                                        'eventType': event.eventType ?? '',
+                                        'eventManagerName':
+                                            event.eventManagerName ?? '',
+                                        'eventLocation':
+                                            event.eventLocation ?? '',
+                                        'ticketSalesStartDate':
+                                            event.ticketSalesStartDate ?? '',
+                                        'ticketSalesEndDate':
+                                            event.ticketSalesEndDate ?? '',
+                                        'eventStartDateTime':
+                                            event.eventStartDateTime ?? '',
+                                        'eventEndDateTime':
+                                            event.eventEndDateTime ?? '',
+                                        'ticketPrice': event.ticketPrice ?? 0,
+                                        'maximumNumberOfTickets':
+                                            event.maximumNumberOfTickets ?? 0,
+                                        'confirmationCodePrefix':
+                                            event.confirmationCodePrefix ?? '',
+                                        'eventDescription':
+                                            event.eventDescription ?? '',
+                                        'status': 'draft',
+                                      },
+                                      imagePath: event.eventImage,
+                                      onSuccess: () {
+                                        eventViewModel
+                                            .fetchEvents(); // Refresh home list
+                                        _showSuccessDialog(context);
+                                      },
+                                      onError: (msg) {
+                                        // Error already handled in VM via snackbar
+                                      },
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1C5941),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            child: eventViewModel.isLoading.value
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text('Create Event'),
                           ),
-                          child: const Text('Create Event'),
                         ),
                       ),
                     ],
@@ -735,6 +919,17 @@ class EventPreviewPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _formatDateTime(String? dateTimeStr) {
+    if (dateTimeStr == null || dateTimeStr.isEmpty) return 'N/A';
+    try {
+      final dateTime = DateTime.tryParse(dateTimeStr);
+      if (dateTime == null) return dateTimeStr;
+      return DateFormat('dd MMM, yyyy hh:mm a').format(dateTime);
+    } catch (e) {
+      return dateTimeStr;
+    }
   }
 
   Widget _buildSectionCard({required String title, required Widget child}) {
@@ -804,7 +999,7 @@ class EventPreviewPage extends StatelessWidget {
               const SizedBox(height: 24),
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -814,8 +1009,8 @@ class EventPreviewPage extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Happy New Year Fest',
-                          style: TextStyle(
+                          event.eventName ?? 'N/A',
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
@@ -828,7 +1023,7 @@ class EventPreviewPage extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -838,8 +1033,8 @@ class EventPreviewPage extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Central Park, New York',
-                          style: TextStyle(
+                          event.eventLocation ?? 'N/A',
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
@@ -850,7 +1045,7 @@ class EventPreviewPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              const Row(
+              Row(
                 children: [
                   Expanded(
                     child: Column(
@@ -862,8 +1057,8 @@ class EventPreviewPage extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          '\$80',
-                          style: TextStyle(
+                          '\$${event.ticketPrice}',
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
@@ -878,7 +1073,7 @@ class EventPreviewPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Get.offAllNamed(AppRoutes.eventHome);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1C5941),

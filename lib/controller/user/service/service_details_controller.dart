@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/service/service_details_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class ServiceDetailsController extends GetxController {
   var isLoading = false.obs;
@@ -22,7 +23,7 @@ class ServiceDetailsController extends GetxController {
         return;
       }
 
-      final String url = "${AppConstants.BASE_URL}/api/user/services/$serviceId";
+      final String url = "${ApiService.BASE_URL}/api/user/services/$serviceId";
       
       print("Fetching service details: $url");
 

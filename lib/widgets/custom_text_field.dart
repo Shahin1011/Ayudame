@@ -14,6 +14,8 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int? maxLines;
   final bool readOnly;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
@@ -28,6 +30,8 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.maxLines = 1,
     this.readOnly = false,
+    this.validator,
+    this.onChanged,
   });
 
   @override
@@ -38,10 +42,16 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       maxLines: maxLines,
       readOnly: readOnly,
+      validator: validator,
+      onChanged: onChanged,
       style: TextStyle(fontSize: 14.sp, fontFamily: "Inter"),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: AppColors.grey, fontSize: 14.sp, fontFamily: "Inter"),
+        hintStyle: TextStyle(
+          color: AppColors.grey,
+          fontSize: 14.sp,
+          fontFamily: "Inter",
+        ),
         fillColor: fillColor ?? const Color(0xFFF9FAFB),
         filled: true,
         prefixIcon: prefixIcon,
@@ -49,11 +59,16 @@ class CustomTextField extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(fieldBorderRadius ?? 10.r),
-          borderSide: BorderSide(color: fieldBorderColor ?? const Color(0xFF525252)),
+          borderSide: BorderSide(
+            color: fieldBorderColor ?? const Color(0xFF525252),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(fieldBorderRadius ?? 10.r),
-          borderSide: const BorderSide(color: AppColors.mainAppColor, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.mainAppColor,
+            width: 1.5,
+          ),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/event_model.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class EventController extends GetxController {
@@ -11,7 +12,7 @@ class EventController extends GetxController {
   var eventList = <EventModel>[].obs;
   var errorMessage = ''.obs;
 
-  final String eventsUrl = "${AppConstants.BASE_URL}/api/home/popular-events";
+  final String eventsUrl = "${ApiService.BASE_URL}/api/home/popular-events";
 
 
   @override

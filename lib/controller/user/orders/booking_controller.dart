@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class BookingController extends GetxController {
   var isLoading = false.obs;
@@ -28,7 +29,7 @@ class BookingController extends GetxController {
         return null;
       }
 
-      final uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings");
+      final uri = Uri.parse("${ApiService.BASE_URL}/api/bookings");
 
       final body = {
         "serviceId": serviceId,

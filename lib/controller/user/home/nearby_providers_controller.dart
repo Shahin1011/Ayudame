@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/nearby_providers_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class NearbyProvidersController extends GetxController {
   var isLoading = false.obs;
@@ -13,7 +14,7 @@ class NearbyProvidersController extends GetxController {
   var searchRadiusKm = '10.0'.obs; // Default value
 
   final String nearbyProvidersUrl =
-      "${AppConstants.BASE_URL}/api/home/nearby-providers";
+      "${ApiService.BASE_URL}/api/home/nearby-providers";
 
   @override
   void onInit() {

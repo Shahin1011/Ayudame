@@ -12,6 +12,7 @@ import 'package:middle_ware/views/provider/profile/all_services_page.dart';
 import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
+import 'package:middle_ware/services/api_service.dart';
 import 'package:middle_ware/utils/constants.dart' hide AppColors;
 import 'package:middle_ware/utils/token_service.dart';
 import 'package:middle_ware/models/user/categories/category_model.dart';
@@ -29,7 +30,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
   final TextEditingController _aboutController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   bool _isLoading = false;
-  final String _createServiceUrl ="${AppConstants.BASE_URL}/api/providers/services";
+  final String _createServiceUrl ="${ApiService.BASE_URL}/api/providers/services";
 
   final List<TextEditingController> _whyChooseControllers = [
     TextEditingController(text: '24/7 Service'),
@@ -129,7 +130,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
       }
 
       final response = await http.get(
-        Uri.parse("${AppConstants.BASE_URL}/api/categories"),
+        Uri.parse("${ApiService.BASE_URL}/api/categories"),
         headers: headers,
       );
 

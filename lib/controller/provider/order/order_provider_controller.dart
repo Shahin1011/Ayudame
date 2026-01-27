@@ -6,6 +6,8 @@ import 'package:middle_ware/utils/token_service.dart';
 import 'package:middle_ware/models/provider/provider_booking_model.dart';
 import 'package:middle_ware/models/provider/provider_appointment_model.dart';
 
+import '../../../services/api_service.dart';
+
 class OrderProviderController extends GetxController {
   var isLoading = false.obs;
   
@@ -40,7 +42,7 @@ class OrderProviderController extends GetxController {
       String? token = await TokenService().getToken();
       
       var response = await http.get(
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/appointments'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/appointments'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -66,7 +68,7 @@ class OrderProviderController extends GetxController {
       String? token = await TokenService().getToken();
       
       var response = await http.get(
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/bookings'),
+        Uri.parse('${ApiService.baseURL}/api/providers/bookings'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

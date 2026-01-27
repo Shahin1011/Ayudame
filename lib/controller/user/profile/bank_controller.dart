@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../models/user/profile/bank_information_model.dart';
 import '../../../models/user/profile/card_model.dart';
 
@@ -26,7 +27,7 @@ class BankController extends GetxController {
         return;
       }
 
-      final url = Uri.parse('${AppConstants.BASE_URL}/api/auth/bank-information');
+      final url = Uri.parse('${ApiService.BASE_URL}/api/auth/bank-information');
       final response = await http.get(
         url,
         headers: {

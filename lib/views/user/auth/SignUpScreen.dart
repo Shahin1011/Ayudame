@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../utils/constants.dart';
 import '../../../widgets/custom_loading_button.dart';
 import '../../../widgets/user_custom_text_field.dart';
@@ -25,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final String apiUrl = "${AppConstants.BASE_URL}/api/auth/register";
+  final String apiUrl = "${ApiService.BASE_URL}/api/auth/register";
 
   Future<void> _createUser() async {
     if (!_formKey.currentState!.validate()) return;

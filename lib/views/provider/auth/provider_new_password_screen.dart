@@ -11,6 +11,7 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import '../../../widgets/user_custom_text_field.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class ProviderNewPasswordScreen extends StatefulWidget {
   const ProviderNewPasswordScreen({super.key});
@@ -28,7 +29,7 @@ class _ProviderNewPasswordScreenState extends State<ProviderNewPasswordScreen> {
   late String _resetToken;
 
   final String _resetPasswordUrl =
-      "${AppConstants.BASE_URL}/api/providers/reset-password";
+      "${ApiService.BASE_URL}/api/providers/reset-password";
 
   @override
   void initState() {

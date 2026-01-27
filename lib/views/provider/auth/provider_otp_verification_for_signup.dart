@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/routes/app_routes.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import '../../../utils/token_service.dart';
 import '../../../widgets/custom_loading_button.dart';
@@ -35,7 +36,7 @@ class _ProviderOtpVerificationScreen extends State<ProviderOtpVerificationScreen
 
 
   Future<bool> verifyUser(String email, String code) async {
-    final url = "${AppConstants.BASE_URL}/api/providers/register/verify-otp";
+    final url = "${ApiService.BASE_URL}/api/providers/register/verify-otp";
 
     if (!await hasInternetConnection()) {
       Get.snackbar("No Internet", "Please check your internet connection.");

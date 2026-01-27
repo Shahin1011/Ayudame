@@ -70,7 +70,7 @@ class _UserAddBankInformationState extends State<UserAddBankInformation> {
       // Let's assume standard http package usage.
       
       /*
-      final url = Uri.parse("${AppConstants.BASE_URL}/api/user/bank-info");
+      final url = Uri.parse("${ApiService.BASE_URL}/api/user/bank-info");
       final token = await TokenService().getToken();
       final response = await http.post(
         url,

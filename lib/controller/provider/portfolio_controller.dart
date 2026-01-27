@@ -8,6 +8,8 @@ import 'package:middle_ware/utils/token_service.dart';
 import '../../models/provider/portfolio_model.dart';
 import 'package:mime/mime.dart';
 
+import '../../services/api_service.dart';
+
 class PortfolioController extends GetxController {
   var isLoading = false.obs;
   var portfolioList = <PortfolioModel>[].obs;
@@ -24,7 +26,7 @@ class PortfolioController extends GetxController {
       String? token = await TokenService().getToken();
       
       var response = await http.get(
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/portfolio'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/portfolio'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -67,7 +69,7 @@ class PortfolioController extends GetxController {
       
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/portfolio'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/portfolio'),
       );
       
       request.headers.addAll({
@@ -137,7 +139,7 @@ class PortfolioController extends GetxController {
       
       var request = http.MultipartRequest(
         'PUT',
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/portfolio/$id'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/portfolio/$id'),
       );
       
       request.headers.addAll({
@@ -201,7 +203,7 @@ class PortfolioController extends GetxController {
       String? token = await TokenService().getToken();
       
       var response = await http.delete(
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/portfolio/$id'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/portfolio/$id'),
         headers: {
           'Authorization': 'Bearer $token',
         },

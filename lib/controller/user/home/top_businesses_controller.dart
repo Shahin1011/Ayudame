@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/top_businesses_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class TopBusinessesController extends GetxController {
   var isLoading = false.obs;
@@ -27,7 +28,7 @@ class TopBusinessesController extends GetxController {
         return;
       }
 
-      final String url = "${AppConstants.BASE_URL}/api/user/top-businesses?limit=$limit";
+      final String url = "${ApiService.BASE_URL}/api/user/top-businesses?limit=$limit";
       
       print("Fetching top businesses: $url");
 

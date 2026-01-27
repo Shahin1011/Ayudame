@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import '../../../viewmodels/BankController.dart';
+import '../../../viewmodels/bank_payout_controller.dart';
 import '../../../widgets/custom_appbar.dart';
 
 class BankFormScreen extends StatelessWidget {
@@ -10,7 +10,7 @@ class BankFormScreen extends StatelessWidget {
   final String buttonText;
   final bool isEdit;
 
-  const BankFormScreen({
+  const BankFormScreen({super.key,
     required this.title,
     required this.buttonText,
     this.isEdit = false,
@@ -18,7 +18,7 @@ class BankFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<BankController>();
+    final controller = Get.find<BankPayoutController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -152,7 +152,7 @@ class BankFormScreen extends StatelessWidget {
   }) {
     if (isDropDown && items != null) {
       return DropdownButtonFormField<String>(
-        value: ctrl.text.isEmpty ? null : ctrl.text,
+        initialValue: ctrl.text.isEmpty ? null : ctrl.text,
         items: items
             .map(
               (bank) => DropdownMenuItem(

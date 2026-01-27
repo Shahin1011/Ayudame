@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class EditProfile extends GetxController {
@@ -37,7 +38,7 @@ class EditProfile extends GetxController {
     String? phoneNumber,
     required String token,
   }) async {
-    final url = Uri.parse("${AppConstants.BASE_URL}/api/auth/me");
+    final url = Uri.parse("${ApiService.BASE_URL}/api/auth/me");
 
     var request = http.MultipartRequest("PUT", url);
     request.headers["Authorization"] = "Bearer $token";

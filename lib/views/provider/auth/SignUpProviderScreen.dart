@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/provider/auth/provider_otp_verification_for_signup.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import 'package:middle_ware/views/provider/auth/provider_otp_verification_for_signup.dart';
 
@@ -39,7 +40,7 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
   bool _isLoading = false;
 
   final ImagePicker _picker = ImagePicker();
-  final String _registerApiUrl = "${AppConstants.BASE_URL}/api/providers/register";
+  final String _registerApiUrl = "${ApiService.BASE_URL}/api/providers/register";
 
   String? _imageSubtypeForPath(String path) {
     final ext = path.split('.').last.toLowerCase();

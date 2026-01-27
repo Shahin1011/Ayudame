@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AppConstants {
 
   // Base Url
-  static const String BASE_URL = "https://libs-revolution-nomination-have.trycloudflare.com";
+
 
   // App Info
   static const String appName = 'MiddleWare';

@@ -3,7 +3,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class EventContactUsScreen extends StatelessWidget {
-  const EventContactUsScreen({Key? key}) : super(key: key);
+  const EventContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

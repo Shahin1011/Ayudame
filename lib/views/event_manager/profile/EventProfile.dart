@@ -1,29 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/event_manager/profile/PrivacyPolicyScreen.dart';
 import 'package:middle_ware/views/event_manager/profile/profile_info.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 
 import '../../../widgets/custom_appbar.dart';
 import 'EventHelpSupportScreen.dart';
 import 'EventTermsConditionScreen.dart';
+import 'EventNotificationPage.dart';
+import 'EventAboutUsScreen.dart';
+import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventProfilePage extends StatefulWidget {
-  const EventProfilePage({Key? key}) : super(key: key);
+  const EventProfilePage({super.key});
 
   @override
   State<EventProfilePage> createState() => _EventProfilePageState();
 }
 
 class _EventProfilePageState extends State<EventProfilePage> {
+  final _viewModel = Get.put(EventManagerViewModel());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel.fetchProfile();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "Profile"),
+      appBar: CustomAppBar(title: "Profile", showBackButton: false),
       body: Column(
         children: [
           Expanded(
@@ -32,48 +45,52 @@ class _EventProfilePageState extends State<EventProfilePage> {
                 children: [
                   const SizedBox(height: 24),
 
-                  Column(
-                    children: [
-                      Stack(
-                        children: [
-                          const CircleAvatar(
-                            radius: 48,
-                            backgroundImage: AssetImage(
-                              'assets/images/profile.png', // replace image
+                  Obx(() {
+                    final manager = _viewModel.currentManager.value;
+                    return Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 48,
+                          backgroundImage:
+                              manager?.profilePicture != null &&
+                                  manager!.profilePicture!.startsWith('http')
+                              ? NetworkImage(manager.profilePicture!)
+                              : const AssetImage('assets/images/profile.png')
+                                    as ImageProvider,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          manager?.fullName ?? 'Manager Name',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1C5941),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            manager?.userType ?? 'Event Manager',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Seam Rahman',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1C5941),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          'Event Manager',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
+                      ],
+                    );
+                  }),
+                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 16),
 
                   // Account Information Section
                   Container(
@@ -109,6 +126,20 @@ class _EventProfilePageState extends State<EventProfilePage> {
                           onTap: () {
                             Get.to(() => const ProfileInfoScreen());
                           },
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.notification,
+                          title: 'Notifications',
+                          onTap: () =>
+                              Get.to(() => const EventNotificationPage()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons.bank,
+                          title: 'Bank Information',
+                          onTap: () {
+                            Get.toNamed(AppRoutes.bankInfo);
+                          },
+                          showDivider: false,
                         ),
                       ],
                     ),
@@ -152,9 +183,14 @@ class _EventProfilePageState extends State<EventProfilePage> {
                         _buildMenuItem(
                           iconPath: AppIcons.terms,
                           title: 'Terms & Condition',
-
                           onTap: () =>
                               Get.to(() => EventTermsConditionScreen()),
+                        ),
+                        _buildMenuItem(
+                          iconPath: AppIcons
+                              .help, // Or use a separate about icon if available
+                          title: 'About Us',
+                          onTap: () => Get.to(() => const EventAboutUsScreen()),
                           showDivider: false,
                         ),
                       ],
@@ -298,13 +334,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // Add your logout logic here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Logged out successfully'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          _viewModel.logout();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
@@ -407,12 +437,7 @@ class _EventProfilePageState extends State<EventProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Account deleted successfully'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
+                          _viewModel.deleteAccount();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -491,6 +516,11 @@ class _EventProfilePageState extends State<EventProfilePage> {
             ),
           ),
         ),
+        if (showDivider)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Divider(height: 1, color: Color(0xFFF0F0F0)),
+          ),
       ],
     );
   }

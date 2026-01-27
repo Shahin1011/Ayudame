@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/event_detail_model.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 
@@ -30,7 +31,7 @@ class EventDetailsController extends GetxController {
 
     try {
       final response = await http.get(
-        Uri.parse("${AppConstants.BASE_URL}/api/home/event/$eventId"),
+        Uri.parse("${ApiService.BASE_URL}/api/home/event/$eventId"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

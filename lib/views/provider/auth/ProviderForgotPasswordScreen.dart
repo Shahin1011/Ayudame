@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/routes/app_routes.dart';
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../widgets/custom_loading_button.dart';
 
 class ProviderForgotPasswordScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _ProviderForgotPasswordScreenState
   bool _isLoading = false;
 
   final String _forgotPasswordUrl =
-      "${AppConstants.BASE_URL}/api/providers/forgot-password";
+      "${ApiService.BASE_URL}/api/providers/forgot-password";
 
   Future<void> _sendResetCode() async {
     if (!_formKey.currentState!.validate()) return;

@@ -4,16 +4,18 @@ import 'package:middle_ware/views/provider/auth/providerVerificationCodeScreen.d
 import '../../views/business/Activities/ActivitiesPage.dart';
 import '../../views/business/auth/BusinessForgotPasswordScreen.dart';
 import '../../views/business/auth/BusinessLoginScreen.dart';
+import '../../views/business/auth/BusinessResetPasswordScreen.dart';
 import '../../views/business/auth/BusinessSignUpScreen.dart';
-import '../../views/business/auth/BusinessVerificationCodeScreen.dart';
+import '../../views/business/auth/BusinessSignUpVerification.dart';
 import '../../views/business/home/BusinessNotificationPage.dart';
 import '../../views/business/profile/BusinessProfile.dart';
 import '../../views/business/profile/BusinessTermsConditionScreen.dart';
 import '../../views/business/profile/PrivacyPolicyScreen.dart';
 import '../../views/event_manager/auth/auth/EventForgotPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventLoginScreen.dart';
+import '../../views/event_manager/auth/auth/EventResetPasswordScreen.dart';
 import '../../views/event_manager/auth/auth/EventSignUpScreen.dart';
-import '../../views/event_manager/auth/auth/EventVerificationCodeScreen.dart';
+import '../../views/event_manager/auth/auth/EventSignUpVerification.dart';
 import '../../views/event_manager/event/CreateEventPage.dart';
 import '../../views/event_manager/profile/EventProfile.dart';
 import '../../views/onboarding/LocationAccessScreen.dart';
@@ -137,6 +139,7 @@ class AppRoutes {
   static const String businessRegister = '/BusinessSignUpScreen';
   static const String businessOtp = '/BusinessVerificationCodeScreen';
   static const String businessForgotPass = '/BusinessForgotPasswordScreen';
+  static const String businessResetPassword = '/BusinessResetPasswordScreen';
   static const String businessEmployee = '/BusinessEmployeeScreen';
   static const String businessOrders = '/business-orders';
   static const String businessActivity = '/ActivitiesPage';
@@ -150,10 +153,12 @@ class AppRoutes {
   static const String eventRegister = '/EventSignUpScreen';
   static const String eventForgotPass = '/EventForgotPasswordScreen';
   static const String eventOtp = '/EventVerificationCodeScreen';
+  static const String eventResetPassword = '/EventResetPasswordScreen';
   static const String eventHome = '/EventHomeScreen';
   static const String eventCreate = '/EventListScreen';
   static const String eventEdit = '/EditEventPage';
   static const String eventProfile = '/EventProfile';
+  static const String bankInfo = '/bank-info';
 
   // ============================================
   // GET PAGES DEFINITION
@@ -253,11 +258,15 @@ class AppRoutes {
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(
       name: businessOtp,
-      page: () => const BusinessVerificationCodeScreen(),
+      page: () => const BusinessSignUpVerification(),
     ),
     GetPage(
       name: businessForgotPass,
-      page: () => const BusinessForgotPasswordScreen(),
+      page: () => BusinessForgotPasswordScreen(),
+    ),
+    GetPage(
+      name: businessResetPassword,
+      page: () => BusinessResetPasswordScreen(),
     ),
     GetPage(
       name: businessEmployee,
@@ -277,10 +286,17 @@ class AppRoutes {
       name: eventForgotPass,
       page: () => const EventForgotPasswordScreen(),
     ),
-    GetPage(name: eventOtp, page: () => const EventVerificationCodeScreen()),
+    GetPage(name: eventOtp, page: () => const EventSignUpVerification()),
+    GetPage(
+      name: eventResetPassword,
+      page: () => const EventResetPasswordScreen(),
+    ),
     GetPage(name: eventHome, page: () => const BottomNavEScreen()),
     GetPage(name: eventCreate, page: () => const CreateEventPage()),
-    GetPage(name: eventEdit, page: () => const EditEventPage()),
+    GetPage(
+      name: eventEdit,
+      page: () => EditEventPage(event: Get.arguments),
+    ),
     GetPage(name: eventProfile, page: () => const EventProfilePage()),
   ];
 }
