@@ -48,7 +48,7 @@ import '../../views/provider/profile/providerBankPayoutView.dart';
 import '../../views/provider/profile/provider_AddBankInfo.dart';
 import '../../views/provider/settings/PaymentHistoryDetailPage.dart';
 import '../../views/provider/settings/PaymentHistoryPage.dart';
-import '../../views/user/UserNotificationPage.dart';
+import '../../views/user/home/UserNotificationPage.dart';
 import '../../views/user/auth/ForgotPasswordScreen.dart';
 import '../../views/user/auth/LoginScreen.dart';
 import '../../views/user/auth/user_new_password_screen.dart';

@@ -122,139 +122,142 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-
-            // Shield Icon
-            Container(
-              width: 64,
-              height: 64,
-              decoration: const BoxDecoration(
-                color: Color(0xFF1C5941),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.shield_outlined,
-                size: 32,
-                color: Colors.white,
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Title
-            const Text(
-              'Enter Verification Code',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Description
-            Text(
-              "We've sent a 6-digit code to $email",
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-
-            PinCodeEnter(context),
-
-
-            const SizedBox(height: 20),
-
-            // Paste Code Link
-            TextButton(
-              onPressed: () async {
-                final data = await Clipboard.getData('text/plain');
-                if (data != null && data.text != null) {
-                  final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
-                  if (code.length >= 6) {
-                    pinController.text = code.substring(0, 6);
-                  } else {
-                    pinController.text = code;
-                  }
-                }
-              },
-              child: const Text(
-                'Paste Code',
-                style: TextStyle(
-                  fontSize: 14,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+        
+              // Shield Icon
+              Container(
+                width: 64,
+                height: 64,
+                decoration: const BoxDecoration(
                   color: Color(0xFF1C5941),
-                  fontWeight: FontWeight.w600,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.shield_outlined,
+                  size: 32,
+                  color: Colors.white,
                 ),
               ),
-            ),
-
-
-            const SizedBox(height: 24),
-
-            CustomLoadingButton(
-              title: "Verify",
-              isLoading: isLoading,
-              onTap: (){
-                final otp = pinController.text.trim();
-                verifyUser(email, otp);
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Didn't receive code text
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Didn\'t receive the code? ',
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
+        
+              const SizedBox(height: 32),
+        
+              // Title
+              const Text(
+                'Enter Verification Code',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(0, 0),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              const SizedBox(height: 12),
+        
+              // Description
+              Text(
+                "We've sent a 6-digit code to $email",
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+        
+              PinCodeEnter(context),
+        
+        
+              const SizedBox(height: 20),
+        
+              // Paste Code Link
+              TextButton(
+                onPressed: () async {
+                  final data = await Clipboard.getData('text/plain');
+                  if (data != null && data.text != null) {
+                    final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
+                    if (code.length >= 6) {
+                      pinController.text = code.substring(0, 6);
+                    } else {
+                      pinController.text = code;
+                    }
+                  }
+                },
+                child: const Text(
+                  'Paste Code',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF1C5941),
+                    fontWeight: FontWeight.w600,
                   ),
-                  child: const Text(
-                    'Resend',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF1C5941),
-                      fontWeight: FontWeight.w600,
+                ),
+              ),
+        
+        
+              const SizedBox(height: 24),
+        
+              CustomLoadingButton(
+                title: "Verify",
+                isLoading: isLoading,
+                onTap: (){
+                  final otp = pinController.text.trim();
+                  verifyUser(email, otp);
+                },
+              ),
+        
+              const SizedBox(height: 20),
+        
+              // Didn't receive code text
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Didn\'t receive the code? ',
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text(
+                      'Resend',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF1C5941),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Back to Login
-            TextButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.userlogin);
-              },
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(0, 0),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ],
               ),
-              child: const Text(
-                'Back to Login',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
+        
+              const SizedBox(height: 8),
+        
+              // Back to Login
+              TextButton(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.userlogin);
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Back to Login',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

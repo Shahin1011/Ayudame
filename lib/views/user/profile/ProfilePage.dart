@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/user/auth/LoginScreen.dart';
 import 'package:middle_ware/views/user/orders/OrderHistoryScreen.dart';
 import 'package:middle_ware/views/user/profile/EditProfileScreen.dart';
 import 'package:middle_ware/views/user/profile/HelpSupportScreen.dart';
@@ -16,10 +15,10 @@ import 'package:shimmer/shimmer.dart';
 import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import '../../../services/firebasenotification/firebasenotification.dart';
 import 'PrivacyPolicyScreen.dart';
 import 'TermsConditionScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/token_service.dart';
 
 
@@ -584,26 +583,31 @@ class ProfilePage extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        // Clear the token
-                        await TokenService().clearToken();
-                        
-                        // Clear the isLoggedIn flag
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.remove('isLoggedIn');
-                        
-                        // Close dialog
-                        Navigator.of(context).pop();
-                        
-                        // Navigate to login screen and clear all previous routes
-                        Get.offAllNamed('/user_login');
-                        
-                        // Show success message
-                        Get.snackbar(
-                          'Success',
-                          'Logged out successfully',
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                        );
+                        try {
+                          await TokenService().clearToken();
+
+                          await PrefsHelper.clear();
+                          print("Prefs cleared");
+
+                          Navigator.of(context).pop();
+
+                          Get.offAllNamed('/user_login');
+
+                          Get.snackbar(
+                            'Success',
+                            'Logged out successfully',
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                          );
+                        } catch (e) {
+                          print("Logout error: $e");
+                          Get.snackbar(
+                            'Error',
+                            'Logout failed: $e',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.mainAppColor,
