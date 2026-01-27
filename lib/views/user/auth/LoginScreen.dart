@@ -8,9 +8,10 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import '../../../utils/token_service.dart';
-import '../../../widgets/user_custom_text_field.dart';
+import 'package:middle_ware/widgets/user_custom_text_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class UserLoginScreen extends StatefulWidget {
@@ -29,7 +30,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
 
   final _formKey = GlobalKey<FormState>();
-  final loginApiUrl = "${AppConstants.BASE_URL}/api/auth/login";
+  final loginApiUrl = "${ApiService.BASE_URL}/api/auth/login";
 
   Future<void> _loginUser(String email, String password) async {
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../models/user/home/provider_profile_model.dart';
 
 class ProviderProfileController extends GetxController {
@@ -22,7 +23,7 @@ class ProviderProfileController extends GetxController {
         return;
       }
 
-      final url = Uri.parse("${AppConstants.BASE_URL}/api/user/providers/$providerId/profile");
+      final url = Uri.parse("${ApiService.BASE_URL}/api/user/providers/$providerId/profile");
       final response = await http.get(
         url,
         headers: {

@@ -12,6 +12,7 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
+import 'package:middle_ware/services/api_service.dart';
 import 'package:middle_ware/utils/constants.dart' hide AppColors;
 import 'package:middle_ware/utils/token_service.dart';
 import 'package:middle_ware/models/user/categories/category_model.dart';
@@ -112,7 +113,7 @@ class _EditServicePageState extends State<EditServicePage> {
       }
 
       final response = await http.get(
-        Uri.parse("${AppConstants.BASE_URL}/api/categories"),
+        Uri.parse("${ApiService.BASE_URL}/api/categories"),
         headers: headers,
       );
 
@@ -288,7 +289,7 @@ class _EditServicePageState extends State<EditServicePage> {
 
     try {
       final request = http.MultipartRequest('PUT',
-        Uri.parse("${AppConstants.BASE_URL}/api/providers/services/$_serviceId"),
+        Uri.parse("${ApiService.BASE_URL}/api/providers/services/$_serviceId"),
       );
       request.headers['Authorization'] = 'Bearer $token';
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 import '../../../models/user/home/featured_providers_model.dart';
 
 class FeaturedProvidersController extends GetxController {
@@ -29,7 +30,7 @@ class FeaturedProvidersController extends GetxController {
       }
 
       final url = Uri.parse(
-          "${AppConstants.BASE_URL}/api/home/featured-providers?latitude=$lat&longitude=$lng");
+          "${ApiService.BASE_URL}/api/home/featured-providers?latitude=$lat&longitude=$lng");
       
       print("Fetching featured providers from: $url");
 

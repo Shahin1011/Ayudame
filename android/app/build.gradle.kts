@@ -42,3 +42,21 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    // ... other dependencies
+
+    // Force specific versions to work with AGP 8.7.3
+    implementation('androidx.browser:browser:1.6.0') {
+        force = true
+    }
+
+    implementation('androidx.core:core:1.12.0') {
+        force = true
+    }
+
+    implementation('androidx.core:core-ktx:1.12.0') {
+        force = true
+    }
+}

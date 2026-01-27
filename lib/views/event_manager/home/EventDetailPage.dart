@@ -1,27 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/models/event_model.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 class EventDetailPage extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String date;
-  final String time;
-  final String guests;
-  final String price;
-  final String location;
+  final EventModel event;
 
-  const EventDetailPage({
-    Key? key,
-    required this.imageUrl,
-    required this.title,
-    required this.date,
-    required this.time,
-    required this.guests,
-    required this.price,
-    required this.location,
-    required String event,
-  }) : super(key: key);
+  const EventDetailPage({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +17,7 @@ class EventDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // 1. Earnings Summary Card
+            // 1. Earnings Summary Card (Stats)
             _buildSectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,16 +30,30 @@ class EventDetailPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSummaryItem('Tickets', '500'),
-                      _buildSummaryItem('Revenue', '\$900.50'),
+                      _buildSummaryItem(
+                        'Total Tickets',
+                        '${event.maximumNumberOfTickets ?? 0}',
+                      ),
+                      _buildSummaryItem(
+                        'Revenue',
+                        '\$${event.revenue?.toStringAsFixed(2) ?? '0.00'}',
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSummaryItem('Tickets Sold', '100', icon: Icons.confirmation_num_outlined),
-                      _buildSummaryItem('Attendees', '100', icon: Icons.people_outline),
+                      _buildSummaryItem(
+                        'Tickets Sold',
+                        '${event.soldTickets ?? 0}',
+                        icon: Icons.confirmation_num_outlined,
+                      ),
+                      _buildSummaryItem(
+                        'Attendees',
+                        '${event.soldTickets ?? 0}',
+                        icon: Icons.people_outline,
+                      ),
                     ],
                   ),
                 ],
@@ -69,27 +68,61 @@ class EventDetailPage extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      "assets/images/event_detail.png",
-                      width: double.infinity,
-
-                    ),
+                    child:
+                        event.eventImage != null &&
+                            event.eventImage!.startsWith('http')
+                        ? Image.network(
+                            event.eventImage!,
+                            width: double.infinity,
+                            height: 180,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _buildPlaceholder(),
+                          )
+                        : _buildPlaceholder(),
                   ),
 
                   const SizedBox(height: 12),
-                  const Text("Event Name", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                  const Text("Happy New Year Fest", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    event.eventType ?? "Event Type",
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  Text(
+                    event.eventName ?? "Untitled Event",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 20),
-                  const Text("Event Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 12),
-                  _buildIconDetail(Icons.calendar_today_outlined, "Date & Time", "August 15, 2023 at 06:00 PM - 11:00 PM"),
-                  _buildIconDetail(Icons.location_on_outlined, "Location", "Central Park, New York"),
-                  _buildIconDetail(Icons.confirmation_num_outlined, "Ticket Price", "\$50.00 per ticket"),
-                  const SizedBox(height: 16),
-                  const Text("Description", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), ),
                   const Text(
-                    "Join us for an unforgettable night of music under the stars! Featuring top artists and bands.",
-                    style: TextStyle(color: Colors.grey, height: 1.4),
+                    "Event Details",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildIconDetail(
+                    Icons.calendar_today_outlined,
+                    "Date & Time",
+                    "${event.eventStartDateTime ?? 'N/A'} - ${event.eventEndDateTime ?? 'N/A'}",
+                  ),
+                  _buildIconDetail(
+                    Icons.location_on_outlined,
+                    "Location",
+                    event.eventLocation ?? "No location",
+                  ),
+                  _buildIconDetail(
+                    Icons.confirmation_num_outlined,
+                    "Ticket Price",
+                    "\$${event.ticketPrice?.toStringAsFixed(2) ?? '0.00'} per ticket",
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Description",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    event.eventDescription ?? "No description provided.",
+                    style: const TextStyle(color: Colors.grey, height: 1.4),
                   ),
                 ],
               ),
@@ -101,22 +134,41 @@ class EventDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Attendees", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Attendees",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 16),
-                  _buildAttendeeItem("Alice Jon", "alice@example.com", "2"),
-                  _buildAttendeeItem("Alice Jon", "alice@example.com", "2"),
-                  _buildAttendeeItem("Alice Jon", "alice@example.com", "2"),
-                  _buildAttendeeItem("Alice Jon", "alice@example.com", "2"),
+                  const Center(
+                    child: Text(
+                      "No attendees yet or list not available",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+
+            const SizedBox(height: 32),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  // Helper for Section Cards
+  Widget _buildPlaceholder() {
+    return Container(
+      width: double.infinity,
+      height: 180,
+      color: Colors.grey[200],
+      child: const Center(
+        child: Icon(Icons.image, size: 50, color: Colors.grey),
+      ),
+    );
+  }
+
   Widget _buildSectionCard({required Widget child}) {
     return Container(
       width: double.infinity,
@@ -130,7 +182,6 @@ class EventDetailPage extends StatelessWidget {
     );
   }
 
-  // Helper for Top Summary Items
   Widget _buildSummaryItem(String label, String value, {IconData? icon}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,53 +190,44 @@ class EventDetailPage extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            if (icon != null) Icon(icon, size: 20, color: const Color(0xFF1C5941)),
+            if (icon != null)
+              Icon(icon, size: 20, color: const Color(0xFF1C5941)),
             if (icon != null) const SizedBox(width: 8),
-            Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
     );
   }
 
-  // Helper for Event Details
-  Widget _buildIconDetail(IconData icon, String title, String subtitle) {
+  Widget _buildIconDetail(IconData icon, String title, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey, size: 24),
+          Icon(icon, size: 20, color: Colors.grey[600]),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(subtitle, style: const TextStyle(color: AppColors.grey, fontSize: 12)),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  // Helper for Attendee Rows
-  Widget _buildAttendeeItem(String name, String email, String count) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                Text(email, style: const TextStyle(color:AppColors.grey, fontSize: 12)),
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
               ],
             ),
           ),
-          const Icon(Icons.confirmation_num_outlined, size: 18, color: Color(0xFF1C5941)),
-          const SizedBox(width: 8),
-          Text(count, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ],
       ),
     );

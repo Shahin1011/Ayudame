@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../models/user/categories/category_model.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
 
@@ -14,7 +14,7 @@ class CategoryController extends GetxController {
   var categories = <CategoryModel>[].obs;
   var errorMessage = ''.obs;
 
-  final String categoryUrl = "${AppConstants.BASE_URL}/api/user/categories";
+  final String categoryUrl = "${ApiService.BASE_URL}/api/user/categories";
 
   @override
   void onInit() {

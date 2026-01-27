@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import '../../../widgets/custom_loading_button.dart';
 import '../../../widgets/user_custom_text_field.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final connectivityResult = await Connectivity().checkConnectivity();
     return connectivityResult != ConnectivityResult.none;
   }
-  final url = "${AppConstants.BASE_URL}/api/auth/forgot-password";
+  final url = "${ApiService.BASE_URL}/api/auth/forgot-password";
 
   /// Forgot Password API
   Future<void> forgotPassword(String email) async {

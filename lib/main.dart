@@ -1,16 +1,54 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/services/notifications/firebase_messaging_service.dart';
+import 'package:middle_ware/services/notifications/local_notifications_service.dart';
 import 'package:middle_ware/utils/token_service.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
+import 'firebase_options.dart';
 
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//
+//   final localNotificationsService =  LocalNotificationsService.instance();
+//   await localNotificationsService.init();
+//
+//   final firebaseMessagingService =  FirebaseMessagingService.instance();
+//   await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+//
+//   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//     statusBarColor: Colors.transparent,
+//     statusBarIconBrightness: Brightness.light,
+//     statusBarBrightness: Brightness.dark,
+//   ));
+//
+//   await TokenService().init();
+//
+//   runApp(const MyApp());
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // final localNotificationsService = LocalNotificationsService.instance();
+  // await localNotificationsService.init();
+  //
+  // final firebaseMessagingService = FirebaseMessagingService.instance();
+  // await firebaseMessagingService.init(
+  //   localNotificationsService: localNotificationsService,
+  // );
+  // await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
@@ -20,6 +58,8 @@ void main() async {
 
   runApp(const MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

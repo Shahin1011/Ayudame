@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
+import 'package:middle_ware/viewmodels/event_manager_viewmodel.dart';
 
-class EventForgotPasswordScreen extends StatelessWidget {
+class EventForgotPasswordScreen extends StatefulWidget {
   const EventForgotPasswordScreen({super.key});
+
+  @override
+  State<EventForgotPasswordScreen> createState() =>
+      _EventForgotPasswordScreenState();
+}
+
+class _EventForgotPasswordScreenState extends State<EventForgotPasswordScreen> {
+  final _emailController = TextEditingController();
+  final _viewModel = Get.put(EventManagerViewModel());
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -68,6 +85,7 @@ class EventForgotPasswordScreen extends StatelessWidget {
             const SizedBox(height: 8),
 
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 hintText: 'Enter your email or phone',
                 hintStyle: const TextStyle(fontSize: 14, color: Colors.black38),
@@ -99,24 +117,33 @@ class EventForgotPasswordScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.eventOtp);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C5941),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _viewModel.isLoading.value
+                      ? null
+                      : () {
+                          _viewModel.sendOtp(_emailController.text.trim());
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1C5941),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Send Reset Code',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: _viewModel.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Send Reset Code',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),

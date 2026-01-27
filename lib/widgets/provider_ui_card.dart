@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProviderUICard extends StatelessWidget {
   final String imageUrl;
@@ -13,11 +12,16 @@ class ProviderUICard extends StatelessWidget {
   final int reviewCount;
   final String price;
   final bool showOnlineIndicator;
-  final String? buttonText;
-  final VoidCallback? onViewDetails;
+  final bool showFavorite;
+  final VoidCallback onViewDetails;
+
+  final double? borderRadius;
+  final EdgeInsets? margin;
+
+  final List<BoxShadow>? boxShadow;
 
   const ProviderUICard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.profileUrl,
     required this.name,
@@ -28,81 +32,95 @@ class ProviderUICard extends StatelessWidget {
     required this.rating,
     required this.reviewCount,
     required this.price,
-    this.showOnlineIndicator = false,
-    this.buttonText,
-    this.onViewDetails,
-  }) : super(key: key);
+    required this.showOnlineIndicator,
+    required this.onViewDetails,
+    this.showFavorite = true,
+    this.borderRadius,
+    this.margin,
+    this.boxShadow,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
-
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: margin ?? const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(borderRadius ?? 20),
+        boxShadow:
+            boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Cover Image
           Stack(
             children: [
-              Image.network(
-                imageUrl,
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 200,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image, size: 50),
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(borderRadius ?? 20),
                 ),
+                child: imageUrl.startsWith('http')
+                    ? Image.network(
+                        imageUrl,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
+                              'assets/images/men_cleaning.jpg',
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                      )
+                    : Image.asset(
+                        imageUrl,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
               ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: Colors.pink.shade300,
+              if (showFavorite)
+                const Positioned(
+                  top: 15,
+                  right: 15,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white60,
+                    child: Icon(Icons.favorite_border, color: Colors.red),
                   ),
                 ),
-              ),
             ],
           ),
 
-          /// Content
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Profile Row
                 Row(
                   children: [
                     Stack(
                       children: [
                         CircleAvatar(
-                          radius: 22,
-                          backgroundImage: NetworkImage(profileUrl),
+                          radius: 25,
+                          backgroundImage: profileUrl.startsWith('http')
+                              ? NetworkImage(profileUrl)
+                              : AssetImage(profileUrl) as ImageProvider,
                         ),
                         if (showOnlineIndicator)
                           Positioned(
-                            right: 0,
                             bottom: 0,
+                            right: 0,
                             child: Container(
-                              width: 12,
                               height: 12,
+                              width: 12,
                               decoration: BoxDecoration(
                                 color: Colors.green,
                                 shape: BoxShape.circle,
@@ -120,106 +138,137 @@ class ProviderUICard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              Text(
-                                postedTime,
-                                style: const TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
-                          const SizedBox(height: 2),
                           Text(
                             location,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 13,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-                Text(
-                  serviceTitle,
-                  style: const TextStyle(fontSize: 14, height: 1.5, fontWeight: FontWeight.w600),
-                ),
-
-                const SizedBox(height: 10),
-                /// Description
-                Text(
-                  description,
-                  style: const TextStyle(fontSize: 12, height: 1.5),
-                ),
-
-                const SizedBox(height: 10),
-
-                /// Rating
-                Row(
-                  children: [
-                    ...List.generate(
-                      5,
-                      (index) => Icon(
-                        Icons.star,
-                        size: 16,
-                        color: index < rating.round()
-                            ? Colors.amber
-                            : Colors.grey.shade300,
+                    Text(
+                      postedTime,
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 6),
+                  ],
+                ),
+                const SizedBox(height: 15),
+
+                // টাইটেল এবং ডেসক্রিপশন
+                Text(
+                  serviceTitle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 15),
+
+                // রেটিং সেকশন
+                Row(
+                  children: [
+                    ...List.generate(5, (index) {
+                      if (index < rating.floor()) {
+                        return const Icon(Icons.star, color: Colors.orange, size: 22);
+                      } else if (index < rating) {
+                         return const Icon(Icons.star_half, color: Colors.orange, size: 22);
+                      } else {
+                        return const Icon(Icons.star_border, color: Colors.orange, size: 22);
+                      }
+                    }),
+                    const SizedBox(width: 8),
                     Text(
-                      '$rating ($reviewCount)',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      rating.toStringAsFixed(2),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      " ($reviewCount)",
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
                     ),
                   ],
                 ),
+                const SizedBox(height: 15),
 
-                const SizedBox(height: 14),
-
-                /// Price + Button
+                // প্রাইস এবং বাটন
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      price,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: "Appointment Price: ",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          TextSpan(
+                            text: price,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: onViewDetails,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B5E4E),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                      ElevatedButton(
+                        onPressed: onViewDetails,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(
+                            0xFF1E5631,
+                          ), // Dark Green Color
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          minimumSize: Size.zero, // Removes default minimum size constraints
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removes extra tap target spacing
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          "View Details",
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                       ),
-                      child: Text(buttonText ?? 'View Details'),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
   }
-}

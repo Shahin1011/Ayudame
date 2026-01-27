@@ -8,6 +8,7 @@ import 'package:middle_ware/views/provider/profile/edit_service.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/utils/constants.dart' hide AppColors;
 import 'package:middle_ware/utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class ProviderService {
   final String id;
@@ -119,7 +120,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
       }
 
       final response = await http.get(
-        Uri.parse("${AppConstants.BASE_URL}/api/providers/services"),
+        Uri.parse("${ApiService.BASE_URL}/api/providers/services"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

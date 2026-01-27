@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/recent_providers_model.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 
@@ -13,7 +14,7 @@ class RecentProviderController extends GetxController {
   var providerList = <ProviderModel>[].obs;
   var errorMessage = ''.obs;
 
-  final String recentUrl = "${AppConstants.BASE_URL}/api/auth/recent-providers";
+  final String recentUrl = "${ApiService.BASE_URL}/api/auth/recent-providers";
 
   @override
   void onInit() {

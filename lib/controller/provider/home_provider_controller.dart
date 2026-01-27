@@ -5,7 +5,8 @@ import 'package:middle_ware/utils/constants.dart';
 import 'package:middle_ware/utils/token_service.dart';
 
 import '../../models/provider/provider_booking_model.dart';
-import '../../models/provider/provider_appointment_model.dart'; // Optional if we want appointments too
+import '../../models/provider/provider_appointment_model.dart';
+import '../../services/api_service.dart'; // Optional if we want appointments too
 
 class HomeProviderController extends GetxController {
   var isLoading = false.obs;
@@ -36,14 +37,14 @@ class HomeProviderController extends GetxController {
       
       final responses = await Future.wait([
         http.get(
-          Uri.parse('${AppConstants.BASE_URL}/api/providers/bookings'),
+          Uri.parse('${ApiService.BASE_URL}/api/providers/bookings'),
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
         ),
         http.get(
-          Uri.parse('${AppConstants.BASE_URL}/api/providers/appointments'),
+          Uri.parse('${ApiService.BASE_URL}/api/providers/appointments'),
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ class HomeProviderController extends GetxController {
       String? token = await TokenService().getToken();
       
       var response = await http.get(
-        Uri.parse('${AppConstants.BASE_URL}/api/providers/bookings/stats'),
+        Uri.parse('${ApiService.BASE_URL}/api/providers/bookings/stats'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class OrderController extends GetxController {
   var isLoading = false.obs;
@@ -34,7 +35,7 @@ class OrderController extends GetxController {
 
       Uri uri;
       if (currentTab.value == 'Appointment') {
-        uri = Uri.parse("${AppConstants.BASE_URL}/api/appointments/my-appointments");
+        uri = Uri.parse("${ApiService.BASE_URL}/api/appointments/my-appointments");
       } else {
         String status = 'pending';
         // Mapping tabs to API status
@@ -60,7 +61,7 @@ class OrderController extends GetxController {
           default:
             status = 'pending';
         }
-        uri = Uri.parse("${AppConstants.BASE_URL}/api/bookings/my-bookings?status=$status&page=1&limit=50");
+        uri = Uri.parse("${ApiService.BASE_URL}/api/bookings/my-bookings?status=$status&page=1&limit=50");
       }
 
       final response = await http.get(

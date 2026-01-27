@@ -10,6 +10,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/constants.dart' hide AppColors;
 import 'package:get/get.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 
 class VerificationCodeScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
 
   Future<bool> verifyUser(String email, String code) async {
-    final url = "${AppConstants.BASE_URL}/api/auth/verify-otp";
+    final url = "${ApiService.BASE_URL}/api/auth/verify-otp";
 
     if (!await hasInternetConnection()) {
       Get.snackbar("No Internet", "Please check your internet connection.");

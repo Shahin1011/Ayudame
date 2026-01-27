@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../models/user/home/business_details_model.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
 
@@ -23,7 +24,7 @@ class BusinessDetailsController extends GetxController {
         return;
       }
 
-      final String url = "${AppConstants.BASE_URL}/api/user/businesses/$ownerId/details";
+      final String url = "${ApiService.BASE_URL}/api/user/businesses/$ownerId/details";
       
       print("Fetching business details: $url");
 

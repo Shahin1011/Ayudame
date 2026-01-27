@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/user/home/category_providers_model.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
+import 'package:middle_ware/services/api_service.dart';
 
 class CategoryProvidersController extends GetxController {
   var isLoading = false.obs;
@@ -26,7 +27,7 @@ class CategoryProvidersController extends GetxController {
         return;
       }
 
-      final String url = "${AppConstants.BASE_URL}/api/home/nearby-providers/category/$categoryId?latitude=$latitude&longitude=$longitude&maxDistance=$maxDistance";
+      final String url = "${ApiService.BASE_URL}/api/home/nearby-providers/category/$categoryId?latitude=$latitude&longitude=$longitude&maxDistance=$maxDistance";
       
       print("Fetching category providers: $url");
 

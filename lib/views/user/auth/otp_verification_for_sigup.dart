@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../utils/constants.dart' hide AppColors;
+import 'package:middle_ware/services/api_service.dart';
 import '../../../widgets/custom_loading_button.dart';
 
 class OTPVerificationForSignup extends StatefulWidget {
@@ -33,7 +34,7 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
 
 
   Future<bool> verifyUser(String email, String code) async {
-    final url = "${AppConstants.BASE_URL}/api/auth/register/verify-otp";
+    final url = "${ApiService.BASE_URL}/api/auth/register/verify-otp";
 
     if (!await hasInternetConnection()) {
       Get.snackbar("No Internet", "Please check your internet connection.");

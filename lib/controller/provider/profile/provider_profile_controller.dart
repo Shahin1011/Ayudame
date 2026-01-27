@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../models/provider/provider_profile_model.dart';
+import '../../../services/api_service.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
 
@@ -10,7 +11,7 @@ class ProviderProfileController extends GetxController {
   var providerProfile = Rxn<ProviderInfo>();
   var errorMessage = ''.obs;
 
-  final String profileUrl = "${AppConstants.BASE_URL}/api/providers/me";
+  final String profileUrl = "${ApiService.BASE_URL}/api/providers/me";
 
   @override
   void onInit() {

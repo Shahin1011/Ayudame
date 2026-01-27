@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
+import '../../../../viewmodels/event_manager_viewmodel.dart';
 
 class EventLoginScreen extends StatefulWidget {
   const EventLoginScreen({super.key});
@@ -10,13 +12,17 @@ class EventLoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<EventLoginScreen> {
+  final _viewModel = Get.put(EventManagerViewModel());
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   bool _rememberMe = false;
   bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -50,6 +56,7 @@ class _LoginScreenState extends State<EventLoginScreen> {
 
                 // Email TextField
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'E-mail address or phone number',
                     hintStyle: const TextStyle(
@@ -91,6 +98,7 @@ class _LoginScreenState extends State<EventLoginScreen> {
                 const SizedBox(height: 8),
 
                 TextField(
+                  controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: '••••••••••',
@@ -187,27 +195,54 @@ class _LoginScreenState extends State<EventLoginScreen> {
 
                 const SizedBox(height: 24),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.offNamed(AppRoutes.eventHome);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C5941),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: _viewModel.isLoading.value
+                          ? null
+                          : () {
+                              if (_emailController.text.isEmpty ||
+                                  _passwordController.text.isEmpty) {
+                                Get.snackbar(
+                                  "Error",
+                                  "Please enter email and password",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
+                              _viewModel.login(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text,
+                              );
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1C5941),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      child: _viewModel.isLoading.value
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
                   ),
                 ),
