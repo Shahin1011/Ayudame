@@ -12,6 +12,7 @@ import 'package:middle_ware/widgets/user_custom_text_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:middle_ware/services/api_service.dart';
+import 'package:middle_ware/services/storage_service.dart';
 
 
 class UserLoginScreen extends StatefulWidget {
@@ -72,6 +73,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
         /// Save the token
         String accessToken = data['data']['accessToken'];
         await TokenService().saveToken(accessToken);
+        await StorageService.saveUserRole('user');
 
         final prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', true);

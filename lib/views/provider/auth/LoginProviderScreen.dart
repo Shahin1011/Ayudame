@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:middle_ware/services/api_service.dart';
+import 'package:middle_ware/services/storage_service.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/token_service.dart';
@@ -66,6 +67,7 @@ class _LoginScreenState extends State<LoginProviderScreen> {
         final accessToken = data['data']?['accessToken'];
         if (accessToken is String && accessToken.isNotEmpty) {
           await TokenService().saveToken(accessToken);
+          await StorageService.saveUserRole('provider');
         }
 
         final prefs = await SharedPreferences.getInstance();

@@ -138,10 +138,22 @@ class EventDetails extends StatelessWidget {
                             onPressed: event.isSoldOut
                                 ? null
                                 : () {
-                                    Get.to(() => const BuyTicketScreen());
+                                    if (DateTime.now().isAfter(event.eventEndDateTime)) {
+                                      Get.snackbar(
+                                        "Event Finished!",
+                                        "This event has already finished.",
+                                        snackPosition: SnackPosition.TOP,
+                                        backgroundColor: Colors.red, 
+                                        colorText: Colors.white,
+                                        margin: EdgeInsets.all(10),
+                                        borderRadius: 8,
+                                      );
+                                    } else {
+                                      Get.to(() => BuyTicketScreen(eventId: event.eventId));
+                                    }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: event.isSoldOut
+                              backgroundColor: (event.isSoldOut || DateTime.now().isAfter(event.eventEndDateTime))
                                   ? Colors.grey
                                   : AppColors.mainAppColor,
                               padding: EdgeInsets.symmetric(vertical: 16.h),
