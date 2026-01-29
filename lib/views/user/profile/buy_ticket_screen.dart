@@ -3,9 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
+import '../../../controller/user/home/buy_ticket_controller.dart';
+import '../../../models/user/home/ticket_purchase_model.dart';
 
 class BuyTicketScreen extends StatefulWidget {
-  const BuyTicketScreen({Key? key}) : super(key: key);
+  final String eventId;
+  const BuyTicketScreen({Key? key, required this.eventId}) : super(key: key);
 
   @override
   State<BuyTicketScreen> createState() => _BuyTicketScreenState();
@@ -18,6 +21,9 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
   // Lists to store controllers for each ticket form
   List<TextEditingController> nameControllers = [];
   List<TextEditingController> idControllers = [];
+  List<String> selectedIdTypes = [];
+
+  final BuyTicketController controller = Get.put(BuyTicketController());
 
   @override
   void initState() {
@@ -36,6 +42,7 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
       for (int i = nameControllers.length; i < ticketCount; i++) {
         nameControllers.add(TextEditingController());
         idControllers.add(TextEditingController());
+        selectedIdTypes.add('Passport');
       }
     } else if (nameControllers.length > ticketCount) {
       for (int i = nameControllers.length; i > ticketCount; i--) {
@@ -43,6 +50,7 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
         nameControllers.removeLast();
         idControllers.last.dispose();
         idControllers.removeLast();
+        selectedIdTypes.removeLast();
       }
     }
   }
@@ -58,12 +66,32 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
     super.dispose();
   }
 
+  void _handlePurchase() {
+    if (nameControllers.any((c) => c.text.isEmpty) ||
+        idControllers.any((c) => c.text.isEmpty)) {
+      Get.snackbar("Error", "Please fill all fields",
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    List<TicketOwner> owners = [];
+    for (int i = 0; i < ticketCount; i++) {
+      owners.add(TicketOwner(
+        name: nameControllers[i].text,
+        identificationType: selectedIdTypes[i],
+        identificationNumber: idControllers[i].text,
+      ));
+    }
+
+    controller.purchaseTicket(widget.eventId, ticketCount, owners);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: CustomAppBar(title: "Buy Ticket"),
-      body: Column(
+      body: Obx(() => Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -158,9 +186,7 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
               ],
             ),
             child: ElevatedButton(
-              onPressed: () {
-                // Handle purchase
-              },
+              onPressed: controller.isLoading.value ? null : _handlePurchase,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF1B5E4E),
                 elevation: 0,
@@ -169,18 +195,24 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
               ),
-              child: Text(
-                "Purchase Now",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+              child: controller.isLoading.value
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    )
+                  : Text(
+                      "Purchase Now",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 
@@ -224,6 +256,7 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
                       if(index > 0) {
                          nameControllers[index].text = nameControllers[index-1].text;
                          idControllers[index].text = idControllers[index-1].text;
+                         selectedIdTypes[index] = selectedIdTypes[index-1];
                       }
                     }
                   });
@@ -285,6 +318,45 @@ class _BuyTicketScreenState extends State<BuyTicketScreen> {
                     color: Colors.grey[400],
                     fontSize: 12.sp,
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(color: Color(0xFF1B5E4E)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(color: Color(0xFF1B5E4E)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                    borderSide: BorderSide(color: Color(0xFF1B5E4E), width: 1.5),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "Select ID Type",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF555555),
+                ),
+              ),
+              SizedBox(height: 8.h),
+              DropdownButtonFormField<String>(
+                value: selectedIdTypes[index],
+                items: ['Passport', 'NID', 'Driving License']
+                    .map((type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type, style: TextStyle(fontSize: 12.sp)),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedIdTypes[index] = value!;
+                  });
+                },
+                decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.r),

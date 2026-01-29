@@ -68,7 +68,7 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
             ),
           ),
         ),
-        height: MediaQuery.of(context).size.height * 0.15,
+        height: MediaQuery.of(context).size.height * 0.12,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
@@ -117,7 +117,7 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
           SvgPicture.asset(
             selectedIndex == index ? selected : unselected,
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 5.h),
         ],
       ),
       label: label,

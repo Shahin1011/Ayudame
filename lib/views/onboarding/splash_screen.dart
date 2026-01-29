@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/utils/token_service.dart';
+import 'package:middle_ware/services/storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,12 +23,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Check if user has a valid token
     final token = await TokenService().getToken();
+    final role = await StorageService.getUserRole();
     
     if (!mounted) return;
 
     if (token != null && token.isNotEmpty) {
-      // User is logged in, navigate to home
-      Navigator.pushReplacementNamed(context, '/bottom_nav');
+      if (role == 'user') {
+        Navigator.pushReplacementNamed(context, '/bottom_nav');
+      } else if (role == 'provider') {
+        Navigator.pushReplacementNamed(context, '/provider_bottom_nav');
+      } else if (role == 'business') {
+        Navigator.pushReplacementNamed(context, '/BusinessHomePageScreen');
+      } else if (role == 'event_manager') {
+        Navigator.pushReplacementNamed(context, '/EventHomeScreen');
+      } else {
+        // Fallback for unknown role, or navigate to selection
+        Navigator.pushReplacementNamed(context, '/bottom_nav');
+      }
     } else {
       // User is not logged in, navigate to onboarding
       Navigator.pushReplacementNamed(context, '/onboarding');
@@ -73,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(height: 20),
 
               Text(
-                'ayudame',
+                'Ayudame',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,

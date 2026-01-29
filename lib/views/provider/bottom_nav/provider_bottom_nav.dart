@@ -72,7 +72,7 @@ class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
             ),
           ),
         ),
-        height: MediaQuery.of(context).size.height * 0.15,
+        height: MediaQuery.of(context).size.height * 0.12,
         child: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
