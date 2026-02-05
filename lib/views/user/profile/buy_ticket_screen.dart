@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../controller/user/home/buy_ticket_controller.dart';
 import '../../../models/user/home/ticket_purchase_model.dart';
+
 
 class BuyTicketScreen extends StatefulWidget {
   final String eventId;

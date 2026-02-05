@@ -6,8 +6,8 @@ import 'storage_service.dart';
 
 class ApiService {
   // Lavellh Backend API
-  static const String baseURL = 'https://libs-revolution-nomination-have.trycloudflare.com';
-  static const String BASE_URL = "https://libs-revolution-nomination-have.trycloudflare.com";
+  static const String baseURL = 'https://telling-new-becomes-lands.trycloudflare.com';
+  static const String BASE_URL = "https://telling-new-becomes-lands.trycloudflare.com";
 
   /// Get default headers with authentication token
   static Future<Map<String, String>> _getDefaultHeaders({

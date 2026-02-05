@@ -5,11 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/services/firebasenotification/firebasenotification.dart';
-import 'package:middle_ware/services/notifications/firebase_messaging_service.dart';
 import 'package:middle_ware/services/notifications/local_notifications_service.dart';
 import 'package:middle_ware/utils/token_service.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_colors.dart';
+import 'controllers/deep_link_controller.dart';
 import 'firebase_options.dart';
 
 
@@ -35,6 +35,9 @@ void main() async {
 
   await NotificationService.initialize();
   await TokenService().init();
+  
+  // Initialize Deep Link Controller
+  Get.put(DeepLinkController(), permanent: true);
 
   runApp(const MyApp());
 }
