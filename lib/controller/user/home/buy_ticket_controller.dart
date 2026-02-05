@@ -52,7 +52,9 @@ class BuyTicketController extends GetxController {
           final uri = Uri.parse(url);
           
           try {
-            if (await launchUrl(uri, mode: LaunchMode.inAppWebView)) {
+            // Using externalApplication to ensure the browser can correctly hand off
+            // the deep link (ayudame://) back to the OS and our app.
+            if (await launchUrl(uri, mode: LaunchMode.externalApplication)) {
             } else {
                // Fallback or retry?
                print("Could not launch $url");

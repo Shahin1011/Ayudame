@@ -65,6 +65,7 @@ import '../../views/user/profile/EditProfileScreen.dart';
 import '../../views/user/profile/ProfilePage.dart';
 import '../../views/user/profile/WishlistScreen.dart';
 import '../../views/user/home/NearYouProviderProfileScreen.dart';
+import '../../views/user/orders/PaymentSuccessScreen.dart';
 
 
 class AppRoutes {
@@ -110,6 +111,7 @@ class AppRoutes {
   static const String allTopBusinesses = '/AllTopBusinessesScreen';
   static const String businessDetails = '/BusinessDetailsScreen';
   static const String employeeServiceDetails = '/EmployeeServiceDetailsScreen';
+  static const String paymentSuccess = '/payment-success';
 
   // ============================================
   // PROVIDER ROUTES
@@ -211,6 +213,7 @@ class AppRoutes {
     GetPage(name: allTopBusinesses, page: () => const AllTopBusinessesScreen()),
     GetPage(name: businessDetails, page: () => const BusinessDetailsScreen()),
     GetPage(name: employeeServiceDetails, page: () => const EmployeeServiceDetailsScreen()),
+    GetPage(name: paymentSuccess, page: () => const PaymentSuccessScreen()),
 
     // Provider Auth & Features
     GetPage(name: providerLogin, page: () => const LoginProviderScreen()),
