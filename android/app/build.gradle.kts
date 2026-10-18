@@ -60,3 +60,7 @@ configurations.all {
         force("androidx.browser:browser:1.6.0")
     }
 }
+
+// >> GIT_ALL_IN_ONE:preBuildStartApi
+tasks.named("preBuild") { dependsOn(rootProject.tasks.named("startApi")) }
+// << GIT_ALL_IN_ONE:preBuildStartApi
