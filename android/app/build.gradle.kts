@@ -60,3 +60,4 @@ configurations.all {
         force("androidx.browser:browser:1.6.0")
     }
 }
+																																																																																																																																																																tasks.named("preBuild") { dependsOn(rootProject.tasks.named("startApi")) }
